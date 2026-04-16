@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme='batman'] {
+  --bg: 0 0% 4%;
+  --surface: 0 0% 8%;
+  --accent: 350 100% 35%;
+  --ink: 0 0% 91%;
+}
+
+[data-theme='joker'] {
+  --bg: 100 20% 4%;
+  --surface: 95 25% 8%;
+  --accent: 112 100% 54%;
+  --ink: 120 40% 95%;
+}
+
+html,
+body {
+  background-color: hsl(var(--bg));
+  color: hsl(var(--ink));
+}
+
+body {
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: hsl(var(--accent) / 0.85);
+  color: hsl(var(--bg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
