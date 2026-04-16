@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /d)",
+      "Bash(find \"d:\\\\\\\\portfolio-batman-joker\" -type d -name \"src\")",
+      "Bash(npm list *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
+    ]
+  }
+}

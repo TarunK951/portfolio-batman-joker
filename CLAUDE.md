@@ -65,3 +65,53 @@ Identity keywords — **"Satya Tarun", "Satya Tarun K", "satyatarun"** — must 
 ## Deployment
 
 Vercel picks up Next.js automatically. Before production cutover, update `SITE.url` in `lib/seo.ts` from the placeholder `https://satyatarun.vercel.app` to the final domain — metadata, canonical URL, sitemap, robots, and JSON-LD all read from that single source.
+
+## Taglines
+
+- **Batman:** "In a world that breaks everyone — some choose to become the darkness that protects the light."
+- **Joker:** "One bad day is all it takes. Make yours count."
+- **Toggle prompt:** "Toggle the mask."
+- **Hero headline:** "Order meets chaos."
+
+## Visual Design System
+
+### Color palette (hex equivalents for Three.js / Canvas contexts)
+
+| Token   | Batman    | Joker     |
+|---------|-----------|-----------|
+| bg      | `#0a0a0a` | `#070a07` |
+| surface | `#141414` | `#12180f` |
+| accent  | `#b00020` | `#39ff14` |
+| ink     | `#e8e8e8` | `#e8ffe8` |
+
+The authoritative source is the HSL vars in `app/globals.css`. Hex values in `tailwind.config.ts` (under `batman.*` / `joker.*`) and `components/three/Scene.tsx` must stay in sync with the HSL vars. Use `theme-*` Tailwind utilities in components; only use hex directly in Three.js materials via `useTheme()`.
+
+### Fonts (currently loaded)
+
+- **Display:** Bebas Neue (`--font-display`) — headings, hero text, section titles
+- **Body:** Inter (`--font-body`) — paragraphs, UI text
+- Both loaded via `next/font/google` in `app/layout.tsx` with `display: 'swap'`
+
+### Fonts (planned, not yet loaded)
+
+- **Crimson Text** — Batman body serif alternative
+- **Caveat** — Joker chaotic handwriting
+- **Noto Serif JP** — Japanese accents for Batman theme
+- **Noto Sans Devanagari** — Hindi accents for Joker theme
+- **Orbitron** — Stats/numbers display font
+
+Add via `next/font/google` with appropriate subsets when needed.
+
+## Sections Roadmap
+
+Target sections for the full portfolio (in scroll order):
+
+1. **Loading Screen** — Cinematic pre-loader with bat/joker motif `[TO BUILD]`
+2. **Split Landing** — Dual Batman/Joker panel, "choose your side" `[TO BUILD]`
+3. **Hero** — `components/sections/Hero.tsx` — GSAP + Framer Motion animated headline with 3D Scene backdrop `[EXISTS]`
+4. **DC Grid** — Character cards for heroes/villains (data from `data/dcHeroes.ts`, `data/dcVillains.ts`) `[TO BUILD]`
+5. **Projects** — Portfolio showcase (data from `data/projects.ts`) `[TO BUILD]`
+6. **About** — Personal bio, skills, timeline `[TO BUILD]`
+7. **Contact** — Form or mailto links `[TO BUILD]`
+8. **Footer** — Site credits, social links, multilingual text `[TO BUILD]`
+9. **404** — Custom `app/not-found.tsx` with theme awareness `[TO BUILD]`
