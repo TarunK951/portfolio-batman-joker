@@ -6,8 +6,20 @@ const Cursor = dynamic(
   () => import('@/components/shared/Cursor').then((m) => m.Cursor),
   { ssr: false },
 );
+const SmoothScroll = dynamic(
+  () => import('@/components/shared/SmoothScroll').then((m) => m.SmoothScroll),
+  { ssr: false },
+);
+const AmbientAudio = dynamic(
+  () => import('@/components/shared/AmbientAudio').then((m) => m.AmbientAudio),
+  { ssr: false },
+);
 const LoadingScreen = dynamic(
   () => import('@/components/sections/LoadingScreen').then((m) => m.LoadingScreen),
+  { ssr: false },
+);
+const BatCaveTunnel = dynamic(
+  () => import('@/components/sections/BatCaveTunnel').then((m) => m.BatCaveTunnel),
   { ssr: false },
 );
 const DCGrid = dynamic(
@@ -48,9 +60,12 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <SmoothScroll />
       <Cursor />
+      <AmbientAudio />
       <LoadingScreen />
       <Hero />
+      <BatCaveTunnel />
       <DCGrid />
       <Projects />
       <About />

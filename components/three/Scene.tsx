@@ -5,10 +5,15 @@ import { Suspense } from 'react';
 import { BatSymbol } from './BatSymbol';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
+const SCENE_COLORS = {
+  batman: { accent: '#b00020', bg: '#060606' },
+  samurai: { accent: '#8a1a1a', bg: '#efe9dd' },
+  futuristic: { accent: '#00e5ff', bg: '#05070c' },
+} as const;
+
 export function Scene() {
   const { theme } = useTheme();
-  const accent = theme === 'batman' ? '#b00020' : '#39ff14';
-  const bg = theme === 'batman' ? '#060606' : '#070a07';
+  const { accent, bg } = SCENE_COLORS[theme];
 
   return (
     <Canvas camera={{ position: [0, 0, 6], fov: 50 }} dpr={[1, 2]}>

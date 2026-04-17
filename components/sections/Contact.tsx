@@ -7,10 +7,25 @@ import { SITE } from '@/lib/seo';
 import { UButton } from '@/components/shared/UButton';
 import { ScrambleText } from '@/components/shared/ScrambleText';
 
+const CONTACT_COPY = {
+  batman: {
+    heading: 'Light',
+    body: 'Got a project that needs precision engineering and obsessive attention to detail? Let\u2019s talk.',
+  },
+  samurai: {
+    heading: 'Send',
+    body: 'Looking for work that prizes restraint, craft, and quiet intentionality? I\u2019m listening.',
+  },
+  futuristic: {
+    heading: 'Ping',
+    body: 'Building something at the edge of the web? Real-time, spatial, data-heavy? Let\u2019s wire it up.',
+  },
+} as const;
+
 export function Contact() {
   const { theme } = useTheme();
   const sectionRef = useRef<HTMLElement | null>(null);
-  const isBatman = theme === 'batman';
+  const copy = CONTACT_COPY[theme];
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -39,9 +54,7 @@ export function Contact() {
               <ScrambleText text="(04) Contact" trigger="inview" />
             </p>
             <h2 className="u-h2">
-              <span className="contact-line block">
-                {isBatman ? 'Light' : 'Drop'}
-              </span>
+              <span className="contact-line block">{copy.heading}</span>
               <span className="contact-line block">
                 <span className="text-utopia-red">the signal.</span>
               </span>
@@ -57,9 +70,7 @@ export function Contact() {
         <div className="mt-16 grid grid-cols-12 gap-6">
           <div className="col-span-12 sm:col-span-7">
             <p className="contact-line max-w-lg text-lg leading-relaxed">
-              {isBatman
-                ? 'Got a project that needs precision engineering and obsessive attention to detail? Let\u2019s talk.'
-                : 'Got a wild idea that needs someone bold enough to build it? I\u2019m in.'}
+              {copy.body}
             </p>
           </div>
 

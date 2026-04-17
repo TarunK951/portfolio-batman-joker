@@ -23,10 +23,28 @@ const timeline = [
   { year: '2022', label: 'Started coding journey' },
 ];
 
+const ABOUT_COPY = {
+  batman: {
+    lead: 'The detective',
+    tail: 'discipline.',
+    bio: "I'm Satya Tarun K — a full-stack product developer who builds with the discipline Batman brings to Gotham. Every pixel planned, every interaction deliberate.",
+  },
+  samurai: {
+    lead: 'The swordsmith',
+    tail: 'restraint.',
+    bio: "I'm Satya Tarun K — a full-stack product developer who works like a swordsmith. Few strokes, each one exact. Craft is the quiet between the lines.",
+  },
+  futuristic: {
+    lead: 'The operator',
+    tail: 'the signal.',
+    bio: "I'm Satya Tarun K — a full-stack product developer engineering interfaces at the edge. Real-time systems, clean data paths, tomorrow's surface today.",
+  },
+} as const;
+
 export function About() {
   const { theme } = useTheme();
   const sectionRef = useRef<HTMLElement | null>(null);
-  const isBatman = theme === 'batman';
+  const copy = ABOUT_COPY[theme];
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -79,13 +97,13 @@ export function About() {
             </p>
             <h2 className="u-h2">
               <span className="about-title-line block text-theme-ink">
-                {isBatman ? 'The detective' : 'The agent'}
+                {copy.lead}
               </span>
               <span className="about-title-line block text-theme-ink/35">
                 behind the
               </span>
               <span className="about-title-line block text-theme-accent">
-                {isBatman ? 'discipline.' : 'madness.'}
+                {copy.tail}
               </span>
             </h2>
           </div>
@@ -105,9 +123,7 @@ export function About() {
           {/* Bio + Timeline */}
           <div className="col-span-12 lg:col-span-7">
             <p className="text-xl leading-relaxed text-theme-ink/85 sm:text-2xl">
-              {isBatman
-                ? "I'm Satya Tarun K — a full-stack product developer who builds with the discipline Batman brings to Gotham. Every pixel planned, every interaction deliberate."
-                : "I'm Satya Tarun K — a full-stack product developer who breaks the rules. Like the Joker, I challenge conventions and build experiences nobody expects."}
+              {copy.bio}
             </p>
             <p className="mt-6 max-w-xl text-sm leading-relaxed text-theme-ink/55">
               I ship production-grade web applications with Next.js, Three.js,

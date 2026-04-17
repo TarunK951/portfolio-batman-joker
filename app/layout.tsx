@@ -85,7 +85,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='batman'||t==='joker'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='batman'||t==='samurai'||t==='futuristic'){document.documentElement.dataset.theme=t;}else{document.documentElement.dataset.theme='batman';}}catch(e){document.documentElement.dataset.theme='batman';}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

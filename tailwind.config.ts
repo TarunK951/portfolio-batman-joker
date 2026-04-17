@@ -18,11 +18,17 @@ const config: Config = {
           accent: '#ff1919',
           ink: '#ebe5ce',
         },
-        joker: {
-          bg: '#0a0f0a',
-          surface: '#121810',
-          accent: '#39ff14',
-          ink: '#e8ffe8',
+        samurai: {
+          bg: '#efe9dd',
+          surface: '#e5dfd0',
+          accent: '#8a1a1a',
+          ink: '#14120f',
+        },
+        futuristic: {
+          bg: '#05070c',
+          surface: '#0b0f17',
+          accent: '#00e5ff',
+          ink: '#e8f4ff',
         },
         // Token-driven (use these in components)
         theme: {

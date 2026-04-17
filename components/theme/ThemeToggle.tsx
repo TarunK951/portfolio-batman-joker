@@ -1,18 +1,59 @@
 'use client';
 
-import { useTheme } from './ThemeProvider';
+import { motion } from 'framer-motion';
+import { THEMES, useTheme, type Theme } from './ThemeProvider';
+
+type Segment = {
+  id: Theme;
+  label: string;
+  aria: string;
+};
+
+const SEGMENTS: readonly Segment[] = [
+  { id: 'batman', label: 'BAT', aria: 'Batman theme — dark red' },
+  { id: 'samurai', label: '雅', aria: 'Samurai theme — bone paper and sumi ink' },
+  { id: 'futuristic', label: '01', aria: 'Futuristic theme — electric cyan' },
+] as const;
 
 export function ThemeToggle() {
-  const { theme, toggle } = useTheme();
-  const next = theme === 'batman' ? 'Joker' : 'Batman';
+  const { theme, setTheme } = useTheme();
+
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={`Switch to ${next} theme`}
-      className="fixed right-6 top-6 z-50 rounded-full border border-theme-accent/40 bg-theme-surface/60 px-4 py-2 font-display text-sm uppercase tracking-[0.3em] text-theme-ink backdrop-blur transition hover:border-theme-accent hover:shadow-glow"
+    <div
+      role="radiogroup"
+      aria-label="Theme selector"
+      className="fixed right-6 top-6 z-50 flex items-center rounded-full border border-theme-line bg-theme-surface/70 p-1 backdrop-blur"
     >
-      {next}
-    </button>
+      {SEGMENTS.map((seg) => {
+        const active = seg.id === theme;
+        return (
+          <button
+            key={seg.id}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            aria-label={seg.aria}
+            data-cursor-hover
+            onClick={() => setTheme(seg.id)}
+            className={`relative z-10 flex h-7 min-w-[2.25rem] items-center justify-center px-3 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-300 ${
+              active ? 'text-theme-bg' : 'text-theme-ink/60 hover:text-theme-ink'
+            }`}
+          >
+            {active && (
+              <motion.span
+                layoutId="theme-toggle-pill"
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 rounded-full bg-theme-accent"
+                transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+              />
+            )}
+            <span className="relative">{seg.label}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
+
+// Exported for sections that want to reference the ordered theme list.
+export { THEMES };

@@ -4,9 +4,15 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
 import { ScrambleText } from '@/components/shared/ScrambleText';
 
+const FOOTER_COPY = {
+  batman: { wordmark: 'GOTHAM', locale: '\u6697\u95C7 \u00B7 \u6B63\u7FA9' },
+  samurai: { wordmark: '\u6C5F\u6238', locale: '\u4F8D \u00B7 \u9759\u5BC2' }, // 江戸 · 侍 静寂
+  futuristic: { wordmark: 'NEO//GRID', locale: 'SYS \u00B7 NET \u00B7 PULSE' },
+} as const;
+
 export function Footer() {
   const { theme } = useTheme();
-  const isBatman = theme === 'batman';
+  const copy = FOOTER_COPY[theme];
   const year = new Date().getFullYear();
 
   return (
@@ -17,7 +23,7 @@ export function Footer() {
           className="u-h1 break-all leading-[0.85] text-theme-ink/90"
           style={{ fontSize: 'clamp(3rem, 18vw, 16rem)' }}
         >
-          {isBatman ? 'GOTHAM' : 'CHAOS'}
+          {copy.wordmark}
         </p>
       </div>
 
@@ -54,7 +60,7 @@ export function Footer() {
             Locale
           </p>
           <p className="mt-2 u-mono text-[11px] tracking-[0.15em] text-theme-ink/55">
-            {isBatman ? '\u6697\u95C7 \u00B7 \u6B63\u7FA9' : '\u091C\u094B\u0915\u0930 \u00B7 \u0916\u0947\u0932'}
+            {copy.locale}
           </p>
         </div>
       </div>

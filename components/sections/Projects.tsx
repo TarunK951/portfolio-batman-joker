@@ -2,9 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { registerGsap } from '@/lib/gsap';
-import { useTheme } from '@/components/theme/ThemeProvider';
+import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
 import { projects } from '@/data/projects';
-import { ScrambleText } from '@/components/shared/ScrambleText';
 
 const statusLabel: Record<string, string> = {
   live: 'Live',
@@ -13,10 +12,44 @@ const statusLabel: Record<string, string> = {
   'coming-soon': 'Soon',
 };
 
+type ProjectsCopy = {
+  title: string;
+  intro: string;
+};
+
+const PROJECTS_COPY: Record<Theme, ProjectsCopy> = {
+  batman: {
+    title: 'Case files.',
+    intro:
+      'A selection of recent work — products, interfaces, and experiments at the intersection of engineering and cinema.',
+  },
+  samurai: {
+    title: 'The scrolls.',
+    intro:
+      'A quiet catalogue. Each piece shaped patiently, finished only when nothing more can be removed.',
+  },
+  futuristic: {
+    title: 'The systems.',
+    intro:
+      'Shipped systems. Throughput, latency, and clarity — measured and optimized end to end.',
+  },
+};
+
+function projectLabel(
+  theme: Theme,
+  project: { batmanName: string; jokerName: string },
+  index: number,
+): string {
+  if (theme === 'batman') return project.batmanName;
+  const n = String(index + 1).padStart(3, '0');
+  if (theme === 'samurai') return `Scroll #${n}`;
+  return `SYS.${n}`;
+}
+
 export function Projects() {
   const { theme } = useTheme();
   const sectionRef = useRef<HTMLElement | null>(null);
-  const isBatman = theme === 'batman';
+  const copy = PROJECTS_COPY[theme];
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -40,44 +73,44 @@ export function Projects() {
   return (
     <section ref={sectionRef} id="work" className="u-section bg-theme-bg">
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-12 items-end gap-6">
-          <div className="col-span-12 lg:col-span-9">
+        {/* ── INTRO ─────────────────────────────────────── */}
+        <div className="grid grid-cols-12 items-start gap-6">
+          <div className="col-span-12 lg:col-span-12">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-              <ScrambleText text="(03) Selected Work" trigger="inview" />
+              <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-theme-accent align-middle" />
+              <span className="ml-3 align-middle">(03) Selected work</span>
             </p>
-            <h2 className="u-h2 text-theme-ink">
-              {isBatman ? 'Case files.' : 'The heists.'}
-            </h2>
+            <h2 className="u-h2 text-theme-ink">{copy.title}</h2>
           </div>
-          <div className="col-span-12 lg:col-span-3 lg:text-right">
-            <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
-              {projects.length.toString().padStart(2, '0')} Entries
+          <div className="col-span-12 lg:col-span-6 lg:col-start-7">
+            <p className="mt-8 text-[15px] leading-relaxed text-theme-ink/65">
+              {copy.intro}
             </p>
           </div>
         </div>
 
-        <div className="u-rule mt-12" />
+        <div className="u-rule mt-20" />
 
-        {/* Utopia-style horizontal "row" cards */}
-        <ul>
+        {/* ── ROW LIST ──────────────────────────────────── */}
+        <ul className="group/list">
           {projects.map((project, i) => (
             <li
               key={project.id}
-              className="project-row group grid cursor-pointer grid-cols-12 items-baseline gap-6 border-b border-theme-line py-8 transition-colors hover:bg-theme-surface/40"
+              className="project-row group/row grid cursor-pointer grid-cols-12 items-baseline gap-6 py-10 transition-opacity duration-500 ease-out md:py-14 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-theme-ink/[0.08] group-hover/list:opacity-40 hover:!opacity-100"
               data-cursor-hover
             >
-              <span className="col-span-2 u-mono text-[11px] tracking-[0.2em] text-theme-ink/45 sm:col-span-1">
+              <span className="col-span-2 u-mono text-[11px] tracking-[0.2em] text-theme-ink/45 transition-colors duration-300 sm:col-span-1 group-hover/row:text-theme-accent">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div className="col-span-10 sm:col-span-5">
-                <h3 className="u-h3 text-theme-ink transition-colors group-hover:text-theme-accent">
+              <div className="col-span-10 sm:col-span-6">
+                <h3 className="u-h3 text-theme-ink transition-colors duration-300 group-hover/row:text-theme-accent">
                   {project.name}
                 </h3>
-                <p className="mt-2 u-mono text-[10px] uppercase tracking-[0.25em] text-theme-ink/50">
-                  {isBatman ? project.batmanName : project.jokerName}
+                <p className="mt-3 u-mono text-[10px] uppercase tracking-[0.25em] text-theme-ink/50">
+                  {projectLabel(theme, project, i)}
                 </p>
               </div>
-              <p className="col-span-12 max-w-md text-sm leading-relaxed text-theme-ink/65 sm:col-span-4">
+              <p className="col-span-12 max-w-md text-sm leading-relaxed text-theme-ink/65 sm:col-span-3">
                 {project.description}
               </p>
               <div className="col-span-12 flex items-center justify-between gap-3 sm:col-span-2 sm:flex-col sm:items-end">
@@ -88,21 +121,11 @@ export function Projects() {
                   {project.type}
                 </span>
               </div>
-
-              {/* tech stack — secondary line */}
-              <div className="col-span-12 mt-2 flex flex-wrap gap-2 sm:col-start-2">
-                {project.stack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="u-mono text-[10px] uppercase tracking-[0.2em] text-theme-ink/40"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
             </li>
           ))}
         </ul>
+
+        <div className="u-rule" />
       </div>
     </section>
   );

@@ -12,7 +12,11 @@ export function LoadingScreen() {
   const numRef = useRef<HTMLSpanElement | null>(null);
   const [visible, setVisible] = useState(true);
   const { theme } = useTheme();
-  const isBatman = theme === 'batman';
+  const loadingCopy = {
+    batman: { mode: 'BAT_MODE', engaged: 'Order' },
+    samurai: { mode: 'SMR_MODE', engaged: 'Restraint' },
+    futuristic: { mode: 'SYS_MODE', engaged: 'Signal' },
+  }[theme];
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -73,7 +77,7 @@ export function LoadingScreen() {
             Satya Tarun K
           </span>
           <span className="ls-meta u-mono text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-            {isBatman ? 'BAT_MODE' : 'JKR_MODE'} / Booting
+            {loadingCopy.mode} / Booting
           </span>
         </div>
 
@@ -100,7 +104,7 @@ export function LoadingScreen() {
               Initializing scene
             </span>
             <span className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
-              {isBatman ? 'Order' : 'Chaos'} engaged
+              {loadingCopy.engaged} engaged
             </span>
           </div>
           <div className="relative h-px w-full bg-theme-ink/15">

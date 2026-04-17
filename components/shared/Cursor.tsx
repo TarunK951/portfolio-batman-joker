@@ -1,40 +1,43 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { registerGsap } from '@/lib/gsap';
 
 /**
- * Utopia Tokyo style custom cursor.
- * Center dot + 4 corner brackets that expand on hoverable elements.
- * Uses requestAnimationFrame + lerp for buttery follow.
- * Hidden on touch / coarse-pointer devices via CSS.
+ * Dot + lagging ring cursor.
+ * - Small solid dot tracks the mouse 1:1 (quickTo)
+ * - Larger ring trails behind with eased quickTo
+ * - Grows + inverts on interactive elements (a, button, [data-cursor-hover])
+ * - mix-blend-mode: difference flips over light "paper" sections automatically
+ * - Hidden on touch / reduced-motion
  */
 export function Cursor() {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const dotRef = useRef<HTMLDivElement | null>(null);
+  const ringRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (window.matchMedia('(pointer: coarse)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const el = ref.current;
-    if (!el) return;
+    const { gsap } = registerGsap();
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
-    let targetX = window.innerWidth / 2;
-    let targetY = window.innerHeight / 2;
-    let x = targetX;
-    let y = targetY;
-    let raf = 0;
+    // initial off-screen
+    gsap.set([dot, ring], { xPercent: -50, yPercent: -50, x: -100, y: -100 });
+
+    const dotX = gsap.quickTo(dot, 'x', { duration: 0.12, ease: 'power3.out' });
+    const dotY = gsap.quickTo(dot, 'y', { duration: 0.12, ease: 'power3.out' });
+    const ringX = gsap.quickTo(ring, 'x', { duration: 0.55, ease: 'power3.out' });
+    const ringY = gsap.quickTo(ring, 'y', { duration: 0.55, ease: 'power3.out' });
 
     const onMove = (e: PointerEvent) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-    };
-
-    const tick = () => {
-      x += (targetX - x) * 0.22;
-      y += (targetY - y) * 0.22;
-      el.style.transform = `translate3d(${String(x)}px, ${String(y)}px, 0) translate(-50%, -50%)`;
-      raf = requestAnimationFrame(tick);
+      dotX(e.clientX);
+      dotY(e.clientY);
+      ringX(e.clientX);
+      ringY(e.clientY);
     };
 
     const onOver = (e: Event) => {
@@ -43,28 +46,39 @@ export function Cursor() {
       const hover = t.closest(
         'a, button, [role="button"], input, textarea, select, [data-cursor-hover]',
       );
-      if (hover) el.classList.add('is-hover');
-      else el.classList.remove('is-hover');
+      if (hover) {
+        ring.classList.add('is-hover');
+        dot.classList.add('is-hover');
+      } else {
+        ring.classList.remove('is-hover');
+        dot.classList.remove('is-hover');
+      }
+    };
+
+    const onDown = () => {
+      ring.classList.add('is-down');
+    };
+    const onUp = () => {
+      ring.classList.remove('is-down');
     };
 
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerover', onOver, { passive: true });
-    raf = requestAnimationFrame(tick);
+    window.addEventListener('pointerdown', onDown, { passive: true });
+    window.addEventListener('pointerup', onUp, { passive: true });
 
     return () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerover', onOver);
-      cancelAnimationFrame(raf);
+      window.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointerup', onUp);
     };
   }, []);
 
   return (
-    <div ref={ref} className="u-cursor" aria-hidden="true">
-      <span className="u-cursor__corner tl" />
-      <span className="u-cursor__corner tr" />
-      <span className="u-cursor__corner bl" />
-      <span className="u-cursor__corner br" />
-      <span className="u-cursor__dot" />
-    </div>
+    <>
+      <div ref={ringRef} className="u-cursor-ring" aria-hidden="true" />
+      <div ref={dotRef} className="u-cursor-dot" aria-hidden="true" />
+    </>
   );
 }

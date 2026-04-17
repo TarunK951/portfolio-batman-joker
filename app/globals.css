@@ -3,35 +3,63 @@
 @tailwind utilities;
 
 /* =========================================================
-   Design tokens — Utopia Tokyo aesthetic over dual theme
-   Utopia palette: #14171f black / #ebe5ce cream / #ff1919 red
-   We map: Batman = utopia-black + red, Joker = green-tint + toxic green.
-   Cream surface available as --paper for breaker sections.
+   Design tokens — three theme system
+   batman      : Utopia Tokyo dark  — near-black + utopia red (dark)
+   samurai     : bone paper / sumi ink / muted vermillion   (LIGHT)
+   futuristic  : tech-black + electric cyan                  (dark)
+   All themes share the same token names so Tailwind theme-*
+   utilities map without change.
    ========================================================= */
 
 :root,
 [data-theme='batman'] {
-  --bg: 225 18% 10%;        /* #14171f */
-  --surface: 224 14% 14%;
-  --paper: 49 30% 86%;      /* #ebe5ce cream breaker */
-  --accent: 0 100% 55%;     /* #ff1919 utopia red */
+  --bg: 225 18% 10%;         /* #14171f */
+  --surface: 224 14% 14%;    /* #1c1f28 */
+  --paper: 49 30% 86%;       /* #ebe5ce cream breaker */
+  --accent: 0 100% 55%;      /* #ff1919 utopia red */
   --accent-soft: 0 100% 65%;
-  --ink: 49 30% 92%;        /* near-cream text on dark */
+  --ink: 49 30% 92%;         /* near-cream text on dark */
   --ink-muted: 0 0% 60%;
   --line: 0 0% 14%;
   --neutral-700: 0 0% 14%;
 }
 
-[data-theme='joker'] {
-  --bg: 120 18% 6%;
-  --surface: 120 14% 10%;
-  --paper: 90 30% 90%;
-  --accent: 112 100% 54%;   /* toxic green */
-  --accent-soft: 112 100% 70%;
-  --ink: 120 30% 95%;
-  --ink-muted: 110 8% 60%;
-  --line: 110 10% 14%;
-  --neutral-700: 110 5% 14%;
+/* SAMURAI — light, warm, minimal. Inverts ink/bg relationship.
+   bg     #efe9dd  warm paper
+   surface#e5dfd0  slightly deeper paper
+   paper  #14120f  sumi-ink (dark breaker)
+   accent #8a1a1a  muted vermillion
+   ink    #14120f  sumi-ink
+*/
+[data-theme='samurai'] {
+  --bg: 41 30% 90%;          /* #efe9dd warm bone paper */
+  --surface: 43 27% 85%;     /* #e5dfd0 deeper paper */
+  --paper: 36 11% 7%;        /* #14120f sumi-ink (dark breaker swap) */
+  --accent: 0 68% 32%;       /* #8a1a1a muted vermillion */
+  --accent-soft: 0 62% 42%;
+  --ink: 36 11% 7%;          /* #14120f sumi */
+  --ink-muted: 36 8% 30%;
+  --line: 36 11% 7%;         /* low-alpha via hsl(var(--line)/0.12) in consumers */
+  --neutral-700: 36 8% 25%;
+}
+
+/* FUTURISTIC — dark tech-black + electric cyan.
+   bg     #05070c  deep tech-black
+   surface#0b0f17  panel
+   paper  #e8f4ff  ice-white breaker
+   accent #00e5ff  electric cyan
+   ink    #e8f4ff  crisp mono-white
+*/
+[data-theme='futuristic'] {
+  --bg: 220 43% 3%;          /* #05070c */
+  --surface: 219 36% 7%;     /* #0b0f17 */
+  --paper: 207 100% 95%;     /* #e8f4ff ice breaker */
+  --accent: 187 100% 50%;    /* #00e5ff electric cyan */
+  --accent-soft: 187 100% 65%;
+  --ink: 207 100% 95%;       /* #e8f4ff */
+  --ink-muted: 207 25% 65%;
+  --line: 207 40% 22%;       /* cool steel line */
+  --neutral-700: 219 28% 14%;
 }
 
 * { box-sizing: border-box; }
@@ -41,6 +69,31 @@ body {
   background-color: hsl(var(--bg));
   color: hsl(var(--ink));
   font-feature-settings: 'ss01', 'cv11';
+  transition:
+    background-color 500ms cubic-bezier(.2,.8,.2,1),
+    color 500ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Opt-in utility for token-driven elements that should crossfade
+   alongside the root on theme switch. Apply to any element whose
+   background/color/border reads from theme-* tokens. */
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color 500ms cubic-bezier(.2,.8,.2,1),
+    color 500ms cubic-bezier(.2,.8,.2,1),
+    border-color 500ms cubic-bezier(.2,.8,.2,1),
+    fill 500ms cubic-bezier(.2,.8,.2,1),
+    stroke 500ms cubic-bezier(.2,.8,.2,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  .theme-transition,
+  .theme-transition * {
+    transition: none !important;
+  }
 }
 
 html {
@@ -124,40 +177,47 @@ body {
 }
 
 /* =========================================================
-   Cursor system
+   Cursor system — dot + lagging ring
+   - Both elements are pos:fixed and translated by GSAP quickTo
+   - mix-blend-mode: difference handles light/dark sections automatically
    ========================================================= */
-.u-cursor {
+.u-cursor-dot,
+.u-cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 36px; height: 36px;
   pointer-events: none;
   z-index: 9999;
-  transform: translate3d(-50%, -50%, 0);
-  mix-blend-mode: difference;
   will-change: transform;
+  border-radius: 9999px;
+  mix-blend-mode: difference;
 }
-.u-cursor__dot {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: 4px; height: 4px;
-  background: hsl(var(--accent));
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+.u-cursor-dot {
+  width: 6px; height: 6px;
+  background: #ffffff;
+  transition: opacity .25s, background-color .25s, width .25s cubic-bezier(.2,.8,.2,1), height .25s cubic-bezier(.2,.8,.2,1);
 }
-.u-cursor__corner {
-  position: absolute;
-  width: 8px; height: 8px;
-  border-color: hsl(var(--ink));
-  border-style: solid;
-  border-width: 0;
-  transition: transform 0.18s cubic-bezier(.2,.8,.2,1);
+.u-cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid #ffffff;
+  background: transparent;
+  transition: width .3s cubic-bezier(.2,.8,.2,1),
+              height .3s cubic-bezier(.2,.8,.2,1),
+              background-color .25s,
+              border-color .25s,
+              opacity .25s;
 }
-.u-cursor__corner.tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
-.u-cursor__corner.tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
-.u-cursor__corner.bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
-.u-cursor__corner.br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
-.u-cursor.is-hover { width: 64px; height: 64px; }
-.u-cursor.is-hover .u-cursor__dot { background: hsl(var(--ink)); }
+.u-cursor-ring.is-hover {
+  width: 70px; height: 70px;
+  background: hsl(var(--accent) / 0.15);
+  border-color: hsl(var(--accent));
+}
+.u-cursor-dot.is-hover {
+  width: 0; height: 0;
+  opacity: 0;
+}
+.u-cursor-ring.is-down {
+  width: 24px; height: 24px;
+}
 
 /* =========================================================
    Buttons — Utopia "dark / red / cream" variants
@@ -237,5 +297,63 @@ body {
     transition-duration: 0.001ms !important;
   }
   html, body, * { cursor: auto !important; }
-  .u-cursor { display: none !important; }
+  .u-cursor-dot, .u-cursor-ring { display: none !important; }
+}
+
+/* =========================================================
+   Bat Cave Tunnel — blood drips overlay (cheap CSS/SVG, not WebGL)
+   Sparse, slow, theatrical.
+   ========================================================= */
+.bat-drips {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 5;
+  mix-blend-mode: screen;
+}
+.bat-drip {
+  position: absolute;
+  top: -10vh;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--accent) / 0.0) 15%,
+    hsl(var(--accent) / 0.55) 60%,
+    hsl(var(--accent) / 0.85) 100%
+  );
+  filter: drop-shadow(0 0 6px hsl(var(--accent) / 0.6));
+  border-radius: 0 0 4px 4px;
+  animation: bat-drip-fall linear infinite;
+  opacity: 0.0;
+}
+.bat-drip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: -3px;
+  width: 8px; height: 10px;
+  background: hsl(var(--accent));
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  filter: drop-shadow(0 0 8px hsl(var(--accent) / 0.7));
+}
+@keyframes bat-drip-fall {
+  0%   { transform: translateY(-30vh); opacity: 0; height: 6vh; }
+  10%  { opacity: 0.85; }
+  85%  { opacity: 0.85; height: 28vh; }
+  100% { transform: translateY(130vh); opacity: 0; height: 32vh; }
+}
+
+/* =========================================================
+   Tunnel section vignette
+   ========================================================= */
+.tunnel-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, hsl(var(--bg) / 0.85) 90%),
+    linear-gradient(to bottom, hsl(var(--bg) / 0.4) 0%, transparent 20%, transparent 80%, hsl(var(--bg) / 0.6) 100%);
+  z-index: 4;
 }

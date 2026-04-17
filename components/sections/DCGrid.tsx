@@ -145,10 +145,17 @@ export function DCGrid() {
     error: villainsError,
   } = useVillains();
 
-  const isBatman = theme === 'batman';
-  const characters = isBatman ? heroes : villains;
-  const loading = isBatman ? heroesLoading : villainsLoading;
-  const error = isBatman ? heroesError : villainsError;
+  // Heroes for order-leaning themes (batman, samurai); villains for disruption (futuristic).
+  const showHeroes = theme !== 'futuristic';
+  const characters = showHeroes ? heroes : villains;
+  const loading = showHeroes ? heroesLoading : villainsLoading;
+  const error = showHeroes ? heroesError : villainsError;
+
+  const gridCopy = {
+    batman: { eyebrow: 'Justice League', title: 'Heroes.' },
+    samurai: { eyebrow: 'The Order', title: 'Guardians.' },
+    futuristic: { eyebrow: 'Rogue Signals', title: 'Outliers.' },
+  }[theme];
 
   const [selectedIdx, setSelectedIdx] = useState(0);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -190,11 +197,9 @@ export function DCGrid() {
         <div className="dc-grid-title grid grid-cols-12 items-end gap-6">
           <div className="col-span-12 lg:col-span-9">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-              (01) {isBatman ? 'Justice League' : 'Rogues Gallery'}
+              (01) {gridCopy.eyebrow}
             </p>
-            <h2 className="u-h2 text-theme-ink">
-              {isBatman ? 'Heroes.' : 'Villains.'}
-            </h2>
+            <h2 className="u-h2 text-theme-ink">{gridCopy.title}</h2>
           </div>
           <div className="col-span-12 lg:col-span-3 lg:text-right">
             <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">

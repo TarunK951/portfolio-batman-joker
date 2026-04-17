@@ -9,7 +9,9 @@ import {
   useState,
 } from 'react';
 
-export type Theme = 'batman' | 'joker';
+export type Theme = 'batman' | 'samurai' | 'futuristic';
+
+export const THEMES: readonly Theme[] = ['batman', 'samurai', 'futuristic'] as const;
 
 type ThemeContextValue = {
   theme: Theme;
@@ -21,10 +23,26 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const STORAGE_KEY = 'portfolio-theme';
 
+function isTheme(value: string | null | undefined): value is Theme {
+  return value === 'batman' || value === 'samurai' || value === 'futuristic';
+}
+
 function readStoredTheme(): Theme | null {
   if (typeof window === 'undefined') return null;
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  return stored === 'batman' || stored === 'joker' ? stored : null;
+  return isTheme(stored) ? stored : null;
+}
+
+function nextTheme(current: Theme): Theme {
+  // batman → samurai → futuristic → batman
+  switch (current) {
+    case 'batman':
+      return 'samurai';
+    case 'samurai':
+      return 'futuristic';
+    case 'futuristic':
+      return 'batman';
+  }
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -52,7 +70,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggle = useCallback(() => {
     setThemeState((prev) => {
-      const next: Theme = prev === 'batman' ? 'joker' : 'batman';
+      const next = nextTheme(prev);
       document.documentElement.dataset.theme = next;
       try {
         window.localStorage.setItem(STORAGE_KEY, next);

@@ -6,10 +6,15 @@ import { Environment } from '@react-three/drei';
 import { BatModel } from './BatModel';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
+const HERO_COLORS = {
+  batman: { accent: '#b00020', glow: '#ff1744' },
+  samurai: { accent: '#8a1a1a', glow: '#c8361f' },
+  futuristic: { accent: '#00e5ff', glow: '#4dfff5' },
+} as const;
+
 export function HeroScene() {
   const { theme } = useTheme();
-  const accent = theme === 'batman' ? '#b00020' : '#39ff14';
-  const glow = theme === 'batman' ? '#ff1744' : '#39ff14';
+  const { accent, glow } = HERO_COLORS[theme];
 
   return (
     <Canvas
