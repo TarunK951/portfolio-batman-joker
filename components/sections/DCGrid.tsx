@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useHeroes, useVillains, type Character } from '@/hooks/useCharacters';
+import { ErrorState } from '@/components/shared/ErrorState';
 
 function StatBar({ label, value }: { label: string; value: number }) {
   const barRef = useRef<HTMLDivElement | null>(null);
@@ -166,7 +167,7 @@ export function DCGrid() {
   }, [theme]);
 
   useEffect(() => {
-    const { gsap, ScrollTrigger } = registerGsap();
+    const { gsap } = registerGsap();
     const node = sectionRef.current;
     if (!node) return;
     const ctx = gsap.context(() => {
@@ -217,9 +218,15 @@ export function DCGrid() {
         )}
 
         {error && (
-          <p className="py-20 text-center text-sm text-red-400">
-            Failed to load characters. Please try again.
-          </p>
+          <div className="py-10">
+            <ErrorState
+              variant="network"
+              onRetry={() => {
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              error={new Error(error)}
+            />
+          </div>
         )}
 
         {/* Grid */}

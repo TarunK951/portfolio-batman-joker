@@ -346,14 +346,95 @@ body {
 }
 
 /* =========================================================
-   Tunnel section vignette
+   Futuristic grid + CRT scanlines overlay
+   Active ONLY under [data-theme='futuristic']; the component
+   renders in all themes but the visuals are gated here.
    ========================================================= */
-.tunnel-vignette {
-  position: absolute;
+.fx-scenery {
+  position: fixed;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at center, transparent 35%, hsl(var(--bg) / 0.85) 90%),
-    linear-gradient(to bottom, hsl(var(--bg) / 0.4) 0%, transparent 20%, transparent 80%, hsl(var(--bg) / 0.6) 100%);
-  z-index: 4;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(.2,.8,.2,1);
 }
+[data-theme='futuristic'] .fx-scenery { opacity: 1; }
+
+/* Animated dotted grid — the 8bit.ai vibe */
+.fx-grid {
+  position: absolute;
+  inset: -2px;
+  background-image:
+    radial-gradient(hsl(var(--accent) / 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: 0 0;
+  animation: fx-grid-drift 24s linear infinite;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+}
+@keyframes fx-grid-drift {
+  from { background-position: 0 0; }
+  to   { background-position: 32px 32px; }
+}
+
+/* Faint CRT scanlines */
+.fx-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    hsl(var(--accent) / 0.025) 3px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+}
+
+/* Slow pulsing accent ring in a corner */
+.fx-pulse {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  background: hsl(var(--accent));
+  box-shadow: 0 0 12px hsl(var(--accent) / 0.8);
+  animation: fx-pulse 2.6s ease-in-out infinite;
+}
+@keyframes fx-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.8); opacity: 0.35; }
+}
+
+/* =========================================================
+   Samurai ink-brush divider — a hand-drawn hairline
+   ========================================================= */
+.ink-brush {
+  display: block;
+  width: 100%;
+  height: 14px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 14' preserveAspectRatio='none'><path d='M2 7 Q 120 2, 260 7 T 540 7 T 820 8 T 1100 6 L 1198 7' fill='none' stroke='%2314120f' stroke-width='1.2' stroke-linecap='round' opacity='0.75'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.85;
+}
+[data-theme='batman'] .ink-brush,
+[data-theme='futuristic'] .ink-brush {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 14' preserveAspectRatio='none'><path d='M2 7 Q 120 2, 260 7 T 540 7 T 820 8 T 1100 6 L 1198 7' fill='none' stroke='%23e8e8e8' stroke-width='1.2' stroke-linecap='round' opacity='0.25'/></svg>");
+}
+
+/* Samurai: slightly different section rhythm + quiet accent dot */
+[data-theme='samurai'] .u-rule {
+  background: hsl(var(--bg) / 0.18);
+  height: 1px;
+}
+
+/* Futuristic: mono numerals + letter spacing tighten */
+[data-theme='futuristic'] .u-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Once loading finishes, a subtle global fade-in */
+body:not(.loaded) main { }
+

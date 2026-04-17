@@ -18,8 +18,12 @@ const LoadingScreen = dynamic(
   () => import('@/components/sections/LoadingScreen').then((m) => m.LoadingScreen),
   { ssr: false },
 );
-const BatCaveTunnel = dynamic(
-  () => import('@/components/sections/BatCaveTunnel').then((m) => m.BatCaveTunnel),
+const HeaderLogo = dynamic(
+  () => import('@/components/shared/HeaderLogo').then((m) => m.HeaderLogo),
+  { ssr: false },
+);
+const SceneryLayer = dynamic(
+  () => import('@/components/shared/SceneryLayer').then((m) => m.SceneryLayer),
   { ssr: false },
 );
 const DCGrid = dynamic(
@@ -48,24 +52,61 @@ export default function Home() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: SITE.name,
-    alternateName: ['Satya Tarun', 'satyatarun'],
+    givenName: 'Satya Tarun',
+    familyName: 'K',
+    alternateName: ['Satya Tarun', 'satyatarun', 'Satya Tarun K'],
     email: `mailto:${SITE.email}`,
     url: SITE.url,
+    image: `${SITE.url}/og.png`,
     jobTitle: 'Creative Developer',
+    description:
+      'Satya Tarun K (satyatarun) is a creative developer and full-stack engineer building cinematic, performant web experiences with Next.js, React Three Fiber, and GSAP.',
+    knowsAbout: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'React Three Fiber',
+      'Three.js',
+      'GSAP',
+      'Framer Motion',
+      'Tailwind CSS',
+      'UI/UX Design',
+      'Creative Development',
+      'WebGL',
+    ],
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Hyderabad',
+      addressCountry: 'IN',
+    },
+    nationality: 'Indian',
+    sameAs: [
+      SITE.socials.github,
+      SITE.socials.linkedin,
+      SITE.socials.twitter,
+      `mailto:${SITE.email}`,
+    ].filter(Boolean),
   };
 
   return (
-    <main className="min-h-screen">
+    <main id="top" className="min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {/* Crawlable H1 — visually subdued, semantically present for SEO. */}
+      <h1 className="sr-only">
+        Satya Tarun K — Creative Developer Portfolio. Satya Tarun (satyatarun),
+        full-stack engineer building cinematic web experiences with Next.js,
+        React Three Fiber, and GSAP.
+      </h1>
       <SmoothScroll />
       <Cursor />
       <AmbientAudio />
       <LoadingScreen />
+      <SceneryLayer />
+      <HeaderLogo />
       <Hero />
-      <BatCaveTunnel />
       <DCGrid />
       <Projects />
       <About />

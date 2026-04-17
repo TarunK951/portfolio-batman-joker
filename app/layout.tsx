@@ -34,49 +34,77 @@ const spaceMono = Space_Mono({
   display: 'swap',
 });
 
+const SEO_DESCRIPTION =
+  'Satya Tarun K (satyatarun, Satya Tarun) — creative developer and full-stack engineer from Hyderabad. Three-theme portfolio (Batman, Samurai, Futuristic) built with Next.js, React Three Fiber, GSAP and Framer Motion.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Portfolio`,
-    template: `%s · ${SITE.name}`,
+    default: `${SITE.name} — Creative Developer Portfolio`,
+    template: `%s | ${SITE.name} — Creative Developer`,
   },
-  description: `${SITE.name} (${SITE.alias}) — dual-theme Batman × Joker portfolio showcasing interactive 3D, motion, and product engineering.`,
+  description: SEO_DESCRIPTION,
   keywords: [
     'Satya Tarun',
     'Satya Tarun K',
     'satyatarun',
     'Satya Tarun portfolio',
     'Satya Tarun developer',
-    'Batman Joker portfolio',
+    'Satya Tarun Hyderabad',
+    'Satya Tarun creative developer',
+    'Satya Tarun Next.js',
+    'Satya Tarun React Three Fiber',
+    'creative developer India',
+    'creative developer Hyderabad',
     'Next.js portfolio',
     'Three.js portfolio',
     'GSAP portfolio',
-    'React Three Fiber',
-    'creative developer India',
+    'React Three Fiber portfolio',
+    'full-stack engineer India',
   ],
   authors: [{ name: SITE.name, url: SITE.url }],
   creator: SITE.name,
   publisher: SITE.name,
+  applicationName: `${SITE.name} Portfolio`,
   alternates: { canonical: SITE.url },
   openGraph: {
     type: 'website',
     url: SITE.url,
-    siteName: SITE.name,
-    title: `${SITE.name} — Batman × Joker Portfolio`,
-    description: 'Dual-theme portfolio: Batman (dark red) vs Joker (toxic green).',
+    siteName: `${SITE.name} — Portfolio`,
+    title: `${SITE.name} — Creative Developer Portfolio`,
+    description: SEO_DESCRIPTION,
     locale: 'en_US',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: `${SITE.name} — Creative Developer Portfolio`,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE.name} — Portfolio`,
-    description: 'Batman × Joker dual-theme portfolio.',
+    title: `${SITE.name} — Creative Developer`,
+    description: SEO_DESCRIPTION,
+    creator: `@${SITE.alias}`,
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
   category: 'technology',
+  verification: {
+    // TODO: Add Google Search Console verification token when available.
+  },
 };
 
 export const viewport: Viewport = {

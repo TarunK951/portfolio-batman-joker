@@ -32,10 +32,20 @@ export function SmoothScroll() {
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
 
+    // Recompute triggers once fonts + images finish loading — prevents start
+    // positions from being computed against pre-layout heights.
+    const onLoad = () => ScrollTrigger.refresh();
+    if (document.readyState === 'complete') {
+      requestAnimationFrame(onLoad);
+    } else {
+      window.addEventListener('load', onLoad, { once: true });
+    }
+
     // Expose for debugging / other components
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
     return () => {
+      window.removeEventListener('load', onLoad);
       gsap.ticker.remove(ticker);
       lenis.destroy();
       delete (window as unknown as { __lenis?: Lenis }).__lenis;

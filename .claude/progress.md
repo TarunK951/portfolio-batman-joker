@@ -56,3 +56,54 @@ Joker palette retained but rotated to match new bg/ink rhythm.
 - [ ] Mask builder / generative visual section (Utopia signature)
 - [ ] Image-rich gallery for Projects (currently text-only rows)
 - [ ] Mobile QA pass on the cursor and oversize type
+
+## Phase 3 — Tunnel removal + Loading/404 rebuild + SEO hardening
+
+### Deleted
+- `components/sections/BatCaveTunnel.tsx`
+- `components/three/BatCaveTunnel.tsx`
+
+### Added
+- `components/three/LogoMark.tsx` — shared R3F scene for batman_logo.glb with per-theme material
+  (batman: red metallic; samurai: matte ink-brushed; futuristic: cyan wireframe). Two modes: hero / tiny.
+- `components/shared/HeaderLogo.tsx` — fixed top-left persistent brand mark (48px, dynamic SSR-off).
+- `components/shared/SceneryLayer.tsx` + globals.css `.fx-*` — dotted grid + CRT scanlines + pulse
+  dot, gated to `[data-theme='futuristic']` via CSS selectors.
+- `components/shared/ErrorState.tsx` — themed runtime/network error card with onRetry.
+- `app/error.tsx` — runtime error boundary using ErrorState.
+- `app/global-error.tsx` — last-resort fallback, fully inlined styles (no ThemeProvider available).
+- `app/opengraph-image.tsx` — next/og edge route generating 1200x630 OG card.
+- `.ink-brush` utility in globals.css — hand-drawn hairline divider, theme-aware stroke color.
+
+### Modified
+- `app/page.tsx` — removed BatCaveTunnel; mounted SceneryLayer + HeaderLogo; added sr-only H1
+  with identity keywords; expanded Person JSON-LD (knowsAbout, address, nationality, sameAs
+  filters empty socials, image).
+- `app/layout.tsx` — new metadata: richer title template, SEO_DESCRIPTION mentions all three
+  identity variants, expanded keyword list, OG + Twitter images point to /opengraph-image.
+- `components/sections/LoadingScreen.tsx` — rebuilt: R3F logo center-stage, 000->100 counter,
+  hairline bar, onComplete adds body.loaded class and triggers ScrollTrigger.refresh.
+- `components/sections/Hero.tsx` — header padding shifted left to leave room for HeaderLogo.
+- `components/sections/DCGrid.tsx` — network failures now render themed ErrorState with retry.
+- `components/shared/SmoothScroll.tsx` — ScrollTrigger.refresh on window load to fix stale starts.
+- `app/not-found.tsx` — rebuilt: oversize dual-line headline + 404 numeral + R3F logo panel.
+- `lib/seo.ts` — added `alternateNames`, `locale`, `locality`, `country`, `jobTitle`, `socials`.
+
+### Trade-offs
+- OG image route uses `edge` runtime, so it disables static generation for that path only.
+  This is acceptable — the rest of the app is fully static.
+- Samurai LogoMark uses matte dark material rather than a truly brushed-ink shader; a custom
+  shader would be nicer but wasn't worth the dep/perf cost this pass.
+- Futuristic wireframe on the GLB depends on the model's mesh density — works but can look
+  sparse; acceptable for a logo mark.
+
+### Verified
+- `npm run typecheck` — clean
+- `npm run build` — clean, / is 104 kB page / 191 kB first-load JS
+
+### Needs human QA
+- Browser pass on all three themes for HeaderLogo sizing vs ThemeToggle on narrow viewports.
+- Visual polish on the samurai LogoMark under real light.
+- Fill in LinkedIn + Twitter URLs in `lib/seo.ts` socials when accounts are set.
+- Add Google Search Console verification token in `app/layout.tsx` metadata.verification.
+- Update `SITE.url` in `lib/seo.ts` to the final production domain before launch.

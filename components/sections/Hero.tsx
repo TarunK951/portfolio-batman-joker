@@ -88,7 +88,8 @@ export function Hero() {
       <ThemeToggle />
 
       {/* ── TOP BAR ─────────────────────────────────────── */}
-      <header className="relative z-10 flex items-center justify-between px-6 pt-8 sm:px-12 sm:pt-10">
+      {/* pl offsets leave room for the fixed HeaderLogo */}
+      <header className="relative z-10 flex items-center justify-between px-6 pt-8 pl-20 sm:px-12 sm:pt-10 sm:pl-24">
         <span className="u-mono text-[11px] uppercase tracking-[0.22em] text-theme-ink/70">
           satyatarun
         </span>
