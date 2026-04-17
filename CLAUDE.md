@@ -115,3 +115,36 @@ Target sections for the full portfolio (in scroll order):
 7. **Contact** — Form or mailto links `[TO BUILD]`
 8. **Footer** — Site credits, social links, multilingual text `[TO BUILD]`
 9. **404** — Custom `app/not-found.tsx` with theme awareness `[TO BUILD]`
+
+## DC API (Akabab Superhero API — free, no key)
+
+Base URL: `https://akabab.github.io/superhero-api/api/id/{id}.json`
+Images: `character.images.lg` (400px CDN-hosted)
+
+| Hero IDs | | Villain IDs | |
+|---|---|---|---|
+| batman | 69 | joker | 370 |
+| superman | 644 | harley | 301 |
+| wonder-woman | 720 | bane | 65 |
+| flash | 213 | riddler | 578 |
+| green-lantern | 263 | scarecrow | 607 |
+| aquaman | 40 | poison-ivy | 543 |
+| cyborg | 148 | mr-freeze | 469 |
+| nightwing | 496 | two-face | 680 |
+
+### Architecture
+
+- **API service:** `lib/dcApi.ts` — fetch functions, ID maps, TypeScript interfaces
+- **Hooks:** `hooks/useCharacters.tsx` — `useHeroes()` and `useVillains()` merge API data (images, powerstats) with static data from `data/dcHeroes.ts` / `data/dcVillains.ts` (bios, skills, titles)
+- **Static data is the source of truth** for custom bios, skill mappings, and titles. The API enriches with images and powerstats.
+- API powerstats: INTELLIGENCE, STRENGTH, SPEED, DURABILITY, POWER, COMBAT (0–100 scale)
+
+### Character Grid design direction
+
+- Left sidebar: scrollable character thumbnails (`character.images.sm`)
+- Click selects character, main panel updates
+- Main panel: `character.images.lg` (large image) + stat bars
+- Stat bars animate with GSAP using real API powerstats
+- Font: Orbitron for numbers, Inter for labels
+- Batman theme: red glow HUD aesthetic
+- Joker theme: green glow glitch aesthetic

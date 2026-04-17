@@ -15,16 +15,19 @@
 - [x] All 7 Claude Code agents configured
 - [x] @gsap/react and split-type installed
 
-## In Progress
-- [ ] Loading Screen (cinematic pre-loader)
+## Sections Built
+- [x] Loading Screen (cinematic GSAP pre-loader with theme symbols)
+- [x] DC Characters Grid (sidebar thumbnails + main panel with API powerstats + GSAP stat bars)
+- [x] DC API service (lib/dcApi.ts) + hooks (hooks/useCharacters.tsx)
+- [x] Projects Section (Case Files / Heists with GSAP scroll reveals)
+- [x] About Section (The Detective / The Chaos Agent — bio, skills, timeline)
+- [x] Contact Section (The Signal / Drop a Note — mailto CTA)
+- [x] Footer (multilingual, theme-styled)
+- [x] 404 Page (theme-aware with dual copy)
+- [x] All sections wired into app/page.tsx with dynamic imports
+
+## Remaining
 - [ ] Split Landing (dual Batman/Joker panels — "choose your side")
-- [ ] DC Characters Grid — Heroes (Batman theme)
-- [ ] DC Characters Grid — Villains (Joker theme)
-- [ ] Projects Section (Case Files / Heists)
-- [ ] About Section (The Detective / The Chaos Agent)
-- [ ] Contact Section (The Signal / Drop a Note)
-- [ ] Footer (multilingual, theme-styled)
-- [ ] 404 Page (theme-aware)
-- [ ] Page transitions
+- [ ] Page transitions (Framer Motion route transitions)
 - [ ] Mobile responsive polish
 - [ ] Final review + performance audit

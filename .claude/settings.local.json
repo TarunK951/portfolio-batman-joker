@@ -5,7 +5,9 @@
       "Bash(find \"d:\\\\\\\\portfolio-batman-joker\" -type d -name \"src\")",
       "Bash(npm list *)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(timeout 8)",
+      "Bash(npx next *)"
     ]
   }
 }
