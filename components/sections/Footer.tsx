@@ -4,6 +4,8 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
 import { ScrambleText } from '@/components/shared/ScrambleText';
 import { LogoDock } from '@/components/three/PersistentLogo';
+import { WireframeDecal } from '@/components/shared/WireframeDecal';
+import { AiDivider } from '@/components/shared/AiDivider';
 
 const FOOTER_COPY = {
   batman: { wordmark: 'GOTHAM', locale: 'SHADOW \u00B7 ORDER' },
@@ -17,15 +19,63 @@ export function Footer() {
   const copy = FOOTER_COPY[theme];
   const year = new Date().getFullYear();
 
+  const isBatman = theme === 'batman';
+  const isAI = theme === 'ancient-india';
+
+  if (theme === 'futuristic') {
+    return (
+      <footer className="bg-theme-bg text-theme-ink">
+        <div className="u-rule" />
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 py-6 sm:flex-row sm:items-center sm:px-10">
+          <span className="fx-wordmark">satyatarun</span>
+          <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/55">
+            © {year} {SITE.name} — All rights reserved.
+          </p>
+          <nav className="flex items-center gap-5">
+            {(['Discover', 'About', 'Contact'] as const).map((l) => (
+              <a
+                key={l}
+                href={`#${l.toLowerCase()}`}
+                data-cursor-hover
+                className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-ink/55 transition-colors hover:text-theme-ink"
+              >
+                {l}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="bg-theme-bg text-theme-ink">
+      {isAI ? (
+        <div className="px-6 py-6 sm:px-10">
+          <AiDivider />
+        </div>
+      ) : null}
       {/* Oversize wordmark */}
-      <div className="border-t border-theme-line px-6 py-16 sm:px-10">
+      <div className="relative border-t border-theme-line px-6 py-16 sm:px-10">
+        {isBatman && (
+          <WireframeDecal
+            variant="diamond"
+            opacity={0.45}
+            className="bat-wireframe-decal"
+            style={{ top: 12, right: 12, width: 140, height: 140 }}
+          />
+        )}
         <p
-          className="u-h1 break-all leading-[0.85] text-theme-ink/90"
+          className={
+            isBatman
+              ? 'bat-stencil break-all'
+              : isAI
+              ? 'ai-serif break-all leading-[0.85] text-theme-ink/90'
+              : 'u-h1 break-all leading-[0.85] text-theme-ink/90'
+          }
           style={{ fontSize: 'clamp(3rem, 18vw, 16rem)' }}
         >
-          {copy.wordmark}
+          {isBatman ? 'GOTHAM' : copy.wordmark}
         </p>
       </div>
 

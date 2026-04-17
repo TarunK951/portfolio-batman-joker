@@ -4,7 +4,11 @@ import { useEffect, useRef } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
 import { projects } from '@/data/projects';
+import { AiDivider } from '@/components/shared/AiDivider';
 import { LogoDock } from '@/components/three/PersistentLogo';
+import { WireframeDecal } from '@/components/shared/WireframeDecal';
+import { CornerReticle } from '@/components/shared/CornerReticle';
+import { LogoCard } from '@/components/shared/LogoCard';
 
 const statusLabel: Record<string, string> = {
   live: 'Live',
@@ -71,9 +75,20 @@ export function Projects() {
     return () => ctx.revert();
   }, []);
 
+  const isBatman = theme === 'batman';
+  const isAI = theme === 'ancient-india';
+  const isFuturistic = theme === 'futuristic';
+
   return (
-    <section ref={sectionRef} id="work" className="u-section bg-theme-bg">
+    <section ref={sectionRef} id="work" className="relative u-section bg-theme-bg">
       <div className="mx-auto max-w-7xl">
+        {isBatman && (
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <CornerReticle inset={8} size={28} className="h-full w-full">
+              <span className="block h-full w-full" />
+            </CornerReticle>
+          </div>
+        )}
         {/* ── INTRO ─────────────────────────────────────── */}
         <div className="grid grid-cols-12 items-start gap-6">
           <div className="col-span-12 lg:col-span-8">
@@ -91,17 +106,81 @@ export function Projects() {
           </div>
         </div>
 
-        <div className="u-rule mt-20" />
+        {isAI ? (
+          <div className="mt-16">
+            <AiDivider />
+          </div>
+        ) : (
+          <div className="u-rule mt-20" />
+        )}
 
-        {/* ── ROW LIST ──────────────────────────────────── */}
+        {isFuturistic && (
+          <ul className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
+            {projects.map((project, i) => (
+              <li key={project.id} className="project-row">
+                <LogoCard
+                  size="md"
+                  notched={i % 3 === 0}
+                  className="h-full !items-stretch !justify-start !text-left"
+                  style={{ minHeight: 220 }}
+                >
+                  <div className="flex h-full w-full flex-col gap-4 text-left">
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/45">
+                        {String(i + 1).padStart(2, '0')} / {projectLabel(theme, project, i)}
+                      </span>
+                      <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/80">
+                        {statusLabel[project.status] ?? project.status}
+                      </span>
+                    </div>
+                    <h3
+                      className="fx-display text-theme-ink"
+                      style={{
+                        fontSize: 'clamp(1.4rem, 2.4vw, 2rem)',
+                        lineHeight: 1.05,
+                      }}
+                    >
+                      {project.name}
+                    </h3>
+                    <p className="flex-1 text-[13px] leading-relaxed text-theme-ink/65">
+                      {project.description}
+                    </p>
+                    <div className="u-rule" />
+                    <span className="u-mono text-[10px] uppercase tracking-[0.22em] text-theme-ink/50">
+                      {project.type}
+                    </span>
+                  </div>
+                </LogoCard>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* ── ROW LIST (batman / ancient-india) ─────────── */}
+        {!isFuturistic && (
         <ul className="group/list">
           {projects.map((project, i) => (
             <li
               key={project.id}
-              className="project-row group/row grid cursor-pointer grid-cols-12 items-baseline gap-6 py-10 transition-opacity duration-500 ease-out md:py-14 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-theme-ink/[0.08] group-hover/list:opacity-40 hover:!opacity-100"
+              className="project-row group/row relative grid cursor-pointer grid-cols-12 items-baseline gap-6 py-10 transition-opacity duration-500 ease-out md:py-14 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-theme-ink/[0.08] group-hover/list:opacity-40 hover:!opacity-100"
               data-cursor-hover
             >
-              <span className="col-span-2 u-mono text-[11px] tracking-[0.2em] text-theme-ink/45 transition-colors duration-300 sm:col-span-1 group-hover/row:text-theme-accent">
+              {isBatman && (
+                <WireframeDecal
+                  variant="arrow"
+                  opacity={0}
+                  className="bat-wireframe-decal transition-opacity duration-300 group-hover/row:opacity-60"
+                  style={{ top: '50%', right: 8, width: 96, height: 32, transform: 'translateY(-50%)' }}
+                />
+              )}
+              <span
+                className={
+                  isBatman
+                    ? 'bat-idx-diff col-span-2 tracking-[-0.02em] sm:col-span-1'
+                    : 'col-span-2 u-mono text-[11px] tracking-[0.2em] text-theme-ink/45 transition-colors duration-300 sm:col-span-1 group-hover/row:text-theme-accent'
+                }
+                style={isBatman ? { fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)', lineHeight: 0.85 } : undefined}
+              >
                 {String(i + 1).padStart(2, '0')}
               </span>
               <div className="col-span-10 sm:col-span-6">
@@ -126,6 +205,7 @@ export function Projects() {
             </li>
           ))}
         </ul>
+        )}
 
         <div className="u-rule" />
       </div>

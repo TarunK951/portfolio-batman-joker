@@ -17,7 +17,11 @@
       "Bash(kill %1)",
       "Bash(netstat -ano)",
       "Bash(tasklist *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(ffmpeg -version)",
+      "Bash(where ffmpeg *)",
+      "Read(//c/Program Files/**)",
+      "Bash(/c/ProgramData/chocolatey/bin/ffmpeg.exe -version)"
     ]
   }
 }

@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { WireframeDecal } from '@/components/shared/WireframeDecal';
 
 const LogoMarkScene = dynamic(
   () => import('@/components/three/LogoMark').then((m) => m.LogoMarkScene),
@@ -63,12 +64,41 @@ export default function NotFound() {
             <span className="block text-theme-ink">{copy.heading}</span>
             <span className="block text-theme-accent">{copy.headingAccent}</span>
           </h1>
-          <p
-            className="mt-8 font-display leading-[0.85] text-theme-ink/90"
-            style={{ fontSize: 'clamp(4rem, 18vw, 13rem)', letterSpacing: '-0.04em' }}
-          >
-            4<span className="text-theme-accent">0</span>4
-          </p>
+          <div className="relative mt-8">
+            {theme === 'batman' && (
+              <>
+                <WireframeDecal
+                  variant="triangle"
+                  opacity={0.45}
+                  className="bat-wireframe-decal"
+                  style={{ top: '-10%', left: '-4%', width: '28%', height: '120%' }}
+                />
+                <WireframeDecal
+                  variant="ring"
+                  opacity={0.55}
+                  className="bat-wireframe-decal"
+                  style={{ top: '-12%', right: '8%', width: '28%', height: '130%' }}
+                />
+              </>
+            )}
+            <p
+              className={theme === 'batman' ? 'bat-stencil--accent' : 'font-display leading-[0.85] text-theme-ink/90'}
+              style={
+                theme === 'batman'
+                  ? {
+                      fontFamily: 'var(--font-stencil), var(--font-display), sans-serif',
+                      fontWeight: 700,
+                      fontSize: 'clamp(5rem, 22vw, 16rem)',
+                      letterSpacing: '-0.045em',
+                      lineHeight: 0.82,
+                      color: 'hsl(var(--accent))',
+                    }
+                  : { fontSize: 'clamp(4rem, 18vw, 13rem)', letterSpacing: '-0.04em' }
+              }
+            >
+              404
+            </p>
+          </div>
           <p className="mt-8 max-w-md text-[15px] leading-relaxed text-theme-ink/65">
             {copy.body}
           </p>

@@ -593,3 +593,699 @@ body:not(.loaded) main { }
   transform-style: preserve-3d;
 }
 
+/* =========================================================
+   Batman (utopiatokyo /clan/demon) — stencil + wireframe DNA
+   All utilities are additive, prefixed .bat-*, scoped to the
+   batman theme via [data-theme='batman'] where color-sensitive.
+   ========================================================= */
+
+.bat-stencil {
+  font-family: var(--font-stencil), var(--font-display), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 0.82;
+  color: hsl(var(--paper));
+  text-transform: uppercase;
+}
+
+.bat-stencil--accent { color: hsl(var(--accent)); }
+
+.bat-stencil-oversize {
+  font-family: var(--font-stencil), var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(4.5rem, 17vw, 13.5rem);
+  letter-spacing: -0.045em;
+  line-height: 0.82;
+  color: hsl(var(--paper));
+  text-transform: uppercase;
+}
+
+/* Wireframe decal helper — absolute-positioned overlay */
+.bat-wireframe-decal {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* HUD chip counter pair "0737 : 0496" style */
+.bat-hud-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.7);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.bat-hud-chip--accent { color: hsl(var(--accent)); }
+
+/* Marquee band — a thin top-and-bottom-bordered horizontal band */
+.bat-marquee-band {
+  position: relative;
+  width: 100%;
+  padding: 14px 0;
+  border-top: 1px solid hsl(var(--accent) / 0.4);
+  border-bottom: 1px solid hsl(var(--accent) / 0.4);
+  background: transparent;
+  overflow: hidden;
+}
+.bat-marquee-band .u-marquee-track > div {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.85);
+}
+
+/* Bracketed red X icon (top-left close/home) */
+.bat-x-bracket {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid hsl(var(--accent));
+  color: hsl(var(--accent));
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Stat card — red-filled number cell atop tick-mark bars */
+.bat-stat-card {
+  border: 1px solid hsl(var(--accent) / 0.45);
+  background: hsl(var(--bg));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.bat-stat-card__num {
+  background: hsl(var(--accent));
+  color: hsl(var(--bg));
+  font-family: var(--font-stencil), var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  line-height: 1;
+  padding: 10px 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.bat-stat-card__ticks {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 10px;
+  min-height: 52px;
+}
+.bat-stat-card__tick {
+  flex: 1;
+  background: hsl(var(--accent) / 0.55);
+  width: 2px;
+}
+.bat-stat-card__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.55);
+  padding: 0 10px 8px;
+}
+
+/* Vertical rail on the right edge of a stat card */
+.bat-stat-card__rail {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 14px;
+  border-left: 1px solid hsl(var(--accent) / 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bat-stat-card__rail span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: hsl(var(--accent) / 0.8);
+  text-transform: uppercase;
+}
+
+/* Bracketed mono CTA pill — [ ENTER WEBSITE ] / >_DISCOVER_YOUR_INNER_MASK */
+.bat-cta-bracket {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: hsl(var(--accent));
+  border: 1px solid hsl(var(--accent) / 0.5);
+  padding: 10px 14px;
+  background: transparent;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+.bat-cta-bracket:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--bg));
+}
+
+/* Mix-blend-difference index numbers for Projects */
+.bat-idx-diff {
+  font-family: var(--font-stencil), var(--font-display), sans-serif;
+  color: hsl(var(--paper));
+  mix-blend-mode: difference;
+}
+
+/* Corner reticle wrapper (alt structural hook; component preferred) */
+.bat-corner-reticle { position: relative; }
+
+
+/* =========================================================
+   Futuristic v2 — 8bit.ai + ascend refit
+   Additive .fx-* utilities. Other themes untouched.
+   ========================================================= */
+
+.fx-italic-emph {
+  font-family: var(--font-italic-serif, 'Instrument Serif', 'Times New Roman', serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: hsl(var(--ink));
+}
+
+/* Under futuristic: swap display font to Inter 600 */
+[data-theme='futuristic'] .u-h1,
+[data-theme='futuristic'] .u-h2,
+[data-theme='futuristic'] .u-h3,
+[data-theme='futuristic'] .u-h4 {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+[data-theme='futuristic'] .fx-display {
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+/* Right-edge vertical scroll progress indicator */
+.fx-scroll-progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100vh;
+  background: hsl(0 0% 100% / 0.08);
+  z-index: 45;
+  pointer-events: none;
+}
+.fx-scroll-progress__fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  background: hsl(0 0% 100% / 0.85);
+  transform-origin: top;
+  transform: scaleY(0);
+  will-change: transform;
+}
+
+/* Starfield — fixed white dots drifting slowly */
+.fx-starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+.fx-star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 0 4px hsl(0 0% 100% / 0.6);
+  animation: fx-star-drift linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes fx-star-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(var(--fx-dx, 0), var(--fx-dy, 0), 0); }
+}
+
+/* White pill CTA — ascend "Get in Touch" style */
+.fx-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.35rem;
+  background: #ffffff;
+  color: #0a0a0a;
+  border-radius: 9999px;
+  border: 1px solid rgba(0,0,0,0.05);
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 300ms cubic-bezier(.2,.8,.2,1),
+              background-color 300ms ease,
+              box-shadow 300ms ease;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset,
+              0 6px 24px hsl(0 0% 100% / 0.1);
+}
+.fx-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset,
+              0 10px 36px hsl(0 0% 100% / 0.2);
+}
+.fx-pill__label { white-space: nowrap; }
+.fx-pill__iconwrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #0a0a0a;
+  color: #ffffff;
+  border-radius: 9999px;
+  transition: transform 300ms cubic-bezier(.2,.8,.2,1);
+}
+.fx-pill:hover .fx-pill__iconwrap {
+  transform: translateX(3px);
+}
+
+/* Rounded dark card — mosaic building block */
+.fx-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--surface) / 0.55);
+  border: 1px solid hsl(var(--line));
+  border-radius: 20px;
+  color: hsl(var(--ink));
+  padding: 20px;
+  text-align: center;
+  transition:
+    border-color 300ms cubic-bezier(.2,.8,.2,1),
+    background-color 300ms ease,
+    transform 300ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 300ms ease;
+  font-family: inherit;
+  overflow: hidden;
+}
+.fx-card--sm { padding: 14px; border-radius: 14px; }
+.fx-card--md { padding: 22px; min-height: 120px; }
+.fx-card--notched {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    0 100%
+  );
+}
+.fx-card--interactive { cursor: pointer; }
+.fx-card--interactive:hover {
+  border-color: hsl(0 0% 100% / 0.35);
+  background: hsl(var(--surface) / 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -12px hsl(0 0% 0% / 0.5);
+}
+.fx-card--active {
+  border-color: hsl(0 0% 100% / 0.6);
+  background: hsl(var(--surface) / 0.9);
+  box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.2),
+              0 16px 40px -12px hsl(0 0% 100% / 0.15);
+}
+
+/* Stack headline — 3-line crossfade */
+.fx-stack-headline {
+  position: relative;
+  display: block;
+  min-height: 3.6em;
+  line-height: 1.05;
+}
+.fx-stack-headline__state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: opacity 600ms cubic-bezier(.2,.8,.2,1);
+  will-change: opacity;
+}
+.fx-stack-headline__line {
+  display: block;
+  font-family: var(--font-body), 'Inter', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: hsl(var(--ink));
+}
+.fx-stack-headline__line .fx-italic-emph {
+  font-size: 1.05em;
+  letter-spacing: -0.015em;
+}
+
+/* HUD corner brackets */
+.fx-corner-frame { position: relative; }
+.fx-corner-frame::before,
+.fx-corner-frame::after,
+.fx-corner-frame > .fx-corner--bl,
+.fx-corner-frame > .fx-corner--br {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: hsl(0 0% 100% / 0.6);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+.fx-corner-frame::before {
+  top: 0; left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.fx-corner-frame::after {
+  top: 0; right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.fx-corner-frame > .fx-corner--bl {
+  bottom: 0; left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.fx-corner-frame > .fx-corner--br {
+  bottom: 0; right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* Hexagon frame — small decorative element near the logo */
+.fx-hex {
+  width: 64px;
+  height: 72px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: hsl(var(--surface) / 0.7);
+  border: 1px solid hsl(var(--line));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--ink) / 0.75);
+}
+.fx-hex--double {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* Wordmark — small top-left mono tag */
+.fx-wordmark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  color: hsl(var(--ink));
+  text-transform: lowercase;
+}
+
+/* Hamburger icon (3 lines) */
+.fx-hamburger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  width: 24px;
+  height: 24px;
+  padding: 4px 0;
+}
+.fx-hamburger span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: hsl(var(--ink) / 0.85);
+}
+
+/* Account circle placeholder */
+.fx-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--ink) / 0.5);
+  background: hsl(var(--surface) / 0.6);
+}
+
+/* =========================================================
+   Ancient-India (.ai-*) — string-tune/fiddle visual layer
+   - cream parchment bg, orange-vermillion accent, mixed type
+   All selectors gated on [data-theme='ancient-india'] where
+   color-sensitive. Utilities are additive — no overrides of
+   existing .u-*, .bat-*, .fx-* rules.
+   ========================================================= */
+
+/* Palette refinement under ancient-india: warm vermillion */
+[data-theme='ancient-india'] {
+  --accent-soft: 12 58% 45%;
+}
+
+/* Serif override for ancient-india headings */
+[data-theme='ancient-india'] .u-h1,
+[data-theme='ancient-india'] .u-h2,
+[data-theme='ancient-india'] .u-h3 {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+[data-theme='ancient-india'] .ai-serif { font-family: var(--font-serif), ui-serif, serif; }
+[data-theme='ancient-india'] .ai-serif-italic { font-family: var(--font-serif), serif; font-style: italic; }
+[data-theme='ancient-india'] .ai-devanagari { font-family: var(--font-devanagari), var(--font-serif), serif; }
+
+/* Parchment frame colour tone */
+.ai-parchment-frame { color: hsl(var(--ink) / 0.45); }
+
+/* FPS rail (left edge) */
+.ai-fps-rail {
+  position: fixed;
+  top: 50%;
+  left: 28px;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  pointer-events: none;
+  z-index: 28;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.55);
+  user-select: none;
+}
+.ai-fps-rail__divider { opacity: 0.4; }
+@media (max-width: 640px) {
+  .ai-fps-rail { left: 14px; font-size: 9px; }
+}
+
+/* Hex-wave divider */
+.ai-divider { width: 100%; }
+.ai-divider__rule { flex: 1; height: 1px; background: hsl(var(--ink) / 0.2); }
+.ai-divider__glyph {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: hsl(var(--ink) / 0.6);
+}
+.ai-divider__paren { font-size: 18px; line-height: 1; opacity: 0.75; }
+
+/* Compass */
+.ai-compass {
+  --compass-size: min(62vmin, 620px);
+  position: relative;
+  width: var(--compass-size);
+  height: var(--compass-size);
+  color: hsl(var(--ink));
+}
+@media (max-width: 768px) {
+  .ai-compass { --compass-size: min(86vmin, 440px); }
+}
+.ai-compass__guide { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; color: hsl(var(--ink)); }
+.ai-compass__label {
+  position: absolute;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.6);
+  z-index: 2;
+}
+.ai-compass__label--n { top: -22px; left: 50%; transform: translateX(-50%); }
+.ai-compass__label--s { bottom: -22px; left: 50%; transform: translateX(-50%); }
+.ai-compass__label--e { right: -28px; top: 50%; transform: translateY(-50%); }
+.ai-compass__label--w { left: -28px; top: 50%; transform: translateY(-50%); }
+
+.ai-compass__flow {
+  position: absolute;
+  top: 4px;
+  right: -8px;
+  transform: translateX(100%);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: hsl(var(--accent) / 0.85);
+  white-space: nowrap;
+  z-index: 2;
+}
+@media (max-width: 900px) { .ai-compass__flow { display: none; } }
+
+.ai-compass__slot {
+  position: absolute;
+  inset: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.ai-compass__slot::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  transform: rotate(45deg);
+  border: 1px solid hsl(var(--ink) / 0.2);
+  background: hsl(var(--surface) / 0.4);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Bento cards */
+.ai-bento-card {
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid hsl(var(--ink) / 0.16);
+  background: hsl(var(--surface) / 0.55);
+  color: hsl(var(--ink));
+  padding: 22px;
+  overflow: hidden;
+  transition: border-color 300ms cubic-bezier(.2,.8,.2,1),
+              background-color 300ms cubic-bezier(.2,.8,.2,1),
+              transform 300ms cubic-bezier(.2,.8,.2,1);
+}
+.ai-bento-card--accent {
+  background: hsl(var(--accent-soft));
+  color: hsl(var(--bg));
+  border-color: hsl(var(--accent-soft));
+}
+.ai-bento-card--ink {
+  background: hsl(var(--ink) / 0.95);
+  color: hsl(var(--bg));
+  border-color: hsl(var(--ink));
+}
+button.ai-bento-card,
+[role='button'].ai-bento-card { cursor: pointer; text-align: left; width: 100%; }
+button.ai-bento-card:hover,
+[role='button'].ai-bento-card:hover {
+  border-color: hsl(var(--accent) / 0.7);
+  transform: translateY(-2px);
+}
+.ai-bento-card--active {
+  border-color: hsl(var(--accent));
+  box-shadow: 0 0 0 1px hsl(var(--accent) / 0.5);
+}
+
+/* UnrollText */
+.ai-unroll { display: inline-block; }
+.ai-unroll__word { display: inline-block; white-space: nowrap; }
+.ai-unroll__char { display: inline-block; will-change: transform, opacity; }
+.ai-unroll__space { display: inline-block; width: 0.25em; }
+
+/* Section parchment unfurl */
+[data-theme='ancient-india'] .ai-unfurl {
+  clip-path: inset(50% 50% 50% 50%);
+  transition: clip-path 1.2s cubic-bezier(.2,.8,.2,1);
+  will-change: clip-path;
+}
+[data-theme='ancient-india'] .ai-unfurl.is-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Orange-square pill CTA */
+.ai-pill-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  background: hsl(var(--ink));
+  color: hsl(var(--bg));
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 250ms, transform 250ms;
+}
+.ai-pill-cta:hover { background: hsl(var(--accent-soft)); transform: translateY(-1px); }
+.ai-pill-cta__square {
+  display: inline-block;
+  width: 14px; height: 14px;
+  background: hsl(var(--accent-soft));
+  border-radius: 3px;
+}
+
+/* Pixel-art portrait placeholder */
+.ai-pixel-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background:
+    linear-gradient(45deg, hsl(var(--accent) / 0.18) 25%, transparent 25%) 0 0 / 18px 18px,
+    linear-gradient(-45deg, hsl(var(--accent) / 0.18) 25%, transparent 25%) 0 0 / 18px 18px,
+    hsl(var(--accent-soft));
+  border-radius: 14px;
+  color: hsl(var(--bg));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  image-rendering: pixelated;
+}
+
+/* Speech bubble */
+.ai-speech {
+  position: relative;
+  padding: 14px 16px;
+  background: hsl(var(--bg));
+  color: hsl(var(--ink));
+  border: 1px solid hsl(var(--ink) / 0.2);
+  border-radius: 14px;
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.ai-speech::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 22px;
+  width: 12px; height: 12px;
+  background: hsl(var(--bg));
+  border-right: 1px solid hsl(var(--ink) / 0.2);
+  border-bottom: 1px solid hsl(var(--ink) / 0.2);
+  transform: rotate(45deg);
+}
+
+/* Headline muted half */
+[data-theme='ancient-india'] .ai-headline-muted { color: hsl(var(--ink) / 0.4); }
+
+/* Content safe-area under parchment border */
+[data-theme='ancient-india'] main { padding-left: 20px; padding-right: 20px; }
+@media (max-width: 640px) {
+  [data-theme='ancient-india'] main { padding-left: 12px; padding-right: 12px; }
+}
+
+

@@ -47,6 +47,25 @@ const FuturisticSceneryLayer = dynamic(
     ),
   { ssr: false },
 );
+const ParchmentFrame = dynamic(
+  () => import('@/components/shared/ParchmentFrame').then((m) => m.ParchmentFrame),
+  { ssr: false },
+);
+const FpsRail = dynamic(
+  () => import('@/components/shared/FpsRail').then((m) => m.FpsRail),
+  { ssr: false },
+);
+const Starfield = dynamic(
+  () => import('@/components/shared/Starfield').then((m) => m.Starfield),
+  { ssr: false },
+);
+const ScrollProgressLine = dynamic(
+  () =>
+    import('@/components/shared/ScrollProgressLine').then(
+      (m) => m.ScrollProgressLine,
+    ),
+  { ssr: false },
+);
 const DCGrid = dynamic(
   () => import('@/components/sections/DCGrid').then((m) => m.DCGrid),
   { ssr: false },
@@ -146,6 +165,10 @@ export default function Home() {
       <AmbientAudio />
       <LoadingScreen />
       <FuturisticSceneryLayer />
+      <Starfield />
+      <ScrollProgressLine />
+      <ParchmentFrame />
+      <FpsRail />
       <Hero />
       {/* DCGrid gates itself to batman + futuristic themes. */}
       <DCGrid />

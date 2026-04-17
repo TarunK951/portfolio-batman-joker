@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue, Caveat, Space_Mono } from 'next/font/google';
+import { Inter, Bebas_Neue, Caveat, Space_Mono, Big_Shoulders_Stencil_Display, Instrument_Serif, Crimson_Pro, Noto_Serif_Devanagari } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
@@ -31,6 +32,38 @@ const spaceMono = Space_Mono({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+// Batman stencil display — Utopia/demon oversize stencil titles
+const stencil = Big_Shoulders_Stencil_Display({
+  subsets: ['latin'],
+  weight: '700',
+  variable: '--font-stencil',
+  display: 'swap',
+});
+
+// Futuristic italic emphasis — ascend/8bit.ai italic serif accent
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: 'italic',
+  variable: '--font-italic-serif',
+  display: 'swap',
+});
+
+// Ancient-india serif — Crimson Pro (variable). Used for h2/h3 under that theme.
+const crimson = Crimson_Pro({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+// Devanagari serif — fallback for Sanskrit accents and quotes.
+const devanagari = Noto_Serif_Devanagari({
+  subsets: ['devanagari'],
+  weight: ['400', '700'],
+  variable: '--font-devanagari',
   display: 'swap',
 });
 
@@ -120,13 +153,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       data-theme="batman"
-      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable}`}
+      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable} ${stencil.variable} ${instrumentSerif.variable} ${crimson.variable} ${devanagari.variable}`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="font-body antialiased">
+        {/*
+          model-viewer 4.2.0 custom element (loaded once, module script).
+          Used by ModelViewerLogo under the batman + ancient-india themes.
+          Must be type="module" and sourced from the CDN exactly as
+          specified in the Wave 3.1 brief — do not self-host or inject
+          from a component (risks double-load on client nav).
+        */}
+        <Script
+          id="model-viewer-cdn"
+          type="module"
+          src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.2.0/model-viewer.min.js"
+          strategy="afterInteractive"
+        />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

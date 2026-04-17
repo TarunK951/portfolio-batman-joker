@@ -100,6 +100,8 @@ export function LoadingScreen() {
 
   if (!visible) return null;
 
+  const isBatman = theme === 'batman';
+
   return (
     <div
       ref={containerRef}
@@ -109,10 +111,10 @@ export function LoadingScreen() {
         {/* Top meta */}
         <div className="flex items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
           <span className="ls-meta u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/60">
-            Satya Tarun K
+            {isBatman ? '[ LOADING ]' : 'Satya Tarun K'}
           </span>
           <span className="ls-meta u-mono text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-            {loadingCopy.mode} / Booting
+            {isBatman ? `[ ${loadingCopy.mode} / BOOTING ]` : `${loadingCopy.mode} / Booting`}
           </span>
         </div>
 
@@ -122,7 +124,34 @@ export function LoadingScreen() {
             className="ls-logo relative"
             style={{ width: 'min(42vw, 320px)', height: 'min(42vw, 320px)' }}
           >
-            <LogoMarkScene mode="hero" />
+            {isBatman ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  aria-hidden
+                  className="absolute"
+                  style={{
+                    width: 3,
+                    height: '82%',
+                    background: 'hsl(var(--accent))',
+                    transform: 'rotate(45deg)',
+                    boxShadow: '0 0 18px hsl(var(--accent) / 0.85), 0 0 36px hsl(var(--accent) / 0.5)',
+                  }}
+                />
+                <span
+                  aria-hidden
+                  className="absolute"
+                  style={{
+                    width: 3,
+                    height: '82%',
+                    background: 'hsl(var(--accent))',
+                    transform: 'rotate(-45deg)',
+                    boxShadow: '0 0 18px hsl(var(--accent) / 0.85), 0 0 36px hsl(var(--accent) / 0.5)',
+                  }}
+                />
+              </div>
+            ) : (
+              <LogoMarkScene mode="hero" />
+            )}
           </div>
           <p
             className="ls-meta font-display leading-none text-theme-ink"

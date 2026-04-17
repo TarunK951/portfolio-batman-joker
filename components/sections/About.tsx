@@ -5,6 +5,8 @@ import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { ScrambleText } from '@/components/shared/ScrambleText';
 import { LogoDock } from '@/components/three/PersistentLogo';
+import { AiDivider } from '@/components/shared/AiDivider';
+import { LogoCard } from '@/components/shared/LogoCard';
 
 const skills = [
   { name: 'Next.js / React', level: 95 },
@@ -87,6 +89,89 @@ export function About() {
     return () => ctx.revert();
   }, []);
 
+  if (theme === 'futuristic') {
+    return (
+      <section ref={sectionRef} id="about" className="u-section bg-theme-bg">
+        <div className="mx-auto max-w-6xl">
+          <p className="u-mono mb-8 text-[11px] uppercase tracking-[0.3em] text-theme-ink/55">
+            [ 04 / the_operator ]
+          </p>
+          <div className="grid grid-cols-12 gap-8">
+            <div className="col-span-12 md:col-span-8">
+              <p
+                className="text-theme-ink/90"
+                style={{
+                  fontSize: 'clamp(1.8rem, 4.5vw, 3.6rem)',
+                  lineHeight: 1.08,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                <span className="fx-italic-emph">One bad day</span> is all it
+                takes to build{' '}
+                <span className="fx-italic-emph">something</span> that outlives
+                the noise.
+              </p>
+              <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-theme-ink/65">
+                {copy.bio}
+              </p>
+            </div>
+            <div className="col-span-12 md:col-span-4 flex justify-end">
+              <LogoDock id="about" size="small" />
+            </div>
+          </div>
+
+          <div className="u-rule mt-16 mb-10" />
+
+          <p className="u-mono mb-6 text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
+            [ arsenal ] :: capabilities
+          </p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {skills.map((skill, i) => (
+              <LogoCard
+                key={skill.name}
+                size="sm"
+                notched={i % 5 === 0}
+                className="!items-stretch !justify-start !text-left"
+                style={{ minHeight: 110 }}
+              >
+                <div className="flex h-full w-full flex-col justify-between gap-3 text-left">
+                  <span className="u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/45">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-[14px] text-theme-ink">
+                    {skill.name}
+                  </span>
+                  <span className="u-mono text-[10px] tracking-[0.14em] text-theme-ink/70">
+                    {skill.level}/100
+                  </span>
+                </div>
+              </LogoCard>
+            ))}
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-4">
+            {timeline.map((item) => (
+              <LogoCard
+                key={item.year}
+                size="sm"
+                className="!items-stretch !justify-start"
+              >
+                <div className="flex w-full flex-col gap-1 text-left">
+                  <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/80">
+                    {item.year}
+                  </span>
+                  <span className="text-[13px] leading-snug text-theme-ink/70">
+                    {item.label}
+                  </span>
+                </div>
+              </LogoCard>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section ref={sectionRef} id="about" className="u-section bg-theme-bg">
       <div className="mx-auto max-w-7xl">
@@ -123,7 +208,11 @@ export function About() {
           </div>
         </div>
 
-        <div className="u-rule mt-10" />
+        {theme === 'ancient-india' ? (
+          <div className="mt-10"><AiDivider /></div>
+        ) : (
+          <div className="u-rule mt-10" />
+        )}
 
         <div className="mt-16 grid grid-cols-12 gap-x-6 gap-y-16">
           {/* Bio + Timeline */}

@@ -3,15 +3,18 @@
 /**
  * PersistentLogo + LogoDock
  * ------------------------------------------------------------------
- * A single Batman-logo Canvas mounted once at the root. Across scroll,
- * its wrapper (fixed-positioned on <body>) tweens its bounding box to
- * match whichever `<LogoDock />` is currently active in the viewport.
+ * A single Batman-logo rendering instance mounted once at the root.
+ * Its fixed wrapper tweens its bounding box to match whichever
+ * `<LogoDock />` is currently active in the viewport.
  *
- * Consumers place `<LogoDock id="hero" size="large" />` inside each
- * section on the right side. The logo flies between them as the user
- * scrolls.
+ * Wave 3.1 renderer split:
+ *   - 'futuristic' theme keeps the R3F Canvas (needs shader FX later)
+ *   - 'batman' and 'ancient-india' use <model-viewer> via
+ *     `ModelViewerLogo` (see design doc §2.1).
  *
- * The `Theme` union is `'batman' | 'ancient-india' | 'futuristic'`.
+ * Rotation is no longer driven by a local useFrame spinner. Both
+ * renderer branches read from the shared `useLogoRotation()` hook
+ * (scroll-coupled, with "tyre rim" idle coast — design doc §2.3).
  */
 
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -24,6 +27,11 @@ import { Suspense, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
 import { registerGsap } from '@/lib/gsap';
+import { useLogoRotation } from '@/hooks/useLogoRotation';
+import {
+  ModelViewerLogo,
+  type ModelViewerLogoHandle,
+} from '@/components/three/ModelViewerLogo';
 
 type LogoThemeKey = Theme;
 
@@ -60,14 +68,14 @@ const PALETTE: Record<LogoThemeKey, PalettePreset> = {
     glass: false,
   },
   futuristic: {
-    base: '#02080c',
-    accent: '#00e5ff',
-    glow: '#6df7ff',
-    emissive: 0.9,
-    metalness: 0.4,
-    roughness: 0.1,
+    base: '#ffffff',
+    accent: '#ffffff',
+    glow: '#ffffff',
+    emissive: 1.4,
+    metalness: 0.2,
+    roughness: 0.35,
     wireframe: false,
-    glass: true,
+    glass: false,
   },
 };
 
@@ -75,12 +83,19 @@ const PALETTE: Record<LogoThemeKey, PalettePreset> = {
 /*                                   Dock                                     */
 /* -------------------------------------------------------------------------- */
 
-export type LogoDockSize = 'small' | 'medium' | 'large';
+export type LogoDockSize = 'small' | 'medium' | 'large' | 'xl';
 
-const DOCK_DIMENSIONS: Record<LogoDockSize, { w: number; h: number }> = {
+/**
+ * Values can be numbers (legacy pixel sizes) or CSS strings (responsive
+ * clamps). GSAP accepts both via its CSS plugin — string values are set
+ * via `gsap.set` rather than `quickTo` since quickTo operates on
+ * numeric tweens (see the sync() branch below).
+ */
+const DOCK_DIMENSIONS: Record<LogoDockSize, { w: number | string; h: number | string }> = {
   small: { w: 96, h: 96 },
   medium: { w: 160, h: 160 },
   large: { w: 420, h: 420 },
+  xl: { w: 'min(62vmin, 680px)', h: 'min(62vmin, 680px)' },
 };
 
 export function LogoDock({
@@ -93,6 +108,8 @@ export function LogoDock({
   className?: string;
 }) {
   const dims = DOCK_DIMENSIONS[size];
+  const widthVal = typeof dims.w === 'number' ? `${dims.w}px` : dims.w;
+  const heightVal = typeof dims.h === 'number' ? `${dims.h}px` : dims.h;
   return (
     <div
       aria-hidden
@@ -100,8 +117,8 @@ export function LogoDock({
       data-logo-dock-size={size}
       className={className}
       style={{
-        width: `${dims.w}px`,
-        height: `${dims.h}px`,
+        width: widthVal,
+        height: heightVal,
         pointerEvents: 'none',
         opacity: 0,
       }}
@@ -110,10 +127,121 @@ export function LogoDock({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               Logo 3D body                                  */
+/*                        Shared dock travel controller                       */
 /* -------------------------------------------------------------------------- */
 
-function LogoBody() {
+/**
+ * Wires a fixed-positioned wrapper to travel between `[data-logo-dock]`
+ * anchors as the user scrolls. Returns a cleanup function. Extracted so
+ * both the R3F (futuristic) and model-viewer (batman / ancient-india)
+ * branches share a single implementation.
+ */
+function wireDockTravel(wrapper: HTMLDivElement): () => void {
+  const { gsap, ScrollTrigger } = registerGsap();
+
+  const quickX = gsap.quickTo(wrapper, 'x', { duration: 0.9, ease: 'power3.out' });
+  const quickY = gsap.quickTo(wrapper, 'y', { duration: 0.9, ease: 'power3.out' });
+  const quickW = gsap.quickTo(wrapper, 'width', {
+    duration: 0.9,
+    ease: 'power3.out',
+  });
+  const quickH = gsap.quickTo(wrapper, 'height', {
+    duration: 0.9,
+    ease: 'power3.out',
+  });
+
+  let activeDock: HTMLElement | null = null;
+
+  const sync = () => {
+    if (!activeDock) return;
+    const r = activeDock.getBoundingClientRect();
+    quickX(r.left);
+    quickY(r.top);
+    quickW(r.width);
+    quickH(r.height);
+  };
+
+  const docks = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-logo-dock]'),
+  );
+
+  if (docks.length === 0) {
+    gsap.set(wrapper, { autoAlpha: 0 });
+    return () => {
+      /* no triggers to kill */
+    };
+  }
+
+  gsap.set(wrapper, { autoAlpha: 1 });
+
+  activeDock = docks[0] ?? null;
+  if (activeDock) {
+    const r = activeDock.getBoundingClientRect();
+    gsap.set(wrapper, {
+      x: r.left,
+      y: r.top,
+      width: r.width,
+      height: r.height,
+    });
+  }
+
+  const triggers: ScrollTrigger[] = [];
+
+  docks.forEach((dock) => {
+    const st = ScrollTrigger.create({
+      trigger: dock,
+      start: 'top center',
+      end: 'bottom center',
+      onToggle: (self) => {
+        if (self.isActive) {
+          activeDock = dock;
+          sync();
+        }
+      },
+      onRefresh: () => {
+        if (activeDock === dock) sync();
+      },
+    });
+    triggers.push(st);
+  });
+
+  const onResize = () => {
+    if (!activeDock) return;
+    const r = activeDock.getBoundingClientRect();
+    gsap.set(wrapper, {
+      x: r.left,
+      y: r.top,
+      width: r.width,
+      height: r.height,
+    });
+  };
+
+  const onScroll = () => sync();
+
+  window.addEventListener('resize', onResize);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const rafId = window.requestAnimationFrame(sync);
+
+  return () => {
+    window.removeEventListener('resize', onResize);
+    window.removeEventListener('scroll', onScroll);
+    window.cancelAnimationFrame(rafId);
+    triggers.forEach((t) => t.kill());
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               R3F Logo body                                */
+/* -------------------------------------------------------------------------- */
+
+function LogoBody({
+  yawRef,
+  pitchRef,
+}: {
+  yawRef: React.MutableRefObject<number>;
+  pitchRef: React.MutableRefObject<number>;
+}) {
   const groupRef = useRef<THREE.Group | null>(null);
   const { theme } = useTheme();
   const palette = PALETTE[theme as LogoThemeKey] ?? PALETTE.batman;
@@ -125,10 +253,6 @@ function LogoBody() {
     cloned.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         if (palette.glass) {
-          // Glass variant: keep the mesh but MeshTransmissionMaterial is a
-          // JSX component attached declaratively below via a wrapper mesh.
-          // For the GLTF children we use a thin glassy MeshPhysicalMaterial
-          // fallback so every child in the hierarchy shares the look.
           const mat = new THREE.MeshPhysicalMaterial({
             color: new THREE.Color(palette.base),
             emissive: new THREE.Color(palette.accent),
@@ -163,19 +287,25 @@ function LogoBody() {
     };
   }, [cloned, palette]);
 
-  useFrame((state) => {
+  // Rotation is now driven entirely by the shared useLogoRotation hook
+  // (see design doc §2.3). The old `t * 0.3` spinner was removed in
+  // Wave 3.1.
+  useFrame(({ clock }) => {
     if (!groupRef.current) return;
-    const t = state.clock.elapsedTime;
-    // Continuous Y rotation ~0.3 rad/sec + slight X wobble
-    groupRef.current.rotation.y = t * 0.3;
-    groupRef.current.rotation.x = Math.sin(t * 0.8) * 0.06;
+    const yawRad = (yawRef.current * Math.PI) / 180;
+    const pitchRad = (pitchRef.current * Math.PI) / 180;
+    groupRef.current.rotation.y = yawRad;
+    groupRef.current.rotation.x = pitchRad;
+    // Subtle breathing pulse — only under the futuristic theme's bright
+    // white look needs the "alive" cue. Harmless at other scales.
+    const pulse = 1 + Math.sin(clock.elapsedTime * 1.6) * 0.015;
+    groupRef.current.scale.setScalar(pulse);
   });
 
   return (
     <group ref={groupRef} scale={1}>
       <primitive object={cloned} />
       {palette.glass ? (
-        // A translucent shell around the logo adds the drei glass look
         <mesh scale={1.18}>
           <sphereGeometry args={[1, 48, 48]} />
           <MeshTransmissionMaterial
@@ -197,113 +327,75 @@ function LogoBody() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                           Fixed wrapper + scroll                            */
+/*                    Model-viewer branch (batman / ancient)                  */
 /* -------------------------------------------------------------------------- */
 
-export function PersistentLogo() {
+function ModelViewerPersistent({
+  theme,
+}: {
+  theme: 'batman' | 'ancient-india';
+}) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const { theme } = useTheme();
-  const palette = PALETTE[theme as LogoThemeKey] ?? PALETTE.batman;
+  const logoRef = useRef<ModelViewerLogoHandle | null>(null);
+  const { yaw, pitch } = useLogoRotation();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
     if (typeof window === 'undefined') return;
 
-    const { gsap, ScrollTrigger } = registerGsap();
+    const cleanupTravel = wireDockTravel(wrapper);
 
-    const quickX = gsap.quickTo(wrapper, 'x', { duration: 0.9, ease: 'power3.out' });
-    const quickY = gsap.quickTo(wrapper, 'y', { duration: 0.9, ease: 'power3.out' });
-    const quickW = gsap.quickTo(wrapper, 'width', {
-      duration: 0.9,
-      ease: 'power3.out',
-    });
-    const quickH = gsap.quickTo(wrapper, 'height', {
-      duration: 0.9,
-      ease: 'power3.out',
-    });
-
-    let activeDock: HTMLElement | null = null;
-
-    const sync = () => {
-      if (!activeDock) return;
-      const r = activeDock.getBoundingClientRect();
-      quickX(r.left);
-      quickY(r.top);
-      quickW(r.width);
-      quickH(r.height);
+    // Rotation application loop — drives the imperative handle on the
+    // model-viewer element every frame. Cheap: just an attribute write.
+    let rafId = 0;
+    const tick = () => {
+      logoRef.current?.setRotation(yaw.current, pitch.current);
+      rafId = window.requestAnimationFrame(tick);
     };
-
-    const docks = Array.from(
-      document.querySelectorAll<HTMLElement>('[data-logo-dock]'),
-    );
-
-    // If no dock exists, hide the wrapper entirely.
-    if (docks.length === 0) {
-      gsap.set(wrapper, { autoAlpha: 0 });
-      return;
-    }
-
-    gsap.set(wrapper, { autoAlpha: 1 });
-
-    // Initial placement: first dock in the DOM.
-    activeDock = docks[0] ?? null;
-    if (activeDock) {
-      const r = activeDock.getBoundingClientRect();
-      gsap.set(wrapper, {
-        x: r.left,
-        y: r.top,
-        width: r.width,
-        height: r.height,
-      });
-    }
-
-    const triggers: ScrollTrigger[] = [];
-
-    docks.forEach((dock) => {
-      const st = ScrollTrigger.create({
-        trigger: dock,
-        start: 'top center',
-        end: 'bottom center',
-        onToggle: (self) => {
-          if (self.isActive) {
-            activeDock = dock;
-            sync();
-          }
-        },
-        onRefresh: () => {
-          if (activeDock === dock) sync();
-        },
-      });
-      triggers.push(st);
-    });
-
-    const onResize = () => {
-      // On resize, snap to active dock's new rect (no easing)
-      if (!activeDock) return;
-      const r = activeDock.getBoundingClientRect();
-      gsap.set(wrapper, {
-        x: r.left,
-        y: r.top,
-        width: r.width,
-        height: r.height,
-      });
-    };
-
-    const onScroll = () => sync();
-
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    // Nudge once after layout settles
-    const rafId = window.requestAnimationFrame(sync);
+    rafId = window.requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onScroll);
+      cleanupTravel();
       window.cancelAnimationFrame(rafId);
-      triggers.forEach((t) => t.kill());
     };
+  }, [yaw, pitch]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      aria-hidden
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0,
+        pointerEvents: 'none',
+        zIndex: 40,
+        willChange: 'transform, width, height',
+      }}
+    >
+      <ModelViewerLogo ref={logoRef} theme={theme} />
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          R3F branch (futuristic)                           */
+/* -------------------------------------------------------------------------- */
+
+function R3FPersistent() {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const { theme } = useTheme();
+  const palette = PALETTE[theme as LogoThemeKey] ?? PALETTE.batman;
+  const { yaw, pitch } = useLogoRotation();
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    if (typeof window === 'undefined') return;
+    return wireDockTravel(wrapper);
   }, []);
 
   return (
@@ -339,11 +431,25 @@ export function PersistentLogo() {
         <pointLight position={[0, -2, -4]} intensity={0.6} color={palette.accent} />
         <Suspense fallback={null}>
           {palette.glass ? <Environment preset="city" /> : null}
-          <LogoBody />
+          <LogoBody yawRef={yaw} pitchRef={pitch} />
         </Suspense>
       </Canvas>
     </div>
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Router component                              */
+/* -------------------------------------------------------------------------- */
+
+export function PersistentLogo() {
+  const { theme } = useTheme();
+
+  if (theme !== 'futuristic') {
+    return <ModelViewerPersistent theme={theme} />;
+  }
+
+  return <R3FPersistent />;
 }
 
 useGLTF.preload('/models/batman_logo.glb');
