@@ -7,7 +7,10 @@
       "Bash(npm install *)",
       "Bash(npm run *)",
       "Bash(timeout 8)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(curl -sL --max-time 30 -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" https://www.utopiatokyo.com/ -o /tmp/utopia.html)",
+      "Read(//tmp/**)",
+      "Bash(curl -sL --max-time 30 \"https://cdn.prod.website-files.com/69810f9f220beb18481f5866/css/utopiatokyo2026.webflow.shared.7afc8fe42.min.css\" -o /tmp/utopia.css)"
     ]
   }
 }

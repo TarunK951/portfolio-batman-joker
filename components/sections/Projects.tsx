@@ -4,19 +4,13 @@ import { useEffect, useRef } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { projects } from '@/data/projects';
+import { ScrambleText } from '@/components/shared/ScrambleText';
 
 const statusLabel: Record<string, string> = {
   live: 'Live',
-  development: 'In Development',
+  development: 'In Dev',
   'this-site': 'This Site',
-  'coming-soon': 'Coming Soon',
-};
-
-const statusColor: Record<string, string> = {
-  live: 'bg-green-500/20 text-green-400',
-  development: 'bg-yellow-500/20 text-yellow-400',
-  'this-site': 'bg-theme-accent/20 text-theme-accent',
-  'coming-soon': 'bg-theme-ink/10 text-theme-ink/40',
+  'coming-soon': 'Soon',
 };
 
 export function Projects() {
@@ -25,21 +19,18 @@ export function Projects() {
   const isBatman = theme === 'batman';
 
   useEffect(() => {
-    const { gsap, ScrollTrigger } = registerGsap();
+    const { gsap } = registerGsap();
     const node = sectionRef.current;
     if (!node) return;
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>('.project-card').forEach((card, i) => {
-        gsap.from(card, {
-          y: 60,
+      gsap.utils.toArray<HTMLElement>('.project-row').forEach((row, i) => {
+        gsap.from(row, {
+          y: 48,
           opacity: 0,
-          duration: 0.7,
+          duration: 0.8,
           ease: 'power3.out',
-          delay: i * 0.1,
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
-          },
+          delay: i * 0.06,
+          scrollTrigger: { trigger: row, start: 'top 88%' },
         });
       });
     }, node);
@@ -47,73 +38,71 @@ export function Projects() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="projects" className="px-6 py-24">
-      <div className="mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-theme-accent">
-            {isBatman ? 'Case Files' : 'The Heists'}
-          </p>
-          <h2 className="mt-2 font-display text-4xl text-theme-ink sm:text-6xl">
-            Projects
-          </h2>
+    <section ref={sectionRef} id="work" className="u-section bg-theme-bg">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-12 items-end gap-6">
+          <div className="col-span-12 lg:col-span-9">
+            <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
+              <ScrambleText text="(03) Selected Work" trigger="inview" />
+            </p>
+            <h2 className="u-h2 text-theme-ink">
+              {isBatman ? 'Case files.' : 'The heists.'}
+            </h2>
+          </div>
+          <div className="col-span-12 lg:col-span-3 lg:text-right">
+            <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
+              {projects.length.toString().padStart(2, '0')} Entries
+            </p>
+          </div>
         </div>
 
-        {/* Grid */}
-        <div className="grid gap-6 sm:grid-cols-2">
-          {projects.map((project) => (
-            <div
+        <div className="u-rule mt-12" />
+
+        {/* Utopia-style horizontal "row" cards */}
+        <ul>
+          {projects.map((project, i) => (
+            <li
               key={project.id}
-              className="project-card group relative overflow-hidden rounded-2xl border border-theme-accent/10 bg-theme-surface/50 p-6 transition-colors hover:border-theme-accent/30"
+              className="project-row group grid cursor-pointer grid-cols-12 items-baseline gap-6 border-b border-theme-line py-8 transition-colors hover:bg-theme-surface/40"
+              data-cursor-hover
             >
-              {/* Status badge */}
-              <div className="mb-4 flex items-center justify-between">
-                <span className="font-display text-xs uppercase tracking-[0.3em] text-theme-accent/60">
+              <span className="col-span-2 u-mono text-[11px] tracking-[0.2em] text-theme-ink/45 sm:col-span-1">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div className="col-span-10 sm:col-span-5">
+                <h3 className="u-h3 text-theme-ink transition-colors group-hover:text-theme-accent">
+                  {project.name}
+                </h3>
+                <p className="mt-2 u-mono text-[10px] uppercase tracking-[0.25em] text-theme-ink/50">
                   {isBatman ? project.batmanName : project.jokerName}
-                </span>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-[10px] uppercase tracking-wider ${statusColor[project.status] ?? ''}`}
-                >
+                </p>
+              </div>
+              <p className="col-span-12 max-w-md text-sm leading-relaxed text-theme-ink/65 sm:col-span-4">
+                {project.description}
+              </p>
+              <div className="col-span-12 flex items-center justify-between gap-3 sm:col-span-2 sm:flex-col sm:items-end">
+                <span className="u-mono text-[10px] uppercase tracking-[0.2em] text-theme-accent">
                   {statusLabel[project.status] ?? project.status}
+                </span>
+                <span className="u-mono text-[10px] uppercase tracking-[0.2em] text-theme-ink/45">
+                  {project.type}
                 </span>
               </div>
 
-              {/* Title */}
-              <h3 className="font-display text-2xl text-theme-ink">
-                {project.name}
-              </h3>
-              <p className="mt-1 text-xs uppercase tracking-wider text-theme-ink/40">
-                {project.type}
-              </p>
-
-              {/* Description */}
-              <p className="mt-4 text-sm leading-relaxed text-theme-ink/60">
-                {project.description}
-              </p>
-
-              {/* Stack */}
-              <div className="mt-5 flex flex-wrap gap-2">
+              {/* tech stack — secondary line */}
+              <div className="col-span-12 mt-2 flex flex-wrap gap-2 sm:col-start-2">
                 {project.stack.map((tech) => (
                   <span
                     key={tech}
-                    className="rounded-full border border-theme-accent/15 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-theme-ink/50"
+                    className="u-mono text-[10px] uppercase tracking-[0.2em] text-theme-ink/40"
                   >
                     {tech}
                   </span>
                 ))}
               </div>
-
-              {/* Hover glow */}
-              <div
-                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                style={{
-                  background:
-                    'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(var(--accent) / 0.06), transparent 40%)',
-                }}
-              />
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

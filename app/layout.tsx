@@ -1,19 +1,36 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue } from 'next/font/google';
+import { Inter, Bebas_Neue, Caveat, Space_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
 
+// Body sans (Utopia uses PPMori — Inter is the closest free, neutral grotesque)
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
 });
 
+// Display — Bebas Neue retained for impact headlines (project signature)
 const bebas = Bebas_Neue({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-display',
+  display: 'swap',
+});
+
+// Joker chaotic accent
+const caveat = Caveat({
+  subsets: ['latin'],
+  variable: '--font-chaotic',
+  display: 'swap',
+});
+
+// Mono — stand-in for Utopia's Zpix pixel monospace (used for eyebrows, labels)
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -63,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#0a0a0a' }],
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#14171f' }],
   width: 'device-width',
   initialScale: 1,
 };
@@ -75,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       data-theme="batman"
-      className={`${inter.variable} ${bebas.variable}`}
+      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable}`}
       suppressHydrationWarning
     >
       <head>

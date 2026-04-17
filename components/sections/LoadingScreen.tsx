@@ -4,10 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 
+/**
+ * Utopia-style entry: bold mono number counter, scramble caption, then wipe.
+ */
 export function LoadingScreen() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const numRef = useRef<HTMLSpanElement | null>(null);
   const [visible, setVisible] = useState(true);
   const { theme } = useTheme();
+  const isBatman = theme === 'batman';
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -15,54 +20,39 @@ export function LoadingScreen() {
     if (!node) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => setVisible(false),
-      });
+      const counter = { v: 0 };
+      const tl = gsap.timeline({ onComplete: () => setVisible(false) });
 
-      // Fade in the symbol
-      tl.from('.loading-symbol', {
-        scale: 0.6,
+      tl.from('.ls-meta', {
+        y: 16,
         opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'power2.out',
       });
-
-      // Pulse the glow
-      tl.to('.loading-symbol', {
-        scale: 1.05,
-        duration: 0.4,
+      tl.to(counter, {
+        v: 100,
+        duration: 1.4,
         ease: 'power2.inOut',
-        yoyo: true,
-        repeat: 1,
-      });
-
-      // Animate the tagline in
-      tl.from(
-        '.loading-tagline',
-        {
-          y: 20,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
+        onUpdate: () => {
+          if (numRef.current)
+            numRef.current.textContent = String(Math.round(counter.v)).padStart(3, '0');
         },
-        '-=0.3',
-      );
-
-      // Hold briefly
-      tl.to({}, { duration: 0.4 });
-
-      // Wipe out
-      tl.to('.loading-content', {
+      }, '-=0.2');
+      tl.to('.ls-bar', {
+        scaleX: 1,
+        duration: 1.4,
+        ease: 'power2.inOut',
+      }, '<');
+      tl.to('.ls-content', {
         opacity: 0,
-        scale: 0.95,
-        duration: 0.4,
+        duration: 0.3,
         ease: 'power2.in',
-      });
-
+      }, '+=0.15');
       tl.to(node, {
         yPercent: -100,
-        duration: 0.7,
-        ease: 'power3.inOut',
+        duration: 0.8,
+        ease: 'power4.inOut',
       });
     }, node);
 
@@ -71,30 +61,52 @@ export function LoadingScreen() {
 
   if (!visible) return null;
 
-  const isBatman = theme === 'batman';
-
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-theme-bg"
+      className="fixed inset-0 z-[100] flex flex-col bg-theme-bg text-theme-ink"
     >
-      <div className="loading-content flex flex-col items-center gap-6">
-        {/* Symbol */}
-        <div
-          className="loading-symbol flex h-24 w-24 items-center justify-center rounded-full border-2 border-theme-accent/40"
-          style={{
-            boxShadow: `0 0 60px hsl(var(--accent) / 0.3), inset 0 0 30px hsl(var(--accent) / 0.1)`,
-          }}
-        >
-          <span className="font-display text-4xl text-theme-accent">
-            {isBatman ? '\u{1F987}' : '\u{1F0CF}'}
+      <div className="ls-content flex flex-1 flex-col">
+        {/* Top meta */}
+        <div className="flex items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
+          <span className="ls-meta u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/60">
+            Satya Tarun K
+          </span>
+          <span className="ls-meta u-mono text-[11px] uppercase tracking-[0.3em] text-theme-accent">
+            {isBatman ? 'BAT_MODE' : 'JKR_MODE'} / Booting
           </span>
         </div>
 
-        {/* Tagline */}
-        <p className="loading-tagline font-display text-sm uppercase tracking-[0.5em] text-theme-ink/60">
-          {isBatman ? 'The Dark Knight Rises' : 'Why So Serious?'}
-        </p>
+        {/* Center counter */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <p className="ls-meta u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-ink/50">
+              Loading edition 2026
+            </p>
+            <p
+              className="font-display leading-none text-theme-ink"
+              style={{ fontSize: 'clamp(5rem, 18vw, 14rem)' }}
+            >
+              <span ref={numRef}>000</span>
+              <span className="text-theme-accent">.</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom progress bar */}
+        <div className="px-6 pb-8 sm:px-10">
+          <div className="ls-meta mb-3 flex items-center justify-between">
+            <span className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
+              Initializing scene
+            </span>
+            <span className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
+              {isBatman ? 'Order' : 'Chaos'} engaged
+            </span>
+          </div>
+          <div className="relative h-px w-full bg-theme-ink/15">
+            <div className="ls-bar absolute inset-y-0 left-0 h-px w-full origin-left bg-theme-accent" style={{ transform: 'scaleX(0)' }} />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -183,18 +183,26 @@ export function DCGrid() {
     <section
       ref={sectionRef}
       id="characters"
-      className="relative min-h-screen px-6 py-24"
+      className="relative u-section bg-theme-bg"
     >
-      <div className="mx-auto max-w-6xl">
-        {/* Section header */}
-        <div className="dc-grid-title mb-12 text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-theme-accent">
-            {isBatman ? 'The Justice League' : 'Rogues Gallery'}
-          </p>
-          <h2 className="mt-2 font-display text-4xl text-theme-ink sm:text-6xl">
-            {isBatman ? 'Heroes' : 'Villains'}
-          </h2>
+      <div className="mx-auto max-w-7xl">
+        {/* Section header — Utopia style */}
+        <div className="dc-grid-title grid grid-cols-12 items-end gap-6">
+          <div className="col-span-12 lg:col-span-9">
+            <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
+              (01) {isBatman ? 'Justice League' : 'Rogues Gallery'}
+            </p>
+            <h2 className="u-h2 text-theme-ink">
+              {isBatman ? 'Heroes.' : 'Villains.'}
+            </h2>
+          </div>
+          <div className="col-span-12 lg:col-span-3 lg:text-right">
+            <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
+              {characters.length.toString().padStart(2, '0')} Subjects
+            </p>
+          </div>
         </div>
+        <div className="u-rule mt-10 mb-12" />
 
         {/* Loading / Error states */}
         {loading && (

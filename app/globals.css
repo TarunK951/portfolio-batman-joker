@@ -2,36 +2,232 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   Design tokens — Utopia Tokyo aesthetic over dual theme
+   Utopia palette: #14171f black / #ebe5ce cream / #ff1919 red
+   We map: Batman = utopia-black + red, Joker = green-tint + toxic green.
+   Cream surface available as --paper for breaker sections.
+   ========================================================= */
+
 :root,
 [data-theme='batman'] {
-  --bg: 0 0% 4%;
-  --surface: 0 0% 8%;
-  --accent: 350 100% 35%;
-  --ink: 0 0% 91%;
+  --bg: 225 18% 10%;        /* #14171f */
+  --surface: 224 14% 14%;
+  --paper: 49 30% 86%;      /* #ebe5ce cream breaker */
+  --accent: 0 100% 55%;     /* #ff1919 utopia red */
+  --accent-soft: 0 100% 65%;
+  --ink: 49 30% 92%;        /* near-cream text on dark */
+  --ink-muted: 0 0% 60%;
+  --line: 0 0% 14%;
+  --neutral-700: 0 0% 14%;
 }
 
 [data-theme='joker'] {
-  --bg: 100 20% 4%;
-  --surface: 95 25% 8%;
-  --accent: 112 100% 54%;
-  --ink: 120 40% 95%;
+  --bg: 120 18% 6%;
+  --surface: 120 14% 10%;
+  --paper: 90 30% 90%;
+  --accent: 112 100% 54%;   /* toxic green */
+  --accent-soft: 112 100% 70%;
+  --ink: 120 30% 95%;
+  --ink-muted: 110 8% 60%;
+  --line: 110 10% 14%;
+  --neutral-700: 110 5% 14%;
 }
+
+* { box-sizing: border-box; }
 
 html,
 body {
   background-color: hsl(var(--bg));
   color: hsl(var(--ink));
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+html {
+  /* Hide native cursor — replaced by custom <Cursor /> on pointer-fine devices */
+}
+@media (hover: hover) and (pointer: fine) {
+  html, body, * { cursor: none !important; }
 }
 
 body {
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background-color: hsl(var(--accent) / 0.85);
   color: hsl(var(--bg));
 }
+
+/* =========================================================
+   Utopia-style fluid type scale
+   H1 ~11em (clamped), tight line-height, -0.02em tracking
+   ========================================================= */
+.u-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 14vw, 11rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+.u-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+.u-h3 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+.u-h4 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  line-height: 1.05;
+  font-weight: 500;
+}
+.u-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--accent));
+}
+.u-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   Section rhythm — Utopia uses ~6em vertical padding
+   ========================================================= */
+.u-section {
+  padding-top: clamp(3rem, 6em, 8rem);
+  padding-bottom: clamp(3rem, 6em, 8rem);
+  padding-left: clamp(1rem, 3vw, 2rem);
+  padding-right: clamp(1rem, 3vw, 2rem);
+}
+
+.u-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .u-grid { gap: 16px; }
+}
+
+/* =========================================================
+   Cursor system
+   ========================================================= */
+.u-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px; height: 36px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate3d(-50%, -50%, 0);
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.u-cursor__dot {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 4px; height: 4px;
+  background: hsl(var(--accent));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.u-cursor__corner {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: hsl(var(--ink));
+  border-style: solid;
+  border-width: 0;
+  transition: transform 0.18s cubic-bezier(.2,.8,.2,1);
+}
+.u-cursor__corner.tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+.u-cursor__corner.tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+.u-cursor__corner.bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.u-cursor__corner.br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+.u-cursor.is-hover { width: 64px; height: 64px; }
+.u-cursor.is-hover .u-cursor__dot { background: hsl(var(--ink)); }
+
+/* =========================================================
+   Buttons — Utopia "dark / red / cream" variants
+   ========================================================= */
+.u-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7em 1em;
+  border-radius: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  transition: background-color .25s, color .25s, border-color .25s, transform .25s;
+  text-decoration: none;
+}
+.u-btn--dark {
+  background: hsl(var(--bg));
+  color: hsl(var(--ink));
+  border-color: hsl(var(--line));
+}
+.u-btn--dark:hover { border-color: hsl(var(--accent)); }
+.u-btn--red {
+  background: hsl(var(--accent));
+  color: hsl(var(--bg));
+}
+.u-btn--red:hover { background: hsl(var(--accent-soft)); }
+.u-btn--cream {
+  background: hsl(var(--paper));
+  color: hsl(var(--bg));
+}
+
+/* =========================================================
+   Marquee + glitch helpers
+   ========================================================= */
+@keyframes u-marquee {
+  from { transform: translate3d(0,0,0); }
+  to   { transform: translate3d(-50%,0,0); }
+}
+.u-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: u-marquee 32s linear infinite;
+}
+
+@keyframes u-flicker {
+  0%, 100% { opacity: 1; }
+  43%      { opacity: 0.6; }
+  44%      { opacity: 1; }
+  60%      { opacity: 0.85; }
+}
+.u-flicker { animation: u-flicker 4.2s ease-in-out infinite; }
+
+/* Cream paper section (Utopia "breaker") */
+.u-paper {
+  background: hsl(var(--paper));
+  color: hsl(var(--bg));
+}
+.u-paper ::selection {
+  background: hsl(var(--bg));
+  color: hsl(var(--paper));
+}
+
+/* Hairline divider */
+.u-rule { height: 1px; background: hsl(var(--ink) / 0.12); }
+.u-paper .u-rule { background: hsl(var(--bg) / 0.18); }
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -40,4 +236,6 @@ body {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
+  html, body, * { cursor: auto !important; }
+  .u-cursor { display: none !important; }
 }
