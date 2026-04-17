@@ -18,13 +18,13 @@ const NF_COPY = {
     cta: 'Return to base',
     status: 'ERR / 404',
   },
-  samurai: {
-    eyebrow: 'The scroll is missing',
+  'ancient-india': {
+    eyebrow: 'The chronicle is missing',
     heading: 'A path',
     headingAccent: 'unwritten.',
-    body: 'This path has drifted beyond the brush. Nothing to read here. Return to the garden.',
-    cta: 'Return to the dojo',
-    status: '四〇四',
+    body: 'This route has drifted beyond the reach of dharma. Nothing inscribed here. Return to the ashrama.',
+    cta: 'Return to the ashrama',
+    status: '४०४',
   },
   futuristic: {
     eyebrow: '404 / signal lost',

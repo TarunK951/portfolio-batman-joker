@@ -8,7 +8,7 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 
 const HERO_COLORS = {
   batman: { accent: '#b00020', glow: '#ff1744' },
-  samurai: { accent: '#8a1a1a', glow: '#c8361f' },
+  'ancient-india': { accent: '#8a1a1a', glow: '#c8361f' },
   futuristic: { accent: '#00e5ff', glow: '#4dfff5' },
 } as const;
 

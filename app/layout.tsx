@@ -35,7 +35,7 @@ const spaceMono = Space_Mono({
 });
 
 const SEO_DESCRIPTION =
-  'Satya Tarun K (satyatarun, Satya Tarun) — creative developer and full-stack engineer from Hyderabad. Three-theme portfolio (Batman, Samurai, Futuristic) built with Next.js, React Three Fiber, GSAP and Framer Motion.';
+  'Satya Tarun K (satyatarun, Satya Tarun) — creative developer and full-stack engineer from Hyderabad. Three-theme portfolio (Batman, Ancient India, Futuristic) built with Next.js, React Three Fiber, GSAP and Framer Motion.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -113,7 +113,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='batman'||t==='samurai'||t==='futuristic'){document.documentElement.dataset.theme=t;}else{document.documentElement.dataset.theme='batman';}}catch(e){document.documentElement.dataset.theme='batman';}})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='samurai'){t='ancient-india';try{localStorage.setItem('portfolio-theme','ancient-india');}catch(e){}}if(t==='batman'||t==='ancient-india'||t==='futuristic'){document.documentElement.dataset.theme=t;}else{document.documentElement.dataset.theme='batman';}}catch(e){document.documentElement.dataset.theme='batman';}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

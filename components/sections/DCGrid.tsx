@@ -1,13 +1,25 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useHeroes, useVillains, type Character } from '@/hooks/useCharacters';
-import { ErrorState } from '@/components/shared/ErrorState';
+import { SmartImage } from '@/components/shared/SmartImage';
+import { LogoDock } from '@/components/three/PersistentLogo';
 
-function StatBar({ label, value }: { label: string; value: number }) {
+type Filter = 'all' | 'heroes' | 'villains';
+
+const FILTERS: Filter[] = ['all', 'heroes', 'villains'];
+
+function StatBar({
+  label,
+  value,
+  reloadKey,
+}: {
+  label: string;
+  value: number;
+  reloadKey: string;
+}) {
   const barRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -18,32 +30,25 @@ function StatBar({ label, value }: { label: string; value: number }) {
       gsap.fromTo(
         node,
         { scaleX: 0 },
-        {
-          scaleX: value / 100,
-          duration: 0.8,
-          ease: 'power2.out',
-          delay: 0.1,
-        },
+        { scaleX: value / 100, duration: 0.85, ease: 'power2.out' },
       );
     }, node);
     return () => ctx.revert();
-  }, [value]);
+  }, [value, reloadKey]);
 
   return (
     <div className="flex items-center gap-3">
-      <span className="w-28 shrink-0 text-xs uppercase tracking-wider text-theme-ink/50">
+      <span className="w-28 shrink-0 u-mono text-[10px] uppercase tracking-[0.25em] text-theme-ink/50">
         {label}
       </span>
-      <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-theme-surface">
+      <div className="relative h-px flex-1 bg-theme-ink/15">
         <div
           ref={barRef}
-          className="absolute inset-y-0 left-0 w-full origin-left rounded-full bg-theme-accent"
-          style={{
-            boxShadow: '0 0 12px hsl(var(--accent) / 0.4)',
-          }}
+          className="absolute inset-y-0 left-0 w-full origin-left bg-theme-accent"
+          style={{ boxShadow: '0 0 6px hsl(var(--accent) / 0.55)' }}
         />
       </div>
-      <span className="w-8 text-right font-display text-sm text-theme-accent">
+      <span className="w-8 text-right u-mono text-[11px] text-theme-accent">
         {value}
       </span>
     </div>
@@ -61,7 +66,7 @@ function CharacterPanel({ character }: { character: Character }) {
       gsap.from(node, {
         opacity: 0,
         x: 20,
-        duration: 0.5,
+        duration: 0.55,
         ease: 'power2.out',
       });
     }, node);
@@ -69,69 +74,61 @@ function CharacterPanel({ character }: { character: Character }) {
   }, [character.id]);
 
   return (
-    <div ref={panelRef} className="flex flex-col gap-6 lg:flex-row lg:gap-10">
-      {/* Character image */}
-      <div className="relative mx-auto w-full max-w-[280px] shrink-0 overflow-hidden rounded-2xl border border-theme-accent/20 lg:mx-0 lg:w-72">
-        {character.images ? (
-          <Image
-            src={character.images.lg}
-            alt={character.name}
-            width={400}
-            height={600}
-            className="h-auto w-full object-cover"
-            unoptimized
-          />
-        ) : (
-          <div className="flex aspect-[2/3] items-center justify-center bg-theme-surface text-theme-ink/30">
-            No image
-          </div>
-        )}
+    <div ref={panelRef} className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+      <div className="relative mx-auto w-full max-w-[280px] shrink-0 overflow-hidden border border-theme-ink/15 lg:mx-0 lg:w-72">
+        <SmartImage
+          src={character.images.lg}
+          alt={character.name}
+          name={character.name}
+          aspectClassName="aspect-[2/3]"
+        />
         <div
-          className="absolute inset-0 rounded-2xl"
-          style={{
-            boxShadow: 'inset 0 0 40px hsl(var(--accent) / 0.15)',
-          }}
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ boxShadow: 'inset 0 0 40px hsl(var(--accent) / 0.15)' }}
         />
       </div>
 
-      {/* Character info + stats */}
       <div className="flex flex-1 flex-col justify-center gap-5">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-theme-accent">
+          <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-accent">
             {character.title}
           </p>
-          <h3 className="mt-1 font-display text-4xl text-theme-ink sm:text-5xl">
+          <h3 className="mt-1 font-display leading-[0.95] text-theme-ink" style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)' }}>
             {character.name}
           </h3>
-          <p className="mt-1 text-sm text-theme-ink/50">
-            {character.realName}
-          </p>
+          <p className="mt-1 text-sm text-theme-ink/55">{character.realName}</p>
         </div>
 
-        <p className="max-w-md text-sm leading-relaxed text-theme-ink/70">
+        <p className="max-w-md text-[14px] leading-relaxed text-theme-ink/75">
           {character.bio}
         </p>
 
-        <div className="rounded-xl border border-theme-accent/10 bg-theme-surface/50 p-4">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.3em] text-theme-accent/60">
-            Skill mapped
+        <div className="border border-theme-ink/12 bg-theme-surface/40 p-4">
+          <p className="u-mono mb-1 text-[10px] uppercase tracking-[0.3em] text-theme-accent/80">
+            First appearance
           </p>
-          <p className="font-display text-lg text-theme-ink">
-            {character.skillMapped}
-          </p>
+          <p className="text-sm text-theme-ink/80">{character.firstAppearance}</p>
+          {character.nemesis ? (
+            <p className="mt-2 u-mono text-[10px] uppercase tracking-[0.25em] text-theme-ink/55">
+              nemesis · {character.nemesis}
+            </p>
+          ) : null}
         </div>
 
-        {/* API Powerstats */}
-        {character.powerstats && (
-          <div className="space-y-2">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-theme-ink/40">
-              Powerstats
-            </p>
-            {Object.entries(character.powerstats).map(([key, val]) => (
-              <StatBar key={key} label={key} value={val} />
-            ))}
-          </div>
-        )}
+        <div className="space-y-2">
+          <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
+            Powerstats
+          </p>
+          {Object.entries(character.powerstats).map(([key, val]) => (
+            <StatBar
+              key={key}
+              label={key}
+              value={val as number}
+              reloadKey={character.id}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -139,32 +136,22 @@ function CharacterPanel({ character }: { character: Character }) {
 
 export function DCGrid() {
   const { theme } = useTheme();
-  const { heroes, loading: heroesLoading, error: heroesError } = useHeroes();
-  const {
-    villains,
-    loading: villainsLoading,
-    error: villainsError,
-  } = useVillains();
+  const { heroes } = useHeroes();
+  const { villains } = useVillains();
 
-  // Heroes for order-leaning themes (batman, samurai); villains for disruption (futuristic).
-  const showHeroes = theme !== 'futuristic';
-  const characters = showHeroes ? heroes : villains;
-  const loading = showHeroes ? heroesLoading : villainsLoading;
-  const error = showHeroes ? heroesError : villainsError;
-
-  const gridCopy = {
-    batman: { eyebrow: 'Justice League', title: 'Heroes.' },
-    samurai: { eyebrow: 'The Order', title: 'Guardians.' },
-    futuristic: { eyebrow: 'Rogue Signals', title: 'Outliers.' },
-  }[theme];
-
+  const [filter, setFilter] = useState<Filter>('all');
   const [selectedIdx, setSelectedIdx] = useState(0);
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  // Reset selection when theme changes
+  const characters = useMemo<readonly Character[]>(() => {
+    if (filter === 'heroes') return heroes;
+    if (filter === 'villains') return villains;
+    return [...heroes, ...villains];
+  }, [filter, heroes, villains]);
+
   useEffect(() => {
     setSelectedIdx(0);
-  }, [theme]);
+  }, [filter, theme]);
 
   useEffect(() => {
     const { gsap } = registerGsap();
@@ -174,98 +161,122 @@ export function DCGrid() {
       gsap.from('.dc-grid-title', {
         y: 40,
         opacity: 0,
-        duration: 0.8,
+        duration: 0.9,
         ease: 'power3.out',
-        scrollTrigger: {
-          trigger: node,
-          start: 'top 80%',
-        },
+        scrollTrigger: { trigger: node, start: 'top 80%' },
       });
     }, node);
     return () => ctx.revert();
   }, []);
 
+  // Gate: only render under batman or futuristic.
+  if (theme !== 'batman' && theme !== 'futuristic') return null;
+
+  const isFuturistic = theme === 'futuristic';
+  const copy = isFuturistic
+    ? { eyebrow: '[ 03 / the_mythos ] :: rogue signals', title: 'Outliers.' }
+    : { eyebrow: '[03] the mythos · Justice & Rogues', title: 'Heroes & villains.' };
+
   const selected = characters[selectedIdx];
 
   return (
-    <section
-      ref={sectionRef}
-      id="characters"
-      className="relative u-section bg-theme-bg"
-    >
+    <section ref={sectionRef} id="characters" className="relative u-section bg-theme-bg">
       <div className="mx-auto max-w-7xl">
-        {/* Section header — Utopia style */}
+        {/* Header */}
         <div className="dc-grid-title grid grid-cols-12 items-end gap-6">
-          <div className="col-span-12 lg:col-span-9">
+          <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-              (01) {gridCopy.eyebrow}
+              {copy.eyebrow}
             </p>
-            <h2 className="u-h2 text-theme-ink">{gridCopy.title}</h2>
+            <h2 className="font-display leading-[0.9] text-theme-ink" style={{ fontSize: 'clamp(2.6rem, 7vw, 5.6rem)' }}>
+              {copy.title}
+            </h2>
           </div>
-          <div className="col-span-12 lg:col-span-3 lg:text-right">
-            <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
-              {characters.length.toString().padStart(2, '0')} Subjects
-            </p>
+          <div className="col-span-12 flex items-start justify-end lg:col-span-4">
+            <LogoDock id="dc" size="small" />
           </div>
         </div>
-        <div className="u-rule mt-10 mb-12" />
 
-        {/* Loading / Error states */}
-        {loading && (
-          <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-theme-accent border-t-transparent" />
-          </div>
-        )}
-
-        {error && (
-          <div className="py-10">
-            <ErrorState
-              variant="network"
-              onRetry={() => {
-                if (typeof window !== 'undefined') window.location.reload();
-              }}
-              error={new Error(error)}
-            />
-          </div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && characters.length > 0 && (
-          <div className="flex flex-col gap-8 lg:flex-row">
-            {/* Sidebar thumbnails */}
-            <div className="flex gap-3 overflow-x-auto pb-2 lg:w-24 lg:flex-col lg:overflow-x-visible lg:overflow-y-auto">
-              {characters.map((char, idx) => (
+        {/* Filter tabs */}
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          {FILTERS.map((f) => {
+            const active = filter === f;
+            if (isFuturistic) {
+              return (
                 <button
-                  key={char.id}
+                  key={f}
                   type="button"
-                  onClick={() => setSelectedIdx(idx)}
-                  aria-label={`Select ${char.name}`}
-                  className={`relative shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                    idx === selectedIdx
-                      ? 'border-theme-accent shadow-glow'
-                      : 'border-theme-surface hover:border-theme-accent/30'
+                  onClick={() => setFilter(f)}
+                  data-cursor-hover
+                  className={`u-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${
+                    active
+                      ? 'text-theme-accent'
+                      : 'text-theme-ink/55 hover:text-theme-ink'
                   }`}
-                  style={{ width: 72, height: 72 }}
+                  style={
+                    active
+                      ? { borderBottom: '1px solid currentColor', paddingBottom: 3 }
+                      : undefined
+                  }
                 >
-                  {char.images ? (
-                    <Image
+                  [ {f} ]
+                </button>
+              );
+            }
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setFilter(f)}
+                data-cursor-hover
+                className={`u-mono text-[11px] uppercase tracking-[0.28em] transition-colors ${
+                  active
+                    ? 'text-theme-accent'
+                    : 'text-theme-ink/55 hover:text-theme-ink'
+                }`}
+              >
+                {f}
+              </button>
+            );
+          })}
+          <span className="ml-auto u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/40">
+            {characters.length.toString().padStart(2, '0')} subjects
+          </span>
+        </div>
+
+        <div className="u-rule mt-6 mb-12" />
+
+        {characters.length > 0 && (
+          <div className="flex flex-col gap-8 lg:flex-row">
+            {/* Thumbnails */}
+            <div className="flex gap-3 overflow-x-auto pb-2 lg:w-24 lg:flex-col lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[680px]">
+              {characters.map((char, idx) => {
+                const active = idx === selectedIdx;
+                return (
+                  <button
+                    key={`${char.id}-${idx}`}
+                    type="button"
+                    onClick={() => setSelectedIdx(idx)}
+                    aria-label={`Select ${char.name}`}
+                    data-cursor-hover
+                    className={`relative shrink-0 overflow-hidden border-2 transition-all ${
+                      active
+                        ? 'border-theme-accent shadow-glow'
+                        : 'border-theme-surface hover:border-theme-accent/40'
+                    }`}
+                    style={{ width: 72, height: 72 }}
+                  >
+                    <SmartImage
                       src={char.images.sm}
                       alt={char.name}
-                      width={100}
-                      height={100}
-                      className="h-full w-full object-cover"
-                      unoptimized
+                      name={char.name}
+                      aspectClassName="aspect-square"
                     />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-theme-surface text-xs text-theme-ink/30">
-                      {char.name[0]}
-                    </div>
-                  )}
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Main panel */}
             {selected && <CharacterPanel character={selected} />}
           </div>
         )}

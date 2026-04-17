@@ -5,7 +5,7 @@ import { UButton } from '@/components/shared/UButton';
 
 type Variant = 'runtime' | 'network';
 
-const COPY: Record<Variant, Record<'batman' | 'samurai' | 'futuristic', { eyebrow: string; heading: string; body: string; cta: string }>> = {
+const COPY: Record<Variant, Record<'batman' | 'ancient-india' | 'futuristic', { eyebrow: string; heading: string; body: string; cta: string }>> = {
   runtime: {
     batman: {
       eyebrow: 'System fault',
@@ -13,10 +13,10 @@ const COPY: Record<Variant, Record<'batman' | 'samurai' | 'futuristic', { eyebro
       body: 'Something went wrong on the client. The shadows returned a fault. Try again, or head back to base.',
       cta: 'Retry',
     },
-    samurai: {
-      eyebrow: 'The brush slipped',
-      heading: 'A stroke out of place.',
-      body: 'The page took a wrong turn. Stillness first — then try again.',
+    'ancient-india': {
+      eyebrow: 'The arrow strayed',
+      heading: 'An arrow off its mark.',
+      body: 'The page wandered from its dharma. Draw breath — then try the path once more.',
       cta: 'Try again',
     },
     futuristic: {
@@ -33,10 +33,10 @@ const COPY: Record<Variant, Record<'batman' | 'samurai' | 'futuristic', { eyebro
       body: 'Couldn\u2019t reach the source. The network is dark. Check your connection and try again.',
       cta: 'Try again',
     },
-    samurai: {
-      eyebrow: 'The messenger is late',
-      heading: 'The path is quiet.',
-      body: 'No word came back. The network is still. Wait, then try again.',
+    'ancient-india': {
+      eyebrow: 'The messenger is delayed',
+      heading: 'The path is silent.',
+      body: 'No word returned from the field. The network is still. Wait, then try again.',
       cta: 'Retry',
     },
     futuristic: {

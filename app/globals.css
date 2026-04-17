@@ -5,7 +5,7 @@
 /* =========================================================
    Design tokens — three theme system
    batman      : Utopia Tokyo dark  — near-black + utopia red (dark)
-   samurai     : bone paper / sumi ink / muted vermillion   (LIGHT)
+   ancient-india : bone paper / sumi ink / muted vermillion   (LIGHT)
    futuristic  : tech-black + electric cyan                  (dark)
    All themes share the same token names so Tailwind theme-*
    utilities map without change.
@@ -24,14 +24,14 @@
   --neutral-700: 0 0% 14%;
 }
 
-/* SAMURAI — light, warm, minimal. Inverts ink/bg relationship.
+/* ANCIENT-INDIA — light, warm, minimal. Inverts ink/bg relationship.
    bg     #efe9dd  warm paper
    surface#e5dfd0  slightly deeper paper
    paper  #14120f  sumi-ink (dark breaker)
    accent #8a1a1a  muted vermillion
    ink    #14120f  sumi-ink
 */
-[data-theme='samurai'] {
+[data-theme='ancient-india'] {
   --bg: 41 30% 90%;          /* #efe9dd warm bone paper */
   --surface: 43 27% 85%;     /* #e5dfd0 deeper paper */
   --paper: 36 11% 7%;        /* #14120f sumi-ink (dark breaker swap) */
@@ -408,7 +408,7 @@ body {
 }
 
 /* =========================================================
-   Samurai ink-brush divider — a hand-drawn hairline
+   Ancient-India ink-brush divider — a hand-drawn hairline
    ========================================================= */
 .ink-brush {
   display: block;
@@ -424,8 +424,8 @@ body {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 14' preserveAspectRatio='none'><path d='M2 7 Q 120 2, 260 7 T 540 7 T 820 8 T 1100 6 L 1198 7' fill='none' stroke='%23e8e8e8' stroke-width='1.2' stroke-linecap='round' opacity='0.25'/></svg>");
 }
 
-/* Samurai: slightly different section rhythm + quiet accent dot */
-[data-theme='samurai'] .u-rule {
+/* Ancient-India: slightly different section rhythm + quiet accent dot */
+[data-theme='ancient-india'] .u-rule {
   background: hsl(var(--bg) / 0.18);
   height: 1px;
 }
@@ -437,4 +437,159 @@ body {
 
 /* Once loading finishes, a subtle global fade-in */
 body:not(.loaded) main { }
+
+/* =========================================================
+   Wave-1 primitives: DepthText / GlassCard / Perspective
+   ========================================================= */
+
+.depth-text {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  will-change: transform;
+}
+
+.glass-card {
+  position: relative;
+  background: hsl(var(--surface) / 0.55);
+  border: 1px solid hsl(var(--ink) / 0.08);
+  border-radius: 14px;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    0 1px 0 hsl(var(--ink) / 0.04) inset,
+    0 30px 60px -30px hsl(0 0% 0% / 0.4);
+  transition:
+    border-color 400ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 400ms cubic-bezier(.2,.8,.2,1),
+    transform 400ms cubic-bezier(.2,.8,.2,1);
+}
+[data-theme='samurai'] .glass-card,
+[data-theme='ancient-india'] .glass-card {
+  background: hsl(var(--surface) / 0.7);
+  border-color: hsl(var(--bg) / 0.12);
+  box-shadow:
+    0 1px 0 hsl(var(--bg) / 0.04) inset,
+    0 24px 48px -28px hsl(0 0% 0% / 0.15);
+}
+.glass-card--interactive:hover {
+  border-color: hsl(var(--accent) / 0.5);
+  box-shadow:
+    0 1px 0 hsl(var(--ink) / 0.05) inset,
+    0 0 0 1px hsl(var(--accent) / 0.25),
+    0 30px 70px -30px hsl(var(--accent) / 0.35);
+}
+
+.perspective-wrapper {
+  display: block;
+  transform-style: preserve-3d;
+}
+
+/* =========================================================
+   FuturisticSceneryLayer extras — pulse rings, drift
+   particles, sweep beams. All gated to [data-theme='futuristic'].
+   ========================================================= */
+
+.fx-rings,
+.fx-particles,
+.fx-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(.2,.8,.2,1);
+}
+[data-theme='futuristic'] .fx-rings,
+[data-theme='futuristic'] .fx-particles,
+[data-theme='futuristic'] .fx-beam {
+  opacity: 1;
+}
+
+.fx-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin-top: -100px;
+  margin-left: -100px;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--accent) / 0.4);
+  transform: scale(0);
+  animation: fx-ring-pulse 6s cubic-bezier(.2,.8,.2,1) infinite;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+}
+.fx-ring--a { animation-delay: 0s; }
+.fx-ring--b { animation-delay: 2s; }
+.fx-ring--c { animation-delay: 4s; }
+
+@keyframes fx-ring-pulse {
+  0%   { transform: scale(0); opacity: 0.9; }
+  80%  { opacity: 0.1; }
+  100% { transform: scale(7); opacity: 0; }
+}
+
+.fx-particle {
+  position: absolute;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  color: hsl(var(--accent) / 0.5);
+  text-shadow: 0 0 6px hsl(var(--accent) / 0.4);
+  opacity: 0.1;
+  user-select: none;
+  animation: fx-particle-drift linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes fx-particle-drift {
+  0%   { transform: translate3d(0, 30vh, 0); opacity: 0; }
+  15%  { opacity: 0.14; }
+  85%  { opacity: 0.14; }
+  100% { transform: translate3d(0, -30vh, 0); opacity: 0; }
+}
+
+.fx-beam {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--accent) / 0) 35%,
+    hsl(var(--accent) / 0.15) 49%,
+    hsl(var(--accent) / 0.3) 50%,
+    hsl(var(--accent) / 0.15) 51%,
+    hsl(var(--accent) / 0) 65%,
+    transparent 100%
+  );
+  transform: translateY(-100%);
+  animation: fx-beam-sweep 12s cubic-bezier(.6,.05,.4,.95) infinite;
+  mix-blend-mode: screen;
+}
+@keyframes fx-beam-sweep {
+  0%, 40%   { transform: translateY(-100%); opacity: 0; }
+  42%       { opacity: 0.9; }
+  58%       { opacity: 0.9; }
+  60%, 100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* =========================================================
+   Per-theme narrative hints
+   - samurai/ancient-india: subtle paper texture via SVG noise
+   - CSS keyframe fallback for spinning logos without R3F
+   ========================================================= */
+
+[data-theme='samurai'] body,
+[data-theme='ancient-india'] body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 0 0  0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+@keyframes spin-slow-y {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+.spin-slow-y {
+  animation: spin-slow-y 18s linear infinite;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
 

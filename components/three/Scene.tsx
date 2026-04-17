@@ -7,7 +7,7 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 
 const SCENE_COLORS = {
   batman: { accent: '#b00020', bg: '#060606' },
-  samurai: { accent: '#8a1a1a', bg: '#efe9dd' },
+  'ancient-india': { accent: '#8a1a1a', bg: '#efe9dd' },
   futuristic: { accent: '#00e5ff', bg: '#05070c' },
 } as const;
 

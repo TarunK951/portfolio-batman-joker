@@ -3,10 +3,12 @@
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
 import { ScrambleText } from '@/components/shared/ScrambleText';
+import { LogoDock } from '@/components/three/PersistentLogo';
 
 const FOOTER_COPY = {
-  batman: { wordmark: 'GOTHAM', locale: '\u6697\u95C7 \u00B7 \u6B63\u7FA9' },
-  samurai: { wordmark: '\u6C5F\u6238', locale: '\u4F8D \u00B7 \u9759\u5BC2' }, // 江戸 · 侍 静寂
+  batman: { wordmark: 'GOTHAM', locale: 'SHADOW \u00B7 ORDER' },
+  // कुरुक्षेत्र (Kurukshetra) — धर्म · कर्म · मोक्ष (dharma · karma · moksha)
+  'ancient-india': { wordmark: '\u0915\u0941\u0930\u0941\u0915\u094D\u0937\u0947\u0924\u094D\u0930', locale: '\u0927\u0930\u094D\u092E \u00B7 \u0915\u0930\u094D\u092E \u00B7 \u092E\u094B\u0915\u094D\u0937' },
   futuristic: { wordmark: 'NEO//GRID', locale: 'SYS \u00B7 NET \u00B7 PULSE' },
 } as const;
 
@@ -56,12 +58,15 @@ export function Footer() {
           </ul>
         </div>
         <div className="col-span-12 sm:col-span-2 sm:text-right">
-          <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/40">
-            Locale
-          </p>
-          <p className="mt-2 u-mono text-[11px] tracking-[0.15em] text-theme-ink/55">
-            {copy.locale}
-          </p>
+          <div className="flex flex-col items-start gap-3 sm:items-end">
+            <LogoDock id="footer" size="small" />
+            <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/40">
+              Locale
+            </p>
+            <p className="u-mono text-[11px] tracking-[0.15em] text-theme-ink/55">
+              {copy.locale}
+            </p>
+          </div>
         </div>
       </div>
 

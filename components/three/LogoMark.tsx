@@ -13,9 +13,9 @@ import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
  *   - Persistent header mark — tiny, top-left, restyled per theme
  *
  * Per-theme material:
- *   batman      → red metallic (hot emissive rim)
- *   samurai     → ink-brushed dark red silhouette, matte, low emissive
- *   futuristic  → neon cyan wireframe, additive glow
+ *   batman        → red metallic (hot emissive rim)
+ *   ancient-india → ink-brushed dark red silhouette, matte, low emissive
+ *   futuristic    → neon cyan wireframe, additive glow
  */
 
 type MarkMode = 'hero' | 'tiny';
@@ -41,8 +41,8 @@ const PALETTE: Record<
     roughness: 0.25,
     wireframe: false,
   },
-  samurai: {
-    // Ink-brushed silhouette — matte, dark on paper, just a whisper of red
+  'ancient-india': {
+    // Ink-brushed silhouette — matte, dark on paper, just a whisper of vermillion
     accent: '#8a1a1a',
     glow: '#c8361f',
     base: '#14120f',
@@ -119,7 +119,7 @@ export function LogoMarkScene({ mode = 'hero' }: { mode?: MarkMode }) {
       gl={{ alpha: true, antialias: true }}
       style={{ background: 'transparent' }}
     >
-      <ambientLight intensity={theme === 'samurai' ? 0.6 : 0.12} />
+      <ambientLight intensity={theme === 'ancient-india' ? 0.6 : 0.12} />
       <spotLight
         position={[4, 5, 5]}
         angle={0.5}

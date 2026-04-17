@@ -11,7 +11,7 @@ type Segment = {
 
 const SEGMENTS: readonly Segment[] = [
   { id: 'batman', label: 'BAT', aria: 'Batman theme — dark red' },
-  { id: 'samurai', label: '雅', aria: 'Samurai theme — bone paper and sumi ink' },
+  { id: 'ancient-india', label: 'ॐ', aria: 'Ancient India theme' },
   { id: 'futuristic', label: '01', aria: 'Futuristic theme — electric cyan' },
 ] as const;
 

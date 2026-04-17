@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
 import { projects } from '@/data/projects';
+import { LogoDock } from '@/components/three/PersistentLogo';
 
 const statusLabel: Record<string, string> = {
   live: 'Live',
@@ -23,10 +24,10 @@ const PROJECTS_COPY: Record<Theme, ProjectsCopy> = {
     intro:
       'A selection of recent work — products, interfaces, and experiments at the intersection of engineering and cinema.',
   },
-  samurai: {
-    title: 'The scrolls.',
+  'ancient-india': {
+    title: 'The chronicles.',
     intro:
-      'A quiet catalogue. Each piece shaped patiently, finished only when nothing more can be removed.',
+      'A patient canon. Each work tempered by dharma — shaped with intent, finished only when nothing more can be refined.',
   },
   futuristic: {
     title: 'The systems.',
@@ -42,7 +43,7 @@ function projectLabel(
 ): string {
   if (theme === 'batman') return project.batmanName;
   const n = String(index + 1).padStart(3, '0');
-  if (theme === 'samurai') return `Scroll #${n}`;
+  if (theme === 'ancient-india') return `Parva ${n}`;
   return `SYS.${n}`;
 }
 
@@ -75,17 +76,18 @@ export function Projects() {
       <div className="mx-auto max-w-7xl">
         {/* ── INTRO ─────────────────────────────────────── */}
         <div className="grid grid-cols-12 items-start gap-6">
-          <div className="col-span-12 lg:col-span-12">
+          <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
               <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-theme-accent align-middle" />
-              <span className="ml-3 align-middle">(03) Selected work</span>
+              <span className="ml-3 align-middle">[02] the work · selected</span>
             </p>
             <h2 className="u-h2 text-theme-ink">{copy.title}</h2>
-          </div>
-          <div className="col-span-12 lg:col-span-6 lg:col-start-7">
-            <p className="mt-8 text-[15px] leading-relaxed text-theme-ink/65">
+            <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-theme-ink/65">
               {copy.intro}
             </p>
+          </div>
+          <div className="col-span-12 flex items-start justify-end lg:col-span-4">
+            <LogoDock id="projects" size="small" />
           </div>
         </div>
 

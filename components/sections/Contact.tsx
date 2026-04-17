@@ -6,15 +6,16 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { SITE } from '@/lib/seo';
 import { UButton } from '@/components/shared/UButton';
 import { ScrambleText } from '@/components/shared/ScrambleText';
+import { LogoDock } from '@/components/three/PersistentLogo';
 
 const CONTACT_COPY = {
   batman: {
     heading: 'Light',
     body: 'Got a project that needs precision engineering and obsessive attention to detail? Let\u2019s talk.',
   },
-  samurai: {
-    heading: 'Send',
-    body: 'Looking for work that prizes restraint, craft, and quiet intentionality? I\u2019m listening.',
+  'ancient-india': {
+    heading: 'Speak',
+    body: 'Seeking work shaped by dharma — patient craft, restrained form, and quiet intent? I\u2019m listening.',
   },
   futuristic: {
     heading: 'Ping',
@@ -51,7 +52,7 @@ export function Contact() {
         <div className="grid grid-cols-12 items-end gap-6">
           <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-utopia-red">
-              <ScrambleText text="(04) Contact" trigger="inview" />
+              <ScrambleText text="[05] the signal · contact" trigger="inview" />
             </p>
             <h2 className="u-h2">
               <span className="contact-line block">{copy.heading}</span>
@@ -61,9 +62,12 @@ export function Contact() {
             </h2>
           </div>
           <div className="col-span-12 lg:col-span-4 lg:text-right">
-            <p className="u-mono text-[11px] uppercase tracking-[0.3em] opacity-50">
-              Response / 24h
-            </p>
+            <div className="flex flex-col items-end gap-4">
+              <LogoDock id="contact" size="small" />
+              <p className="u-mono text-[11px] uppercase tracking-[0.3em] opacity-50">
+                Response / 24h
+              </p>
+            </div>
           </div>
         </div>
 

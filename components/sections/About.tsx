@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { ScrambleText } from '@/components/shared/ScrambleText';
+import { LogoDock } from '@/components/three/PersistentLogo';
 
 const skills = [
   { name: 'Next.js / React', level: 95 },
@@ -29,10 +30,10 @@ const ABOUT_COPY = {
     tail: 'discipline.',
     bio: "I'm Satya Tarun K — a full-stack product developer who builds with the discipline Batman brings to Gotham. Every pixel planned, every interaction deliberate.",
   },
-  samurai: {
-    lead: 'The swordsmith',
-    tail: 'restraint.',
-    bio: "I'm Satya Tarun K — a full-stack product developer who works like a swordsmith. Few strokes, each one exact. Craft is the quiet between the lines.",
+  'ancient-india': {
+    lead: 'The bow-smith',
+    tail: 'dharma.',
+    bio: "I'm Satya Tarun K — a full-stack product developer who builds like a dhanush-smith on the field of Kurukshetra. Few arrows, each loosed with intent. Craft is the quiet between the strings.",
   },
   futuristic: {
     lead: 'The operator',
@@ -93,7 +94,7 @@ export function About() {
         <div className="grid grid-cols-12 items-end gap-6">
           <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-              <ScrambleText text="(02) About" trigger="inview" />
+              <ScrambleText text="[04] the journey · about" trigger="inview" />
             </p>
             <h2 className="u-h2">
               <span className="about-title-line block text-theme-ink">
@@ -108,12 +109,17 @@ export function About() {
             </h2>
           </div>
           <div className="col-span-12 lg:col-span-4 lg:text-right">
-            <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
-              File / Personnel
-            </p>
-            <p className="mt-1 u-mono text-[11px] tracking-[0.2em] text-theme-ink/70">
-              ID-0951 · Hyderabad / IN
-            </p>
+            <div className="flex flex-col items-end gap-4">
+              <LogoDock id="about" size="small" />
+              <div>
+                <p className="u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/40">
+                  File / Personnel
+                </p>
+                <p className="mt-1 u-mono text-[11px] tracking-[0.2em] text-theme-ink/70">
+                  ID-0951 · Hyderabad / IN
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

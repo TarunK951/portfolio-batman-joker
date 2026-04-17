@@ -107,3 +107,31 @@ Joker palette retained but rotated to match new bg/ink rhythm.
 - Fill in LinkedIn + Twitter URLs in `lib/seo.ts` socials when accounts are set.
 - Add Google Search Console verification token in `app/layout.tsx` metadata.verification.
 - Update `SITE.url` in `lib/seo.ts` to the final production domain before launch.
+
+## Wave 2 — Narrative rebuild (PersistentLogo travel + Mahabharata twin)
+
+### Created
+- `components/shared/SmartImage.tsx` — native <img> + onError fallback to initials tile over theme-accent gradient. Consumed by DC and Mahabharata grids.
+- `components/sections/MahabharataGrid.tsx` — ancient-india-only section. 19-character rail, relationship tree, faction pill, 6-axis GSAP stat bars, ink-brush death card, 18-day war footer, right-rail LogoDock.
+
+### Modified
+- `app/page.tsx` — swapped SceneryLayer → FuturisticSceneryLayer; removed HeaderLogo; mounted PersistentLogo once at root (dynamic, ssr:false); wired MahabharataGrid alongside DCGrid (each gates itself by theme).
+- `components/sections/Hero.tsx` — full rewrite. Center stack: eyebrow, LogoDock id="hero" size="large", DepthText "TARUN" (8 layers, carved feel), semantic "Satya Tarun K · Creative Developer" tag, theme-aware subline, CTA. Futuristic top bar gets `[ system: online ]` pill + live IST uptime counter. IST clock now seconds-accurate.
+- `components/sections/DCGrid.tsx` — gated to batman + futuristic (early-return null under ancient-india). Heroes + villains merged via `[all|heroes|villains]` tabs (terminal brackets on futuristic, plain uppercase on batman). Right-rail LogoDock id="dc". SmartImage everywhere. Firstappearance + nemesis card added.
+- `components/sections/Projects.tsx` — eyebrow → `[02] the work · selected`; right-rail LogoDock id="projects"; intro moved into left 8-col column.
+- `components/sections/About.tsx` — eyebrow → `[04] the journey · about`; right column adds LogoDock id="about".
+- `components/sections/Contact.tsx` — eyebrow → `[05] the signal · contact`; right column adds LogoDock id="contact".
+- `components/sections/Footer.tsx` — bottom-right cell adds LogoDock id="footer".
+
+### Logo travel flow
+PersistentLogo mounts once at root as a fixed-position `<Canvas>`. Six docks in the DOM: `hero` (large, center hero) → `projects` (right rail) → `dc` (right rail) → `mahabharata` (right rail, only in ancient-india) → `about` (right column) → `contact` (right column) → `footer` (bottom-right cell). PersistentLogo's GSAP ScrollTrigger watches each dock's `top center / bottom center` window and tweens the wrapper's x/y/width/height with quickTo for smooth hand-off.
+
+### Image fallback strategy
+All character portraits use `/characters/{id}.jpg` or `/mahabharata/{id}.jpg` placeholder paths. SmartImage renders a bare `<img>` and on `error` swaps to a themed fallback: first two letters of the character's name over a theme-accent gradient tile with inset accent glow. Build never breaks on missing assets.
+
+### Human QA needed
+- Verify PersistentLogo dock transitions feel smooth when scrolling fast on a trackpad (may need quickTo duration tuning).
+- Under ancient-india, the dock flow is hero → projects → mahabharata → about → contact → footer (DC is null). Confirm visually that the logo settles in each dock.
+- TARUN DepthText under ancient-india's light background uses the muted-vermillion shadow — verify legibility.
+- Mahabharata character images are placeholders; SmartImage fallback is expected.
+

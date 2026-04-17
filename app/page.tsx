@@ -18,16 +18,24 @@ const LoadingScreen = dynamic(
   () => import('@/components/sections/LoadingScreen').then((m) => m.LoadingScreen),
   { ssr: false },
 );
-const HeaderLogo = dynamic(
-  () => import('@/components/shared/HeaderLogo').then((m) => m.HeaderLogo),
+const PersistentLogo = dynamic(
+  () => import('@/components/three/PersistentLogo').then((m) => m.PersistentLogo),
   { ssr: false },
 );
-const SceneryLayer = dynamic(
-  () => import('@/components/shared/SceneryLayer').then((m) => m.SceneryLayer),
+const FuturisticSceneryLayer = dynamic(
+  () =>
+    import('@/components/shared/FuturisticSceneryLayer').then(
+      (m) => m.FuturisticSceneryLayer,
+    ),
   { ssr: false },
 );
 const DCGrid = dynamic(
   () => import('@/components/sections/DCGrid').then((m) => m.DCGrid),
+  { ssr: false },
+);
+const MahabharataGrid = dynamic(
+  () =>
+    import('@/components/sections/MahabharataGrid').then((m) => m.MahabharataGrid),
   { ssr: false },
 );
 const Projects = dynamic(
@@ -101,13 +109,16 @@ export default function Home() {
         React Three Fiber, and GSAP.
       </h1>
       <SmoothScroll />
+      <PersistentLogo />
       <Cursor />
       <AmbientAudio />
       <LoadingScreen />
-      <SceneryLayer />
-      <HeaderLogo />
+      <FuturisticSceneryLayer />
       <Hero />
+      {/* DCGrid gates itself to batman + futuristic themes. */}
       <DCGrid />
+      {/* MahabharataGrid gates itself to ancient-india theme. */}
+      <MahabharataGrid />
       <Projects />
       <About />
       <Contact />

@@ -9,9 +9,9 @@ import {
   useState,
 } from 'react';
 
-export type Theme = 'batman' | 'samurai' | 'futuristic';
+export type Theme = 'batman' | 'ancient-india' | 'futuristic';
 
-export const THEMES: readonly Theme[] = ['batman', 'samurai', 'futuristic'] as const;
+export const THEMES: readonly Theme[] = ['batman', 'ancient-india', 'futuristic'] as const;
 
 type ThemeContextValue = {
   theme: Theme;
@@ -24,21 +24,30 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const STORAGE_KEY = 'portfolio-theme';
 
 function isTheme(value: string | null | undefined): value is Theme {
-  return value === 'batman' || value === 'samurai' || value === 'futuristic';
+  return value === 'batman' || value === 'ancient-india' || value === 'futuristic';
 }
 
 function readStoredTheme(): Theme | null {
   if (typeof window === 'undefined') return null;
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  return isTheme(stored) ? stored : null;
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  // Migration: old 'samurai' key → 'ancient-india'
+  if (raw === 'samurai') {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, 'ancient-india');
+    } catch {
+      /* noop */
+    }
+    return 'ancient-india';
+  }
+  return isTheme(raw) ? raw : null;
 }
 
 function nextTheme(current: Theme): Theme {
-  // batman → samurai → futuristic → batman
+  // batman → ancient-india → futuristic → batman
   switch (current) {
     case 'batman':
-      return 'samurai';
-    case 'samurai':
+      return 'ancient-india';
+    case 'ancient-india':
       return 'futuristic';
     case 'futuristic':
       return 'batman';

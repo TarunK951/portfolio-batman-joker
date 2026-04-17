@@ -1,85 +1,78 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import {
-  fetchCharacters,
-  HERO_IDS,
-  VILLAIN_IDS,
   type SuperheroAPIResponse,
+  type SuperheroImages,
 } from '@/lib/dcApi'
-import { dcHeroes, type DCCharacter } from '@/data/dcHeroes'
+import {
+  dcHeroes,
+  type DCCharacter,
+  type Powerstats,
+} from '@/data/dcHeroes'
 import { dcVillains } from '@/data/dcVillains'
 
-/** Static character data enriched with API images and powerstats. */
+/**
+ * Character shape consumed by the DC Grid section.
+ * Kept backwards-compatible with the old Akabab-enriched shape so
+ * existing components keep working. `apiId` now mirrors the id
+ * string; `powerstats`/`images` are always present (never null).
+ */
 export interface Character extends DCCharacter {
-  apiId: number
-  powerstats: SuperheroAPIResponse['powerstats'] | null
-  images: SuperheroAPIResponse['images'] | null
+  apiId: string
+  powerstats: Powerstats
+  images: SuperheroImages
+  /** @deprecated retained for legacy display code — mirrors `powerstats`. */
+  stats: Record<string, number>
+  /** @deprecated previously held a skill-keyword string for UI badges. */
+  skillMapped: string
 }
 
-function mergeWithStatic(
-  apiData: SuperheroAPIResponse[],
-  staticData: readonly DCCharacter[],
-  idMap: Record<string, number>,
-): Character[] {
-  const entries = Object.entries(idMap)
-  return entries.map((entry, i) => {
-    const [key, apiId] = entry
-    const api = apiData[i]
-    const local = staticData.find((c) => c.id === key)
-
-    return {
-      id: key,
-      name: local?.name ?? api?.name ?? key,
-      realName: local?.realName ?? api?.biography.fullName ?? '',
-      title: local?.title ?? '',
-      skillMapped: local?.skillMapped ?? '',
-      bio: local?.bio ?? '',
-      stats: local?.stats ?? {},
-      apiId,
-      powerstats: api?.powerstats ?? null,
-      images: api?.images ?? null,
-    }
-  })
+function toCharacter(c: DCCharacter): Character {
+  const images: SuperheroImages = {
+    xs: c.image,
+    sm: c.image,
+    md: c.image,
+    lg: c.image,
+  }
+  return {
+    ...c,
+    apiId: c.id,
+    powerstats: c.powerstats,
+    images,
+    stats: {
+      INTELLIGENCE: c.powerstats.intelligence,
+      STRENGTH: c.powerstats.strength,
+      SPEED: c.powerstats.speed,
+      DURABILITY: c.powerstats.durability,
+      POWER: c.powerstats.power,
+      COMBAT: c.powerstats.combat,
+    },
+    skillMapped: c.title,
+  }
 }
 
-export function useHeroes() {
-  const [heroes, setHeroes] = useState<Character[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+const HEROES: readonly Character[] = dcHeroes.map(toCharacter)
+const VILLAINS: readonly Character[] = dcVillains.map(toCharacter)
 
-  useEffect(() => {
-    const ids = Object.values(HERO_IDS)
-    fetchCharacters([...ids])
-      .then((data) => setHeroes(mergeWithStatic(data, dcHeroes, HERO_IDS)))
-      .catch((e: unknown) => {
-        const msg = e instanceof Error ? e.message : 'Failed to fetch heroes'
-        setError(msg)
-      })
-      .finally(() => setLoading(false))
-  }, [])
-
-  return { heroes, loading, error }
+/**
+ * Returns heroes from the static dataset.
+ * `loading`/`error` are preserved for consumer compatibility but
+ * are no-ops — data resolves synchronously.
+ */
+export function useHeroes(): {
+  heroes: readonly Character[]
+  loading: false
+  error: null
+} {
+  return { heroes: HEROES, loading: false, error: null }
 }
 
-export function useVillains() {
-  const [villains, setVillains] = useState<Character[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const ids = Object.values(VILLAIN_IDS)
-    fetchCharacters([...ids])
-      .then((data) =>
-        setVillains(mergeWithStatic(data, dcVillains, VILLAIN_IDS)),
-      )
-      .catch((e: unknown) => {
-        const msg =
-          e instanceof Error ? e.message : 'Failed to fetch villains'
-        setError(msg)
-      })
-      .finally(() => setLoading(false))
-  }, [])
-
-  return { villains, loading, error }
+export function useVillains(): {
+  villains: readonly Character[]
+  loading: false
+  error: null
+} {
+  return { villains: VILLAINS, loading: false, error: null }
 }
+
+export type { SuperheroAPIResponse }

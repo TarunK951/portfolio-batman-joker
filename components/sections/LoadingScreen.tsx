@@ -22,7 +22,7 @@ export function LoadingScreen() {
   const { theme } = useTheme();
   const loadingCopy = {
     batman: { mode: 'BAT_MODE', engaged: 'Order', edition: 'Edition 2026' },
-    samurai: { mode: 'SMR_MODE', engaged: 'Restraint', edition: '二〇二六' },
+    'ancient-india': { mode: 'DHR_MODE', engaged: 'Dharma', edition: '२०२६' },
     futuristic: { mode: 'SYS_MODE', engaged: 'Signal', edition: 'v.2026.Q2' },
   }[theme];
 
