@@ -11,7 +11,13 @@
       "Bash(curl -sL --max-time 30 -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" https://www.utopiatokyo.com/ -o /tmp/utopia.html)",
       "Read(//tmp/**)",
       "Bash(curl -sL --max-time 30 \"https://cdn.prod.website-files.com/69810f9f220beb18481f5866/css/utopiatokyo2026.webflow.shared.7afc8fe42.min.css\" -o /tmp/utopia.css)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(grep -oE \"Error[^<]{10,200}\")",
+      "Bash(grep -oE \"\\\\.map[^<]{5,100}\")",
+      "Bash(kill %1)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist *)",
+      "Bash(powershell *)"
     ]
   }
 }

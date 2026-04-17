@@ -1,6 +1,24 @@
 import dynamic from 'next/dynamic';
-import { Hero } from '@/components/sections/Hero';
 import { SITE } from '@/lib/seo';
+
+// Hero is a client-only leaf (uses useTheme + GSAP + an R3F LogoDock anchor).
+// Wrapping it in ssr:false matches every other section and eliminates an
+// entire class of SSR edge cases (Date.now / window-read / .map-over-undefined
+// during server render). A minimal semantic fallback keeps the initial HTML
+// crawlable for SEO even if JS is disabled.
+const Hero = dynamic(
+  () => import('@/components/sections/Hero').then((m) => m.Hero),
+  {
+    ssr: false,
+    loading: () => (
+      <section
+        id="hero"
+        className="relative flex min-h-screen w-full items-center justify-center bg-theme-bg text-theme-ink"
+        aria-hidden
+      />
+    ),
+  },
+);
 
 const Cursor = dynamic(
   () => import('@/components/shared/Cursor').then((m) => m.Cursor),
@@ -108,6 +126,20 @@ export default function Home() {
         full-stack engineer building cinematic web experiences with Next.js,
         React Three Fiber, and GSAP.
       </h1>
+      {/* No-JS fallback — identity survives even without client hydration. */}
+      <noscript>
+        <div style={{ padding: '4rem 1.5rem', textAlign: 'center', color: '#e8e8e8' }}>
+          <h2 style={{ fontSize: '2rem', letterSpacing: '-0.02em' }}>Satya Tarun K</h2>
+          <p style={{ marginTop: '0.5rem', opacity: 0.7 }}>
+            Creative Developer — Hyderabad, IN. Order meets chaos.
+          </p>
+          <p style={{ marginTop: '1rem' }}>
+            <a href={`mailto:${SITE.email}`} style={{ color: '#b00020' }}>
+              {SITE.email}
+            </a>
+          </p>
+        </div>
+      </noscript>
       <SmoothScroll />
       <PersistentLogo />
       <Cursor />
