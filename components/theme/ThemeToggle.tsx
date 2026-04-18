@@ -21,7 +21,7 @@ export function ThemeToggle() {
     <div
       role="radiogroup"
       aria-label="Theme selector"
-      className="fixed right-6 top-6 z-50 flex items-center rounded-full border border-theme-line bg-theme-surface/70 p-1 backdrop-blur"
+      className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center rounded-full border border-theme-line bg-theme-surface/70 p-1 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur"
     >
       {SEGMENTS.map((seg) => {
         const active = seg.id === theme;

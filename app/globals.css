@@ -1094,4 +1094,319 @@ button.ai-bento-card:hover,
   font-variant-numeric: tabular-nums;
 }
 
+/* Closest-match prediction card --------------------------------- */
+.bat-match-card {
+  position: relative;
+  border: 1px solid hsl(var(--accent) / 0.55);
+  background: hsl(var(--surface) / 0.6);
+  padding: 22px 24px 20px 24px;
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 240ms ease, border-color 240ms ease, transform 240ms ease;
+  overflow: hidden;
+}
+.bat-match-card:hover {
+  background: hsl(var(--surface) / 0.85);
+  transform: translateY(-1px);
+}
+.bat-match-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: hsl(var(--accent));
+  transition: width 0.3s ease;
+  box-shadow: 0 0 12px hsl(var(--accent) / 0.7);
+}
+.bat-match-card__thumb {
+  width: 60px;
+  height: 60px;
+  border: 1px solid hsl(var(--accent) / 0.7);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.bat-match-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.bat-match-card__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.55);
+}
+.bat-match-card__name {
+  line-height: 1;
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+}
+.bat-match-card__tagline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.6);
+  margin-top: 4px;
+}
+.bat-match-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.bat-match-card__score {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: hsl(var(--accent));
+  font-variant-numeric: tabular-nums;
+}
+.bat-match-card__pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid hsl(var(--accent));
+  color: hsl(var(--accent));
+}
 
+/* =========================================================
+   Mahabharata roster — view-mode toggle, grid tiles, list rows,
+   detail panel. Ancient-india theme only (gated in component).
+   ========================================================= */
+
+.ai-roster-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid hsl(var(--line) / 0.25);
+  border-radius: 999px;
+  padding: 2px;
+  background: hsl(var(--surface) / 0.5);
+}
+.ai-roster-toggle__btn {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: hsl(var(--ink) / 0.6);
+  background: transparent;
+  transition: background 180ms ease, color 180ms ease;
+  cursor: pointer;
+}
+.ai-roster-toggle__btn:hover {
+  color: hsl(var(--ink));
+}
+.ai-roster-toggle__btn--active {
+  background: hsl(var(--accent));
+  color: hsl(var(--bg));
+}
+
+/* ── GRID TILES ──────────────────────────────────────── */
+.ai-roster-tile-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ai-roster-tile {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--line) / 0.25);
+  background: hsl(var(--surface) / 0.5);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.ai-roster-tile:hover {
+  background: hsl(var(--accent) / 0.1);
+  border-color: hsl(var(--accent) / 0.5);
+}
+.ai-roster-tile--active {
+  border-color: hsl(var(--accent));
+  background: hsl(var(--accent) / 0.12);
+  box-shadow: 0 0 0 2px hsl(var(--accent) / 0.25);
+}
+.ai-roster-tile__img {
+  border-radius: 50% !important;
+  width: 70px !important;
+  height: 70px !important;
+  object-fit: cover;
+}
+.ai-roster-tile__initials {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  color: hsl(var(--accent-soft));
+  line-height: 1;
+}
+.ai-roster-tile__name {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.65);
+  text-align: center;
+  max-width: 96px;
+  line-height: 1.2;
+}
+.ai-roster-tile::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(var(--ink));
+  color: hsl(var(--bg));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+  z-index: 20;
+}
+.ai-roster-tile:hover::after {
+  opacity: 1;
+}
+
+/* ── LIST ROWS ───────────────────────────────────────── */
+.ai-roster-list {
+  border-top: 1px solid hsl(var(--line) / 0.18);
+  border-bottom: 1px solid hsl(var(--line) / 0.18);
+}
+.ai-roster-list__head {
+  display: grid;
+  grid-template-columns: 56px 1.4fr 1.4fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: hsl(var(--ink) / 0.45);
+  border-bottom: 1px solid hsl(var(--line) / 0.18);
+}
+.ai-roster-list__head-stats {
+  text-align: right;
+  min-width: 110px;
+}
+.ai-roster-list__body {
+  display: flex;
+  flex-direction: column;
+}
+.ai-roster-list-row {
+  display: grid;
+  grid-template-columns: 56px 1.4fr 1.4fr auto;
+  gap: 16px;
+  align-items: center;
+  height: 56px;
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid hsl(var(--line) / 0.1);
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms ease;
+  width: 100%;
+}
+.ai-roster-list-row:hover {
+  background: hsl(var(--accent) / 0.06);
+}
+.ai-roster-list-row--active {
+  background: hsl(var(--accent) / 0.1);
+}
+.ai-roster-list-row__thumb {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid hsl(var(--line) / 0.25);
+  background: hsl(var(--surface) / 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ai-roster-list-row__initials {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 14px;
+  color: hsl(var(--accent-soft));
+  letter-spacing: 0.04em;
+}
+.ai-roster-list-row__name {
+  font-family: var(--ai-serif, 'Cormorant Garamond', serif);
+  font-size: 18px;
+  color: hsl(var(--ink));
+  line-height: 1.2;
+}
+.ai-roster-list-row__deva {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--ink) / 0.65);
+  font-size: 13px;
+}
+.ai-roster-list-row__dot {
+  color: hsl(var(--ink) / 0.3);
+}
+.ai-roster-list-row__stats {
+  display: inline-flex;
+  gap: 12px;
+  justify-content: flex-end;
+  min-width: 110px;
+  font-size: 11px;
+  color: hsl(var(--accent));
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── DETAIL PANEL ────────────────────────────────────── */
+.ai-roster-detail {
+  border: 1px solid hsl(var(--line) / 0.2);
+  border-radius: 14px;
+  padding: 24px;
+  background: hsl(var(--surface) / 0.4);
+  animation: ai-roster-detail-slide 360ms ease-out;
+}
+@keyframes ai-roster-detail-slide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ai-roster-detail__portrait {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--line) / 0.25);
+  background: hsl(var(--surface) / 0.6);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ai-roster-detail__initials {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 120px;
+  color: hsl(var(--accent-soft));
+  letter-spacing: 0.04em;
+  line-height: 1;
+}

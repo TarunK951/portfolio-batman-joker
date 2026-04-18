@@ -1,18 +1,18 @@
 'use client';
 
 /**
- * MahabharataGrid (ancient-india only) — bento-card rebuild
+ * MahabharataGrid (ancient-india only)
  * ------------------------------------------------------------------
- * Reference: string-tune.fiddle.digital bento-card grid.
- * - Large stacked "Code With Clarity"-style headline above the grid.
- * - Bento grid of character cards with varied sizes (small/med/large).
- * - One "accent" card with a pixel-art portrait + speech-bubble quote.
- * - One "ink" quote card with a pull-quote in italic serif.
- * - Selecting a character promotes their detail into a sticky hero card.
- * Data wiring to mahabharataCharacters / mahabharataFactions preserved.
+ * Roster directory with two view modes:
+ *   - GRID  : 80px square tiles, dense 4/6/8-col responsive grid
+ *   - LIST  : 56px-tall single-column rows with thumbnail + stats
+ * Selecting a character slides a detail panel down above the roster.
+ * Chronicles (event paintings) live in their own row beneath.
+ *
+ * Persists view mode to localStorage `mahabharata-view`.
  */
 
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import {
@@ -24,10 +24,12 @@ import { ancientIndiaCopy } from '@/data/ancientIndiaCopy';
 import { SmartImage } from '@/components/shared/SmartImage';
 import { BentoCard } from '@/components/shared/BentoCard';
 import { AiDivider } from '@/components/shared/AiDivider';
-import { UnrollText } from '@/components/shared/UnrollText';
 import { KineticSerif } from '@/components/shared/KineticSerif';
-import { hindiCopy } from '@/data/hindiCopy';
+import { UnrollText } from '@/components/shared/UnrollText';
 import { mahabharataEvents, type MahabharataEvent } from '@/data/mahabharataEvents';
+
+type ViewMode = 'grid' | 'list';
+const STORAGE_KEY = 'mahabharata-view';
 
 const STAT_LABELS: Array<{ key: keyof MahabharataCharacter['stats']; label: string }> = [
   { key: 'valor', label: 'Valor' },
@@ -38,17 +40,134 @@ const STAT_LABELS: Array<{ key: keyof MahabharataCharacter['stats']; label: stri
   { key: 'influence', label: 'Influence' },
 ];
 
-function StatBar({ label, value, reloadKey }: { label: string; value: number; reloadKey: string }) {
-  const barRef = useRef<HTMLDivElement | null>(null);
+/** Real (non-fallback) image heuristic: must exist and not be a known
+ *  placeholder path. Currently only Karna ships a real asset. */
+function hasRealImage(c: MahabharataCharacter): boolean {
+  if (!c.image) return false;
+  if (c.image.includes('/characters/')) return false;
+  // Static dataset uses /mahabharata/{id}.jpg as a TODO placeholder;
+  // accept .png (provided assets) and any explicit non-placeholder path.
+  return c.image.endsWith('.png');
+}
+
+function getInitials(name: string): string {
+  const cleaned = name.replace(/^The\s+/i, '').trim();
+  const parts = cleaned.split(/\s+/);
+  if (parts.length >= 2 && parts[0] && parts[1]) {
+    return (parts[0][0]! + parts[1][0]!).toUpperCase();
+  }
+  return cleaned.slice(0, 2).toUpperCase();
+}
+
+// ─── GRID TILE ───────────────────────────────────────────────────
+function RosterTile({
+  character,
+  active,
+  onSelect,
+}: {
+  character: MahabharataCharacter;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  const real = hasRealImage(character);
+  return (
+    <div className="ai-roster-tile-wrap">
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-label={`Select ${character.name}`}
+        aria-pressed={active}
+        data-cursor-hover="true"
+        data-name={`${character.name} · ${character.nameDevanagari}`}
+        className={`ai-roster-tile${active ? ' ai-roster-tile--active' : ''}`}
+      >
+        {real ? (
+          <SmartImage
+            src={character.image}
+            alt={character.name}
+            name={character.name}
+            aspectClassName="aspect-square"
+            className="ai-roster-tile__img"
+          />
+        ) : (
+          <span className="ai-roster-tile__initials">{getInitials(character.name)}</span>
+        )}
+      </button>
+      <p className="ai-roster-tile__name">{character.name}</p>
+    </div>
+  );
+}
+
+// ─── LIST ROW ───────────────────────────────────────────────────
+function RosterListRow({
+  character,
+  active,
+  onSelect,
+}: {
+  character: MahabharataCharacter;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  const real = hasRealImage(character);
+  const faction = mahabharataFactions[character.faction];
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={active}
+      data-cursor-hover="true"
+      className={`ai-roster-list-row${active ? ' ai-roster-list-row--active' : ''}`}
+    >
+      <span className="ai-roster-list-row__thumb">
+        {real ? (
+          <SmartImage
+            src={character.image}
+            alt={character.name}
+            name={character.name}
+            aspectClassName="aspect-square"
+          />
+        ) : (
+          <span className="ai-roster-list-row__initials">
+            {getInitials(character.name)}
+          </span>
+        )}
+      </span>
+      <span className="ai-roster-list-row__name">{character.name}</span>
+      <span className="ai-roster-list-row__deva">
+        <span className="ai-devanagari">{character.nameDevanagari}</span>
+        <span aria-hidden className="ai-roster-list-row__dot">·</span>
+        <span
+          className="u-mono text-[9px] uppercase tracking-[0.22em]"
+          style={{ color: faction.color }}
+        >
+          {faction.label}
+        </span>
+      </span>
+      <span className="ai-roster-list-row__stats u-mono">
+        <span>{character.stats.martial}</span>
+        <span>{character.stats.strategy}</span>
+        <span>{character.stats.wisdom}</span>
+      </span>
+    </button>
+  );
+}
+
+// ─── DETAIL PANEL ───────────────────────────────────────────────
+function StatBar({ label, value }: { label: string; value: number }) {
+  const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const { gsap } = registerGsap();
-    const node = barRef.current;
+    const node = ref.current;
     if (!node) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(node, { scaleX: 0 }, { scaleX: value / 100, duration: 0.9, ease: 'power2.out' });
+      gsap.fromTo(
+        node,
+        { scaleX: 0 },
+        { scaleX: value / 100, duration: 0.8, ease: 'power2.out' },
+      );
     }, node);
     return () => ctx.revert();
-  }, [value, reloadKey]);
+  }, [value]);
   return (
     <div className="flex items-center gap-3">
       <span className="w-20 shrink-0 u-mono text-[9px] uppercase tracking-[0.22em] text-theme-ink/55">
@@ -56,82 +175,53 @@ function StatBar({ label, value, reloadKey }: { label: string; value: number; re
       </span>
       <div className="relative h-px flex-1 bg-theme-ink/15">
         <div
-          ref={barRef}
+          ref={ref}
           className="absolute inset-y-0 left-0 w-full origin-left bg-theme-accent"
           style={{ boxShadow: '0 0 6px hsl(var(--accent) / 0.5)' }}
         />
       </div>
-      <span className="w-6 text-right u-mono text-[10px] text-theme-accent">{value}</span>
+      <span className="w-7 text-right u-mono text-[10px] text-theme-accent">{value}</span>
     </div>
   );
 }
 
-function FactionPill({ character }: { character: MahabharataCharacter }) {
-  const faction = mahabharataFactions[character.faction];
-  return (
-    <span className="inline-flex items-center gap-2 u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/60">
-      <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: faction.color }} />
-      {faction.label}
-    </span>
-  );
-}
-
-function CharacterMiniCard({
+function DetailPanel({
   character,
-  active,
-  onSelect,
-  size = 'sm',
+  onClose,
 }: {
   character: MahabharataCharacter;
-  active: boolean;
-  onSelect: () => void;
-  size?: 'sm' | 'md';
+  onClose: () => void;
 }) {
+  const real = hasRealImage(character);
+  const faction = mahabharataFactions[character.faction];
   return (
-    <BentoCard
-      as="button"
-      onClick={onSelect}
-      active={active}
-      size={size}
-      ariaLabel={`Select ${character.name}`}
-    >
-      <div className="relative mb-3 overflow-hidden rounded-[14px] border border-theme-ink/10">
-        <SmartImage
-          src={character.image}
-          alt={character.name}
-          name={character.name}
-          aspectClassName="aspect-[4/5]"
-        />
-      </div>
-      <FactionPill character={character} />
-      <p className="ai-serif mt-2 text-[18px] leading-tight text-theme-ink">
-        {character.name}
-      </p>
-      <p className="ai-devanagari text-[12px] text-theme-ink/55">
-        {character.nameDevanagari}
-      </p>
-    </BentoCard>
-  );
-}
-
-function HeroCharacterCard({ character }: { character: MahabharataCharacter }) {
-  return (
-    <BentoCard size="lg" className="ai-hero-card">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-5 md:gap-6">
-        <div className="md:col-span-2">
-          <div className="overflow-hidden rounded-[14px] border border-theme-ink/10">
-            <SmartImage
-              src={character.image}
-              alt={character.name}
-              name={character.name}
-              aspectClassName="aspect-[3/4]"
-            />
-          </div>
-          <div className="mt-3">
-            <FactionPill character={character} />
+    <div className="ai-roster-detail">
+      <button
+        type="button"
+        onClick={onClose}
+        data-cursor-hover="true"
+        className="u-mono mb-5 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-theme-accent hover:opacity-80"
+      >
+        <span aria-hidden>←</span> back to roster
+      </button>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+        <div className="md:col-span-5">
+          <div className="ai-roster-detail__portrait">
+            {real ? (
+              <SmartImage
+                src={character.image}
+                alt={character.name}
+                name={character.name}
+                aspectClassName="aspect-square"
+              />
+            ) : (
+              <span className="ai-roster-detail__initials">
+                {getInitials(character.name)}
+              </span>
+            )}
           </div>
         </div>
-        <div className="md:col-span-3">
+        <div className="md:col-span-4">
           <p className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-accent">
             {character.epithet}
           </p>
@@ -144,25 +234,43 @@ function HeroCharacterCard({ character }: { character: MahabharataCharacter }) {
           <p className="ai-devanagari mt-1 text-theme-ink/55">
             {character.nameDevanagari}
           </p>
+          <span
+            className="mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 u-mono text-[9px] uppercase tracking-[0.24em]"
+            style={{
+              borderColor: faction.color,
+              color: faction.color,
+            }}
+          >
+            <span aria-hidden className="h-2 w-2 rounded-full" style={{ background: faction.color }} />
+            {faction.label} · {faction.devanagari}
+          </span>
           <p className="mt-4 text-[14px] leading-relaxed text-theme-ink/80">
             {character.bio}
           </p>
-          <div className="mt-5 space-y-2.5">
+          <p className="ai-serif-italic mt-4 text-[14px] leading-snug text-theme-ink/70">
+            &ldquo;{character.keyMoment}&rdquo;
+          </p>
+        </div>
+        <div className="md:col-span-3">
+          <p className="u-mono mb-3 text-[10px] uppercase tracking-[0.28em] text-theme-ink/55">
+            attributes · गुण
+          </p>
+          <div className="space-y-2.5">
             {STAT_LABELS.map((s) => (
               <StatBar
-                key={s.key}
+                key={`${character.id}-${s.key}`}
                 label={s.label}
                 value={character.stats[s.key]}
-                reloadKey={character.id}
               />
             ))}
           </div>
         </div>
       </div>
-    </BentoCard>
+    </div>
   );
 }
 
+// ─── EVENT (chronicles) CARD — kept from prior impl ────────────
 function EventBentoCard({ event }: { event: MahabharataEvent }) {
   return (
     <BentoCard size="lg" className="relative overflow-hidden p-0">
@@ -174,11 +282,9 @@ function EventBentoCard({ event }: { event: MahabharataEvent }) {
           aspectClassName="aspect-[16/10]"
           className="h-full w-full"
         />
-        {/* top-right Hindi title */}
         <div className="pointer-events-none absolute right-4 top-4 rounded-md bg-theme-bg/70 px-2 py-1 backdrop-blur-sm">
           <span className="ai-devanagari text-[14px] text-theme-accent">{event.hindi}</span>
         </div>
-        {/* bottom serif caption overlay */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-theme-bg/85 via-theme-bg/50 to-transparent p-5">
           <p className="u-mono text-[9px] uppercase tracking-[0.28em] text-theme-accent">
             {event.id} ॥ {event.hindi}
@@ -195,10 +301,24 @@ function EventBentoCard({ event }: { event: MahabharataEvent }) {
   );
 }
 
+// ─── MAIN ───────────────────────────────────────────────────────
 export function MahabharataGrid() {
   const { theme } = useTheme();
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [view, setView] = useState<ViewMode>('grid');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
+
+  // hydrate persisted view
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored === 'grid' || stored === 'list') setView(stored);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(STORAGE_KEY, view);
+  }, [view]);
 
   useEffect(() => {
     if (theme !== 'ancient-india') return;
@@ -206,32 +326,28 @@ export function MahabharataGrid() {
     const node = sectionRef.current;
     if (!node) return;
     const ctx = gsap.context(() => {
-      gsap.from('.mb-bento-card', {
-        y: 30,
+      gsap.from('.ai-roster-tile-wrap, .ai-roster-list-row', {
+        y: 12,
         opacity: 0,
-        duration: 0.7,
+        duration: 0.5,
         ease: 'power2.out',
-        stagger: 0.04,
+        stagger: 0.015,
         scrollTrigger: { trigger: node, start: 'top 80%' },
       });
     }, node);
     return () => ctx.revert();
-  }, [theme]);
+  }, [theme, view]);
 
   const selected = useMemo(
-    () => mahabharataCharacters[selectedIdx] ?? mahabharataCharacters[0]!,
-    [selectedIdx],
+    () => mahabharataCharacters.find((c) => c.id === selectedId) ?? null,
+    [selectedId],
   );
 
   if (theme !== 'ancient-india') return null;
 
   const copy = ancientIndiaCopy.dcGrid;
-
-  // Build grid: hero card (lg), then ~10 small cards, sprinkled with
-  // 1 accent pixel-art card + 1 ink quote card.
-  const characterList = mahabharataCharacters;
-  const accentChar = characterList[1];
-  const quoteChar = characterList[0];
+  const total = mahabharataCharacters.length;
+  const padded = String(total).padStart(3, '0');
 
   return (
     <section
@@ -240,17 +356,15 @@ export function MahabharataGrid() {
       className="u-section bg-theme-bg"
     >
       <div className="mx-auto max-w-[1280px]">
-        {/* ── OVERSIZE STACKED HEADLINE ────────────────── */}
-        <div className="mb-16 grid grid-cols-12 items-end gap-6">
+        {/* ── HEADER ───────────────────────────────────── */}
+        <div className="mb-10 grid grid-cols-12 items-end gap-6">
           <div className="col-span-12 md:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
-              [03] {copy.eyebrow} · the mythos
-              {' '}
-              <span aria-hidden className="text-theme-ink/30">॥</span>
-              {' '}
-              <span className="ai-devanagari normal-case tracking-normal">{hindiCopy.roster}</span>
-              {' '}
-              <span aria-hidden className="text-theme-ink/30">॥</span>
+              [ 03 · the roster ·{' '}
+              <span className="ai-devanagari normal-case tracking-normal">पात्रावलि</span>
+              {' '}]
+              <span aria-hidden className="ml-3 text-theme-ink/30">॥</span>{' '}
+              <span className="text-theme-ink/50">{copy.eyebrow}</span>
             </p>
             <div className="ai-serif leading-[0.92] text-theme-ink" style={{ fontSize: 'clamp(3rem, 8vw, 6.4rem)' }}>
               <UnrollText as="div" text="Code" onScroll />
@@ -265,127 +379,93 @@ export function MahabharataGrid() {
               />
             </div>
           </div>
-          <div className="col-span-12 md:col-span-4 md:text-right">
-            <p className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/50">
-              ( ˄ ) Built to tune<br />your narrative,<br />not fight your dom
-            </p>
+          <div className="col-span-12 flex flex-col items-end gap-3 md:col-span-4">
+            <span className="u-mono text-[10px] uppercase tracking-[0.3em] text-theme-ink/55">
+              {total} / {padded}
+            </span>
+            {/* view-mode pill toggle */}
+            <div className="ai-roster-toggle" role="tablist" aria-label="Roster view mode">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={view === 'grid'}
+                onClick={() => setView('grid')}
+                data-cursor-hover="true"
+                className={`ai-roster-toggle__btn${view === 'grid' ? ' ai-roster-toggle__btn--active' : ''}`}
+              >
+                grid
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={view === 'list'}
+                onClick={() => setView('list')}
+                data-cursor-hover="true"
+                className={`ai-roster-toggle__btn${view === 'list' ? ' ai-roster-toggle__btn--active' : ''}`}
+              >
+                list
+              </button>
+            </div>
           </div>
         </div>
 
-        <AiDivider className="mb-12" />
+        <AiDivider className="mb-10" />
 
-        {/* ── HERO CARD — current selection ──────────── */}
-        <div className="mb-10">
-          <div className="mb-bento-card">
-            <HeroCharacterCard character={selected} />
+        {/* ── DETAIL PANEL (slides above roster) ──────── */}
+        {selected ? (
+          <div className="mb-10">
+            <DetailPanel character={selected} onClose={() => setSelectedId(null)} />
           </div>
-        </div>
+        ) : null}
 
-        {/* ── BENTO GRID ─────────────────────────────── */}
-        <div
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4 md:auto-rows-[minmax(260px,auto)]"
-        >
-          {/* Accent pixel-art card */}
-          {accentChar ? (
-            <div className="mb-bento-card md:col-span-2 md:row-span-2">
-              <BentoCard variant="accent" size="lg" className="flex flex-col justify-between gap-4">
-                <div>
-                  <p className="u-mono text-[10px] uppercase tracking-[0.28em] opacity-80">
-                    Performance Supervision · फिडल
-                  </p>
-                  <p className="ai-serif mt-2 text-[26px] leading-tight">
-                    Control your <em className="ai-serif-italic">Progress Data</em>
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="ai-pixel-portrait max-w-[120px] flex-1">AIKA</div>
-                  <div className="ai-speech flex-1">
-                    Eighteen days, eighteen stories —
-                    pick a figure and hear their song.
-                  </div>
-                </div>
-              </BentoCard>
-            </div>
-          ) : null}
-
-          {/* Ink quote card */}
-          {quoteChar ? (
-            <div className="mb-bento-card md:col-span-2 md:row-span-1">
-              <BentoCard variant="ink" size="md">
-                <p className="u-mono text-[10px] uppercase tracking-[0.28em] opacity-70">
-                  कर्मण्येवाधिकारस्ते — on duty
-                </p>
-                <p className="ai-serif-italic mt-3 text-[20px] leading-snug">
-                  &ldquo;{quoteChar.keyMoment}&rdquo;
-                </p>
-                <p className="u-mono mt-4 text-[10px] uppercase tracking-[0.28em] opacity-60">
-                  — {quoteChar.name}
-                </p>
-              </BentoCard>
-            </div>
-          ) : null}
-
-          {/* Remaining character mini-cards — event cards injected at 4/10/16 */}
-          {characterList.map((c, idx) => {
-            // Inject a large event bento card BEFORE positions 4, 10, 16
-            // (i.e. after every 6 character tiles, using events 0/1/2).
-            const injectIdx =
-              idx === 4 ? 0 : idx === 10 ? 1 : idx === 16 ? 2 : -1;
-            const eventToInject =
-              injectIdx >= 0 ? mahabharataEvents[injectIdx] : undefined;
-            return (
-              <Fragment key={c.id}>
-                {eventToInject ? (
-                  <div
-                    key={`event-${eventToInject.id}`}
-                    className="mb-bento-card"
-                  >
-                    <EventBentoCard event={eventToInject} />
-                  </div>
-                ) : null}
-                <div className="mb-bento-card">
-                  <CharacterMiniCard
-                    character={c}
-                    active={idx === selectedIdx}
-                    onSelect={() => setSelectedIdx(idx)}
-                  />
-                </div>
-              </Fragment>
-            );
-          })}
-
-          {/* StringTune-esque helper card */}
-          <div className="mb-bento-card md:col-span-2">
-            <BentoCard size="md">
-              <p className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-accent">
-                Use Scroll Container. If you want
-              </p>
-              <p className="ai-serif mt-2 text-[18px] leading-snug text-theme-ink">
-                eighteen days rolled out — one parva per hour of reading —
-                press <span className="ai-serif-italic">Skill Hub</span>.
-              </p>
-              <div className="mt-4 rounded-[12px] border border-theme-ink/15 bg-theme-bg/40 p-3">
-                <p className="u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/55">
-                  preview · parva 01
-                </p>
-                <p className="mt-2 text-[12px] text-theme-ink/75">
-                  &ldquo;Between two armies, a choice becomes dharma.&rdquo;
-                </p>
-              </div>
-            </BentoCard>
+        {/* ── ROSTER ──────────────────────────────────── */}
+        {view === 'grid' ? (
+          <div className="grid grid-cols-4 gap-x-3 gap-y-5 md:grid-cols-6 lg:grid-cols-8">
+            {mahabharataCharacters.map((c) => (
+              <RosterTile
+                key={c.id}
+                character={c}
+                active={selectedId === c.id}
+                onSelect={() =>
+                  setSelectedId((prev) => (prev === c.id ? null : c.id))
+                }
+              />
+            ))}
           </div>
+        ) : (
+          <div className="ai-roster-list">
+            <div className="ai-roster-list__head u-mono">
+              <span />
+              <span>name · नाम</span>
+              <span>faction · पक्ष</span>
+              <span className="ai-roster-list__head-stats">str / agi / int</span>
+            </div>
+            <div className="ai-roster-list__body">
+              {mahabharataCharacters.map((c) => (
+                <RosterListRow
+                  key={c.id}
+                  character={c}
+                  active={selectedId === c.id}
+                  onSelect={() =>
+                    setSelectedId((prev) => (prev === c.id ? null : c.id))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
-          <div className="mb-bento-card md:col-span-2">
-            <BentoCard size="md">
-              <p className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-accent">
-                Safe natural kerning when Splitting
-              </p>
-              <p className="ai-serif mt-2 text-[18px] leading-snug text-theme-ink">
-                Every name unrolls letter by letter — the
-                <span className="ai-serif-italic"> Gandiva </span>
-                releases only when the grip is true.
-              </p>
-            </BentoCard>
+        {/* ── CHRONICLES (events) ─────────────────────── */}
+        <div className="mt-16">
+          <p className="u-mono mb-5 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
+            [ chronicles ·{' '}
+            <span className="ai-devanagari normal-case tracking-normal">प्रसंग</span>
+            {' '}]
+          </p>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            {mahabharataEvents.slice(0, 3).map((ev) => (
+              <EventBentoCard key={ev.id} event={ev} />
+            ))}
           </div>
         </div>
       </div>

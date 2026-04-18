@@ -58,6 +58,46 @@ function valuesFromCharacter(c: Character): StatValues {
   ];
 }
 
+const MAX_STAT_DISTANCE = Math.sqrt(6 * 100 * 100);
+
+interface MatchResult {
+  index: number;
+  character: Character;
+  distance: number;
+  score: number;
+}
+
+function findClosestMatch(
+  values: StatValues,
+  roster: readonly Character[],
+): MatchResult | null {
+  let best: MatchResult | null = null;
+  for (let i = 0; i < roster.length; i += 1) {
+    const c = roster[i];
+    if (!c) continue;
+    const v = valuesFromCharacter(c);
+    let sumSq = 0;
+    for (let j = 0; j < 6; j += 1) {
+      const a = values[j as 0 | 1 | 2 | 3 | 4 | 5];
+      const b = v[j as 0 | 1 | 2 | 3 | 4 | 5];
+      const d = a - b;
+      sumSq += d * d;
+    }
+    const distance = Math.sqrt(sumSq);
+    const score = Math.round(100 - (distance / MAX_STAT_DISTANCE) * 100);
+    if (best === null || distance < best.distance) {
+      best = { index: i, character: c, distance, score };
+    } else if (
+      distance === best.distance &&
+      c.alignment === 'hero' &&
+      best.character.alignment !== 'hero'
+    ) {
+      best = { index: i, character: c, distance, score };
+    }
+  }
+  return best;
+}
+
 function hexVertex(i: number, n: number, r: number, cx: number, cy: number) {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
   return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
@@ -654,6 +694,43 @@ export function BatmanStatLab() {
     return () => ctx.revert();
   }, []);
 
+  // Closest-match prediction (recomputes only when slider values or roster change)
+  const match = useMemo(
+    () => findClosestMatch(values, roster),
+    [values, roster],
+  );
+  const isPerfectSelfMatch =
+    selected !== undefined && match !== null && match.distance === 0
+      && match.character.id === selected.id;
+
+  const matchCardRef = useRef<HTMLButtonElement | null>(null);
+  const lastMatchIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!match) return;
+    const node = matchCardRef.current;
+    if (!node) {
+      lastMatchIdRef.current = match.character.id;
+      return;
+    }
+    if (
+      lastMatchIdRef.current !== null &&
+      lastMatchIdRef.current !== match.character.id
+    ) {
+      const { gsap } = registerGsap();
+      gsap.fromTo(
+        node,
+        { borderColor: 'hsl(var(--accent))', boxShadow: '0 0 22px hsl(var(--accent) / 0.55)' },
+        {
+          borderColor: 'hsl(var(--accent) / 0.55)',
+          boxShadow: '0 0 0 hsl(var(--accent) / 0)',
+          duration: 0.4,
+          ease: 'power2.out',
+        },
+      );
+    }
+    lastMatchIdRef.current = match.character.id;
+  }, [match]);
+
   // Derived sums
   const sum = values.reduce((a, b) => a + b, 0);
   const level = Math.round(sum / 6);
@@ -818,6 +895,55 @@ export function BatmanStatLab() {
                 </div>
               </div>
             </div>
+
+            {/* Row 6 — Closest Match prediction card */}
+            {match ? (
+              <div className="mt-6 grid grid-cols-12 gap-4">
+                <button
+                  type="button"
+                  ref={matchCardRef}
+                  onClick={() => commitSelection(match.index)}
+                  data-cursor-hover
+                  className="bat-match-card col-span-12 text-left"
+                  aria-label={`Switch lab to ${match.character.name}`}
+                >
+                  <span
+                    className="bat-match-bar"
+                    aria-hidden
+                    style={{ width: `${Math.max(0, Math.min(100, match.score))}%` }}
+                  />
+                  <div className="bat-match-card__thumb">
+                    <SmartImage
+                      src={match.character.images.sm}
+                      alt={match.character.name}
+                      name={match.character.name}
+                      aspectClassName="aspect-square"
+                    />
+                  </div>
+                  <div className="bat-match-card__body">
+                    <span className="bat-match-card__eyebrow">
+                      [ closest match &middot; 0.{match.index.toString().padStart(2, '0')} ]
+                    </span>
+                    <h3 className="bat-stencil bat-stencil--accent bat-match-card__name">
+                      {match.character.name.toUpperCase()}
+                    </h3>
+                    <span className="bat-match-card__tagline">
+                      Closest in temperament to {match.character.title}
+                    </span>
+                  </div>
+                  <div className="bat-match-card__meta">
+                    <span className="bat-match-card__pill">
+                      {match.character.alignment === 'hero' ? 'HERO' : 'VILLAIN'}
+                    </span>
+                    <span className="bat-match-card__score">
+                      {isPerfectSelfMatch
+                        ? 'PERFECT MATCH'
+                        : `MATCH SCORE: ${match.score}%`}
+                    </span>
+                  </div>
+                </button>
+              </div>
+            ) : null}
 
             {generatingFor !== null && roster[generatingFor] ? (
               <GeneratingOverlay

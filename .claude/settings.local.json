@@ -26,7 +26,8 @@
       "Bash(/c/Users/TARUN/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/ffmpeg.exe -y -i data/19-03-00.mp4 -vf fps=1/4,scale=1280:-1 -q:v 3 data/refs/ai-dense/f_%02d.jpg -loglevel error)",
       "Bash(wait)",
       "WebFetch(domain:commons.wikimedia.org)",
-      "WebFetch(domain:en.wikipedia.org)"
+      "WebFetch(domain:en.wikipedia.org)",
+      "Bash(taskkill //F //IM node.exe)"
     ]
   }
 }

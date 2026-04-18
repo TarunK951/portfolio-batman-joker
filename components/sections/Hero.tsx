@@ -117,7 +117,7 @@ export function Hero() {
         </p>
 
         <div className="hero-reveal" style={{ willChange: 'transform' }} aria-hidden>
-          <LogoDock id="hero" size="xl" />
+          <LogoDock id="hero" size="xxl" />
         </div>
 
         <DepthText
@@ -231,11 +231,25 @@ function AncientIndiaHero({
         />
       </div>
 
-      {/* COMPASS + logo */}
+      {/* COMPASS + Karna sketch as the diegetic centerpiece */}
       <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-12 sm:px-12">
         <div className="hero-reveal" aria-hidden>
           <Compass label="FLOW CONTROL">
-            <LogoDock id="hero" size="xl" />
+            <div className="ai-compass-portrait">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/mahabharata/karna.png"
+                alt=""
+                aria-hidden
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  mixBlendMode: 'multiply',
+                  opacity: 0.92,
+                }}
+              />
+            </div>
           </Compass>
         </div>
       </div>

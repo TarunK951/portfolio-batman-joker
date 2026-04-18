@@ -27,12 +27,55 @@ export interface Character extends DCCharacter {
   skillMapped: string
 }
 
+// Akabab Superhero API CDN — free, no key, hosts character art for the
+// canonical numeric ids. We map our kebab-case ids to the numeric ids
+// here so the UI always has a real image (with SmartImage fallback for
+// any 404s).
+const AKABAB_ID: Readonly<Record<string, number>> = {
+  // heroes
+  batman: 70,
+  superman: 644,
+  'wonder-woman': 720,
+  flash: 213,
+  'green-lantern': 263,
+  aquaman: 40,
+  cyborg: 148,
+  nightwing: 496,
+  robin: 562,
+  'green-arrow': 271,
+  'martian-manhunter': 429,
+  shazam: 620,
+  // villains
+  joker: 370,
+  harley: 301,
+  'harley-quinn': 301,
+  bane: 65,
+  riddler: 578,
+  scarecrow: 607,
+  'poison-ivy': 543,
+  'mr-freeze': 469,
+  'two-face': 680,
+  deathstroke: 195,
+  'lex-luthor': 405,
+  darkseid: 173,
+  'black-adam': 62,
+  'reverse-flash': 561,
+  'killer-croc': 380,
+  brainiac: 99,
+}
+
+function akababUrl(id: string, size: 'xs' | 'sm' | 'md' | 'lg'): string {
+  const n = AKABAB_ID[id]
+  if (!n) return `/characters/${id}.jpg` // SmartImage will fall back to initials
+  return `https://akabab.github.io/superhero-api/api/images/${size}/${n}.jpg`
+}
+
 function toCharacter(c: DCCharacter): Character {
   const images: SuperheroImages = {
-    xs: c.image,
-    sm: c.image,
-    md: c.image,
-    lg: c.image,
+    xs: akababUrl(c.id, 'xs'),
+    sm: akababUrl(c.id, 'sm'),
+    md: akababUrl(c.id, 'md'),
+    lg: akababUrl(c.id, 'lg'),
   }
   return {
     ...c,

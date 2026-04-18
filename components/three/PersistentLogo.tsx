@@ -26,7 +26,7 @@ import {
 /*                                   Dock                                     */
 /* -------------------------------------------------------------------------- */
 
-export type LogoDockSize = 'small' | 'medium' | 'large' | 'xl';
+export type LogoDockSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl';
 
 /**
  * Values can be numbers (legacy pixel sizes) or CSS strings (responsive
@@ -39,6 +39,7 @@ const DOCK_DIMENSIONS: Record<LogoDockSize, { w: number | string; h: number | st
   medium: { w: 160, h: 160 },
   large: { w: 420, h: 420 },
   xl: { w: 'min(62vmin, 680px)', h: 'min(62vmin, 680px)' },
+  xxl: { w: 'min(82vmin, 920px)', h: 'min(82vmin, 920px)' },
 };
 
 export function LogoDock({
@@ -233,5 +234,8 @@ function ModelViewerPersistent({
 
 export function PersistentLogo() {
   const { theme } = useTheme();
+  // The bat-logo GLB is meaningful only under the batman theme.
+  // Under ancient-india the compass / hero composes its own visual mark.
+  if (theme !== 'batman') return null;
   return <ModelViewerPersistent theme={theme} />;
 }

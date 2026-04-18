@@ -10,6 +10,14 @@ const LogoMarkScene = dynamic(
   { ssr: false },
 );
 
+const LottiePlayer = dynamic(
+  () =>
+    import('@lottiefiles/dotlottie-react').then((m) => ({
+      default: m.DotLottieReact,
+    })),
+  { ssr: false },
+);
+
 /**
  * Loading screen — batman theme renders the utopiatokyo-style crossed-blade
  * loader with scattered SATYA TARUN letters and an [ ENTER PORTFOLIO ] CTA.
@@ -92,17 +100,11 @@ export function LoadingScreen() {
 
     const ctx = gsap.context(() => {
       if (isBatman) {
-        // Blades grow in via clip-path reveal.
+        // Lottie scales + fades in.
         gsap.fromTo(
-          '.bat-loader-blade',
-          { clipPath: 'inset(50% 0% 50% 0%)', opacity: 0 },
-          {
-            clipPath: 'inset(0% 0% 0% 0%)',
-            opacity: 1,
-            duration: 1.2,
-            ease: 'power3.out',
-            force3D: true,
-          },
+          '.bat-loader-lottie',
+          { scale: 0.9, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1.0, ease: 'power3.out', force3D: true },
         );
         // Scattered letters fade in.
         gsap.fromTo(
@@ -275,18 +277,15 @@ export function LoadingScreen() {
       {/* Horizontal scan sweep */}
       <div className="bat-loader-sweep pointer-events-none absolute inset-x-0 h-px" aria-hidden />
 
-      {/* Crossed blades — centered */}
+      {/* Centered Lottie animation */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div
-          className="bat-loader-blade"
-          style={{ transform: 'translate(-50%, -50%) rotate(22deg)' }}
+          className="bat-loader-lottie"
+          style={{ width: 'min(60vmin, 560px)', height: 'min(60vmin, 560px)' }}
           aria-hidden
-        />
-        <div
-          className="bat-loader-blade"
-          style={{ transform: 'translate(-50%, -50%) rotate(-22deg)' }}
-          aria-hidden
-        />
+        >
+          <LottiePlayer src="/lottie/loader.lottie" autoplay loop />
+        </div>
       </div>
 
       {/* Scattered letters */}
