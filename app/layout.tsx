@@ -1,8 +1,19 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue, Caveat, Space_Mono, Big_Shoulders_Stencil_Display, Crimson_Pro, Noto_Serif_Devanagari } from 'next/font/google';
+import {
+  Inter,
+  Bebas_Neue,
+  Caveat,
+  Space_Mono,
+  Big_Shoulders_Stencil_Display,
+  Crimson_Pro,
+  Noto_Serif_Devanagari,
+  Crimson_Text,
+  JetBrains_Mono,
+} from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 import { SITE } from '@/lib/seo';
 
 // Body sans (Utopia uses PPMori — Inter is the closest free, neutral grotesque)
@@ -55,6 +66,23 @@ const devanagari = Noto_Serif_Devanagari({
   subsets: ['devanagari'],
   weight: ['400', '700'],
   variable: '--font-devanagari',
+  display: 'swap',
+});
+
+// Batman reskin additions — Crimson Text for lore paragraphs, JetBrains Mono
+// for terminal / coords / version strings.
+const crimsonText = Crimson_Text({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-lore',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-code',
   display: 'swap',
 });
 
@@ -144,7 +172,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       data-theme="batman"
-      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable} ${stencil.variable} ${crimson.variable} ${devanagari.variable}`}
+      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable} ${stencil.variable} ${crimson.variable} ${devanagari.variable} ${crimsonText.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -164,7 +192,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.2.0/model-viewer.min.js"
           strategy="afterInteractive"
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

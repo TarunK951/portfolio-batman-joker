@@ -14,13 +14,19 @@
 [data-theme='batman'] {
   --bg: 225 18% 10%;         /* #14171f */
   --surface: 224 14% 14%;    /* #1c1f28 */
+  --surface-raised: 224 14% 18%; /* #252832 elevated panel */
   --paper: 49 30% 86%;       /* #ebe5ce cream breaker */
   --accent: 0 100% 55%;      /* #ff1919 utopia red */
   --accent-soft: 0 100% 65%;
+  --accent-dim: 0 55% 38%;   /* #962c2c desaturated idle accent */
   --ink: 49 30% 92%;         /* near-cream text on dark */
   --ink-muted: 0 0% 60%;
+  --ink-subtle: 0 0% 45%;    /* caption / timestamp tier */
   --line: 0 0% 14%;
   --neutral-700: 0 0% 14%;
+  /* hairline rule: pre-baked white@12% — read with `hsl(var(--hairline))` (no / alpha).
+     Value kept as full hsla via fallback in consumers when needed. */
+  --hairline: 0 0% 100%;     /* base hue; consumer applies / 0.12 alpha */
 }
 
 /* ANCIENT-INDIA — light, warm, minimal. Inverts ink/bg relationship.

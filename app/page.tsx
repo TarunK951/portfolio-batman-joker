@@ -74,6 +74,46 @@ const Footer = dynamic(
   { ssr: false },
 );
 
+// Utopia-Tokyo reskin sections (Batman). All client-only leaves.
+const UtopiaHero = dynamic(
+  () =>
+    import('@/components/sections/utopia/UtopiaHero').then((m) => m.UtopiaHero),
+  { ssr: false },
+);
+const StanzaBlock = dynamic(
+  () =>
+    import('@/components/sections/utopia/StanzaBlock').then((m) => m.StanzaBlock),
+  { ssr: false },
+);
+const VersionMarquee = dynamic(
+  () =>
+    import('@/components/sections/utopia/VersionMarquee').then(
+      (m) => m.VersionMarquee,
+    ),
+  { ssr: false },
+);
+const LoreParallax = dynamic(
+  () =>
+    import('@/components/sections/utopia/LoreParallax').then(
+      (m) => m.LoreParallax,
+    ),
+  { ssr: false },
+);
+const CaseFileGallery = dynamic(
+  () =>
+    import('@/components/sections/utopia/CaseFileGallery').then(
+      (m) => m.CaseFileGallery,
+    ),
+  { ssr: false },
+);
+const BackgroundColorMorph = dynamic(
+  () =>
+    import('@/components/motion/BackgroundColorMorph').then(
+      (m) => m.BackgroundColorMorph,
+    ),
+  { ssr: false },
+);
+
 export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -149,6 +189,26 @@ export default function Home() {
       <ParchmentFrame />
       <FpsRail />
       <Hero />
+
+      {/* Utopia-Tokyo reskin (Batman) — ORDER MEETS CHAOS + stanzas + marquee +
+          lore + horizontal case files. Wrapped in BackgroundColorMorph so
+          the canvas shifts tone as sections scroll into view. */}
+      <BackgroundColorMorph
+        initial="hsl(var(--bg))"
+        stops={[
+          { selector: '[data-morph-stop="stanza"]', color: 'hsl(225 18% 8%)' },
+          { selector: '[data-morph-stop="marquee"]', color: 'hsl(225 18% 10%)' },
+          { selector: '[data-morph-stop="lore"]', color: 'hsl(224 14% 14%)' },
+          { selector: '[data-morph-stop="gallery"]', color: 'hsl(225 18% 7%)' },
+        ]}
+      >
+        <UtopiaHero />
+        <StanzaBlock />
+        <VersionMarquee />
+        <LoreParallax />
+        <CaseFileGallery />
+      </BackgroundColorMorph>
+
       {/* DCGrid gates itself to batman theme. */}
       <DCGrid />
       {/* MahabharataGrid gates itself to ancient-india theme. */}
