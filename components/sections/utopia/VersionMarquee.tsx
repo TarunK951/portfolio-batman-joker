@@ -15,7 +15,8 @@ export function VersionMarquee() {
   return (
     <section
       data-morph-stop="marquee"
-      className="relative w-full border-y border-theme-accent/40 bg-theme-bg py-4"
+      data-cursor="target"
+      className="relative w-full border-y border-theme-accent/40 bg-theme-bg py-5"
     >
       <Marquee speed={38} pauseOnHover>
         {ITEMS.map((item, idx) => (

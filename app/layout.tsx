@@ -14,6 +14,8 @@ import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
+import { GrainOverlay } from '@/components/motion/GrainOverlay';
+import { TargetCursor } from '@/components/motion/TargetCursor';
 import { SITE } from '@/lib/seo';
 
 // Body sans (Utopia uses PPMori — Inter is the closest free, neutral grotesque)
@@ -160,7 +162,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#14171f' }],
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }],
   width: 'device-width',
   initialScale: 1,
 };
@@ -193,6 +195,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="afterInteractive"
         />
         <ThemeProvider>
+          <GrainOverlay />
+          <TargetCursor />
           <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </ThemeProvider>
       </body>

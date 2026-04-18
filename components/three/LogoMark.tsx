@@ -32,8 +32,8 @@ const PALETTE: Record<
   }
 > = {
   batman: {
-    accent: '#ff1919',
-    glow: '#ff4d4d',
+    accent: '#D72638',
+    glow: '#F04757',
     base: '#0a0a0a',
     emissive: 0.45,
     metalness: 0.95,

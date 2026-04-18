@@ -30,6 +30,7 @@ export function UtopiaHero() {
         <div className="flex flex-col items-center gap-10 text-center">
           <h2
             data-pin-headline
+            data-cursor="target"
             className="u-h1 font-display text-theme-ink"
             style={{ willChange: 'transform' }}
           >
@@ -52,7 +53,7 @@ export function UtopiaHero() {
                 className="ml-1 inline-block h-[1em] w-[0.5em] translate-y-[2px] bg-theme-accent align-middle u-flicker"
               />
             </span>
-            <p className="max-w-[520px] font-lore text-[16px] leading-[1.55] text-theme-ink/70">
+            <p className="mx-auto max-w-[68ch] font-lore text-[17px] leading-[1.7] text-theme-ink/75">
               In a world that breaks everyone &mdash; some choose to become the
               darkness that protects the light.
             </p>

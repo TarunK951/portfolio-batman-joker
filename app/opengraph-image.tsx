@@ -16,18 +16,18 @@ export default async function OGImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: '#14171f',
-          color: '#ebe5ce',
+          background: '#0A0A0A',
+          color: '#EDEAE0',
           padding: '64px',
           fontFamily: 'sans-serif',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, letterSpacing: 4, textTransform: 'uppercase', opacity: 0.7 }}>
           <span>satyatarun</span>
-          <span style={{ color: '#ff1919' }}>Portfolio / 2026</span>
+          <span style={{ color: '#D72638' }}>Portfolio / 2026</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: 28, letterSpacing: 6, textTransform: 'uppercase', color: '#ff1919', marginBottom: 24 }}>
+          <div style={{ fontSize: 28, letterSpacing: 6, textTransform: 'uppercase', color: '#D72638', marginBottom: 24 }}>
             Creative Developer
           </div>
           <div
@@ -36,7 +36,7 @@ export default async function OGImage() {
               lineHeight: 0.92,
               letterSpacing: '-0.03em',
               fontWeight: 600,
-              color: '#ebe5ce',
+              color: '#EDEAE0',
               display: 'flex',
               flexDirection: 'column',
             }}

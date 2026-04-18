@@ -135,3 +135,50 @@ All character portraits use `/characters/{id}.jpg` or `/mahabharata/{id}.jpg` pl
 - TARUN DepthText under ancient-india's light background uses the muted-vermillion shadow — verify legibility.
 - Mahabharata character images are placeholders; SmartImage fallback is expected.
 
+
+---
+
+## Wave 4.2 — Batman palette re-tone + grain + TargetCursor + layout polish (2026-04-18)
+
+### Palette swap (Utopia-Tokyo tonal reference)
+- `app/globals.css` — `[data-theme='batman']` HSL vars rebuilt around `#0A0A0A / #111111 / #161616 / #D72638 / #8A1824 / #EDEAE0 / #8A8880`. Hairline now cream @ 8% alpha (`45 22% 90% / 0.08`).
+- `tailwind.config.ts` — `batman.*` and `utopia.*` hex aliases synced. Added `batman.surface-raised`, `batman.accent-dim`, `batman.ink-subtle`. `theme-hairline` alias retuned to cream/8%.
+- `components/three/LogoMark.tsx` — batman: `accent '#D72638'`, `glow '#F04757'`, `base '#0A0A0A'`.
+- `components/shared/DepthText.tsx` — batman: `color '#EDEAE0'`, `shadow '#D72638'`.
+- `app/layout.tsx` — `themeColor` meta = `#0A0A0A`.
+- `app/opengraph-image.tsx`, `app/global-error.tsx`, `app/page.tsx` noscript — all hardcoded legacy hex replaced with the new tokens.
+- `app/globals.css` bat-loader-blade gradient stops and crosshair-bg SVG updated to `#EDEAE0` / `#D72638`.
+- `docs/palette.md` — fully rewritten to reflect the new tokens and Tailwind aliases.
+
+### Grain overlay
+- New `components/motion/GrainOverlay.tsx` — client component, fixed full-viewport, `pointer-events: none`, `z-index: 30`, `mix-blend-mode: overlay`, 6% opacity. Inline SVG `feTurbulence` data-URI (220x220 tile, 0.9 baseFrequency, 1 octave). Mounted once in `app/layout.tsx` inside `<ThemeProvider>`, above `<SmoothScrollProvider>`.
+
+### TargetCursor
+- New `components/motion/TargetCursor.tsx` — hand-rolled react-bits pattern. Crosshair + four corner brackets, centre dot. GSAP `quickTo` follow (reticle 0.28s power3.out, dot 0.08s power2.out). Snaps to `data-cursor="target"` / `.cursor-target` elements via bbox `width/height/x/y` tween (0.35s power3.out). Hides on `@media (hover: none)`. Native cursor already hidden in `globals.css` via the existing `cursor: none !important` rule.
+- Applied `data-cursor="target"` to: UtopiaHero headline, every StanzaBlock row, the whole VersionMarquee, each LoreParallax paragraph, each CaseFileGallery card.
+
+### FixedMetaHud
+- New `components/sections/utopia/FixedMetaHud.tsx` — four fixed corners (coords TL, version TR, `>_EXECUTE_PROTOCOL` + blinking caret BL, live UTC clock BR). Mounted in `app/page.tsx`.
+
+### Layout polish pass
+- `app/page.tsx` — removed old `<Hero />` (two stacked heroes bug), removed page-level `<SmoothScroll />` (layout-level provider handles it). Also removed orphaned `<Cursor />` shim in favour of `<TargetCursor />` at layout root.
+- `BackgroundColorMorph` stops retuned to subtle near-black ladder (`hsl(0 0% 5%)` → `6%` → `7%` → `4%`).
+- `UtopiaHero` — lore paragraph now `mx-auto max-w-[68ch]` with font-lore 17px/1.7 leading.
+- `StanzaBlock` — `py-[20vh]`, each word on its own line in `clamp(4rem, 14vw, 16rem)` Bebas Neue, hairline divider before every stanza, `01 / 03`-style mono numbering, lore caption `max-w-[68ch]` centred.
+- `LoreParallax` — single narrow `max-w-[680px]` centred column, `py-[20vh]`, lore at 19px/1.75 leading, hairline accent below the heading, eyebrow `[ 02 ] / lore`.
+- `CaseFileGallery` — square aspect cards, hairline-only border (no filled panel), `01 / 06` mono label top-left, italic serif title bottom-left, ghost numeral centred at 7% ink opacity.
+- `VersionMarquee` — made the whole band a `data-cursor="target"`.
+
+### Docs
+- `docs/animation-timings.md` — added TargetCursor, GrainOverlay, FixedMetaHud tables.
+- `docs/palette.md` — fully rewritten (see above).
+
+### Verification
+- `npm run typecheck` — clean (0 errors).
+- `npx eslint` on all changed files — clean.
+
+### Rough edges / follow-ups
+- `SmoothScroll` and `Cursor` shims still exist under `components/shared/`; they are no longer mounted anywhere and can be deleted in a future sweep.
+- The hero/section `BackgroundColorMorph` ladder is very subtle (4–7% L). If the shift feels imperceptible at 60hz, widen the stops. Still deliberately subtle per the utopiatokyo.com brief.
+- `FixedMetaHud` renders on all themes including `ancient-india` — probably fine (mono/cream reads on parchment) but worth eyeballing. If it needs gating, wrap in a `useTheme()` check inside the component.
+- `TargetCursor` currently snaps only on direct `mouseover` of targeted nodes. Very rapid cursor motion across overlapping targets may cause a brief un-snap flicker; adequate for the current interactions but could be smoothed with a debounced `closest()` sweep on `mousemove` if it becomes noticeable.

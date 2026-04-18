@@ -1,31 +1,16 @@
 import dynamic from 'next/dynamic';
 import { SITE } from '@/lib/seo';
 
-// Hero is a client-only leaf (uses useTheme + GSAP + an R3F LogoDock anchor).
-// Wrapping it in ssr:false matches every other section and eliminates an
-// entire class of SSR edge cases (Date.now / window-read / .map-over-undefined
-// during server render). A minimal semantic fallback keeps the initial HTML
-// crawlable for SEO even if JS is disabled.
-const Hero = dynamic(
-  () => import('@/components/sections/Hero').then((m) => m.Hero),
-  {
-    ssr: false,
-    loading: () => (
-      <section
-        id="hero"
-        className="relative flex min-h-screen w-full items-center justify-center bg-theme-bg text-theme-ink"
-        aria-hidden
-      />
-    ),
-  },
-);
+// NOTE: the old <Hero /> has been removed in favour of <UtopiaHero /> below —
+// we were rendering two stacked heroes. Smooth scrolling is now handled by
+// the layout-level <SmoothScrollProvider />; the page-level <SmoothScroll />
+// shim has been dropped (double-init caused Lenis race conditions).
 
-const Cursor = dynamic(
-  () => import('@/components/shared/Cursor').then((m) => m.Cursor),
-  { ssr: false },
-);
-const SmoothScroll = dynamic(
-  () => import('@/components/shared/SmoothScroll').then((m) => m.SmoothScroll),
+const FixedMetaHud = dynamic(
+  () =>
+    import('@/components/sections/utopia/FixedMetaHud').then(
+      (m) => m.FixedMetaHud,
+    ),
   { ssr: false },
 );
 const AmbientAudio = dynamic(
@@ -175,31 +160,30 @@ export default function Home() {
             Creative Developer — Hyderabad, IN. Order meets chaos.
           </p>
           <p style={{ marginTop: '1rem' }}>
-            <a href={`mailto:${SITE.email}`} style={{ color: '#b00020' }}>
+            <a href={`mailto:${SITE.email}`} style={{ color: '#D72638' }}>
               {SITE.email}
             </a>
           </p>
         </div>
       </noscript>
-      <SmoothScroll />
       <PersistentLogo />
-      <Cursor />
       <AmbientAudio />
       <LoadingScreen />
       <ParchmentFrame />
       <FpsRail />
-      <Hero />
+      <FixedMetaHud />
 
       {/* Utopia-Tokyo reskin (Batman) — ORDER MEETS CHAOS + stanzas + marquee +
           lore + horizontal case files. Wrapped in BackgroundColorMorph so
-          the canvas shifts tone as sections scroll into view. */}
+          the canvas shifts tone as sections scroll into view. Stops tuned to
+          the new tonal palette (#0A0A0A -> #0E0E0E -> #111111 -> #0A0A0A). */}
       <BackgroundColorMorph
         initial="hsl(var(--bg))"
         stops={[
-          { selector: '[data-morph-stop="stanza"]', color: 'hsl(225 18% 8%)' },
-          { selector: '[data-morph-stop="marquee"]', color: 'hsl(225 18% 10%)' },
-          { selector: '[data-morph-stop="lore"]', color: 'hsl(224 14% 14%)' },
-          { selector: '[data-morph-stop="gallery"]', color: 'hsl(225 18% 7%)' },
+          { selector: '[data-morph-stop="stanza"]', color: 'hsl(0 0% 5%)' },
+          { selector: '[data-morph-stop="marquee"]', color: 'hsl(0 0% 6%)' },
+          { selector: '[data-morph-stop="lore"]', color: 'hsl(0 0% 7%)' },
+          { selector: '[data-morph-stop="gallery"]', color: 'hsl(0 0% 4%)' },
         ]}
       >
         <UtopiaHero />

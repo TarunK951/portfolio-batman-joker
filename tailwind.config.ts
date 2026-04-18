@@ -7,16 +7,19 @@ const config: Config = {
       colors: {
         // Utopia Tokyo brand palette (literal hex — for special cases only)
         utopia: {
-          black: '#14171f',
-          cream: '#ebe5ce',
-          red: '#ff1919',
-          neutral: '#252525',
+          black: '#0A0A0A',
+          cream: '#EDEAE0',
+          red: '#D72638',
+          neutral: '#161616',
         },
         batman: {
-          bg: '#14171f',
-          surface: '#1c1f28',
-          accent: '#ff1919',
-          ink: '#ebe5ce',
+          bg: '#0A0A0A',
+          surface: '#111111',
+          'surface-raised': '#161616',
+          accent: '#D72638',
+          'accent-dim': '#8A1824',
+          ink: '#EDEAE0',
+          'ink-subtle': '#8A8880',
         },
         samurai: {
           bg: '#efe9dd',
@@ -37,7 +40,7 @@ const config: Config = {
           'ink-muted': 'hsl(var(--ink-muted) / <alpha-value>)',
           'ink-subtle': 'hsl(var(--ink-subtle, var(--ink-muted)) / <alpha-value>)',
           line: 'hsl(var(--line) / <alpha-value>)',
-          hairline: 'hsl(var(--hairline, 0 0% 100%) / 0.12)',
+          hairline: 'hsl(var(--hairline, 45 22% 90%) / 0.08)',
         },
       },
       fontFamily: {

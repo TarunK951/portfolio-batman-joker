@@ -12,21 +12,21 @@
 
 :root,
 [data-theme='batman'] {
-  --bg: 225 18% 10%;         /* #14171f */
-  --surface: 224 14% 14%;    /* #1c1f28 */
-  --surface-raised: 224 14% 18%; /* #252832 elevated panel */
-  --paper: 49 30% 86%;       /* #ebe5ce cream breaker */
-  --accent: 0 100% 55%;      /* #ff1919 utopia red */
-  --accent-soft: 0 100% 65%;
-  --accent-dim: 0 55% 38%;   /* #962c2c desaturated idle accent */
-  --ink: 49 30% 92%;         /* near-cream text on dark */
-  --ink-muted: 0 0% 60%;
-  --ink-subtle: 0 0% 45%;    /* caption / timestamp tier */
-  --line: 0 0% 14%;
+  --bg: 0 0% 4%;             /* #0A0A0A deep near-black */
+  --surface: 0 0% 7%;        /* #111111 layered secondary dark */
+  --surface-raised: 0 0% 9%; /* #161616 elevated panel */
+  --paper: 45 22% 90%;       /* #EDEAE0 off-white cream (re-used as ink tier) */
+  --accent: 354 70% 50%;     /* #D72638 bright red signal */
+  --accent-soft: 354 70% 60%;
+  --accent-dim: 354 71% 32%; /* #8A1824 desaturated idle accent */
+  --ink: 45 22% 90%;         /* #EDEAE0 cream text on near-black */
+  --ink-muted: 49 5% 52%;    /* #8A8880 second-tier */
+  --ink-subtle: 49 5% 52%;   /* #8A8880 caption / timestamp tier */
+  --line: 0 0% 9%;           /* #161616 hairline neutrals */
   --neutral-700: 0 0% 14%;
-  /* hairline rule: pre-baked white@12% — read with `hsl(var(--hairline))` (no / alpha).
-     Value kept as full hsla via fallback in consumers when needed. */
-  --hairline: 0 0% 100%;     /* base hue; consumer applies / 0.12 alpha */
+  /* hairline rule: cream @ 8% alpha — read with `hsl(var(--hairline) / 0.08)`.
+     Consumers compose alpha via Tailwind theme-hairline alias (pre-baked @ 0.08). */
+  --hairline: 45 22% 90%;    /* base cream hue; consumer applies / 0.08 alpha */
 }
 
 /* ANCIENT-INDIA — light, warm, minimal. Inverts ink/bg relationship.
@@ -860,8 +860,8 @@ button.ai-bento-card:hover,
   background:
     radial-gradient(
       ellipse at center,
-      #ebe5ce 0%,
-      #ebe5ce 28%,
+      #EDEAE0 0%,
+      #EDEAE0 28%,
       hsl(var(--accent)) 62%,
       hsl(var(--accent) / 0.6) 100%
     );
@@ -923,7 +923,7 @@ button.ai-bento-card:hover,
   pointer-events: none;
   z-index: 0;
   background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><g fill='none' stroke='%23ff1919' stroke-width='0.6' opacity='0.55'><line x1='24' y1='20' x2='24' y2='28'/><line x1='20' y1='24' x2='28' y2='24'/><circle cx='24' cy='24' r='0.9' fill='%23ff1919' stroke='none' opacity='0.85'/></g></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><g fill='none' stroke='%23D72638' stroke-width='0.6' opacity='0.55'><line x1='24' y1='20' x2='24' y2='28'/><line x1='20' y1='24' x2='28' y2='24'/><circle cx='24' cy='24' r='0.9' fill='%23D72638' stroke='none' opacity='0.85'/></g></svg>"),
     radial-gradient(circle at 1px 1px, hsl(var(--accent) / 0.18) 1px, transparent 1.6px);
   background-size: 48px 48px, 8px 8px;
   opacity: 0.35;

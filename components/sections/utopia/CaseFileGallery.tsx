@@ -19,14 +19,22 @@ const FILES: readonly CaseFile[] = [
   { id: '06', code: 'W.E.-1207', title: 'Gotham Light & Power', subtitle: 'Redacted line items totalling $1.4M.', date: '2021.09.30' },
 ];
 
+/**
+ * Case-file horizontal gallery.
+ *
+ * utopiatokyo.com style: square cards, hairline border only (no filled panel),
+ * mono number label in the top-left, serif title in the bottom-left. Numbered
+ * `NN / 06` with tabular-nums. Cards are `cursor-target` snap points for the
+ * custom reticle.
+ */
 export function CaseFileGallery() {
   return (
     <section
       data-morph-stop="gallery"
       className="relative w-full border-t border-theme-hairline bg-theme-bg"
     >
-      <div className="px-6 pt-28 pb-10 sm:px-12">
-        <div className="mx-auto flex w-full max-w-[1600px] items-end justify-between gap-6">
+      <div className="px-6 pt-[20vh] pb-10 sm:px-12">
+        <div className="mx-auto flex w-full max-w-[1600px] items-end justify-between gap-6 border-t border-theme-hairline pt-10">
           <div>
             <span className="font-code text-[10px] uppercase tracking-[0.3em] text-theme-accent">
               [ 03 ] / case files
@@ -34,9 +42,9 @@ export function CaseFileGallery() {
             <h3
               className="mt-3 font-display text-theme-ink"
               style={{
-                fontSize: 'clamp(2rem, 5vw, 4rem)',
-                letterSpacing: '-0.025em',
-                lineHeight: 0.95,
+                fontSize: 'clamp(2.4rem, 6vw, 5rem)',
+                letterSpacing: '-0.03em',
+                lineHeight: 0.92,
               }}
             >
               Filed under <span className="text-theme-accent">unfinished</span>.
@@ -48,44 +56,52 @@ export function CaseFileGallery() {
         </div>
       </div>
 
-      <HorizontalGallery className="pb-32">
+      <HorizontalGallery className="pb-[20vh]">
         {FILES.map((file, idx) => (
           <article
             key={file.id}
-            className="relative mx-4 flex h-[64vh] w-[min(420px,80vw)] flex-shrink-0 flex-col justify-between border border-theme-hairline bg-theme-surface-raised p-8"
+            data-cursor="target"
+            className="relative mx-4 flex aspect-square w-[min(560px,80vw)] flex-shrink-0 flex-col border border-theme-hairline bg-transparent p-7"
           >
-            <header className="flex items-start justify-between gap-4 font-code text-[10px] uppercase tracking-[0.3em] text-theme-ink-subtle">
+            {/* TOP-LEFT number label (mono) */}
+            <span className="font-code text-[11px] uppercase tracking-[0.3em] text-theme-ink-subtle tabular-nums">
+              {String(idx + 1).padStart(2, '0')} / {String(FILES.length).padStart(2, '0')}
+            </span>
+
+            {/* TOP-RIGHT date + code */}
+            <div className="absolute right-7 top-7 flex flex-col items-end gap-1 font-code text-[10px] uppercase tracking-[0.3em] text-theme-ink-subtle">
               <span className="text-theme-accent">{file.code}</span>
               <span className="tabular-nums">{file.date}</span>
-            </header>
+            </div>
 
-            <div
-              aria-hidden
-              className="my-6 flex flex-1 items-center justify-center border border-theme-hairline bg-theme-bg/60"
-            >
+            {/* Oversize ghost numeral, centred */}
+            <div className="flex flex-1 items-center justify-center">
               <span
-                className="font-display text-theme-ink/15"
-                style={{ fontSize: 'clamp(6rem, 12vw, 10rem)', lineHeight: 1 }}
+                aria-hidden
+                className="font-display text-theme-ink/[0.07]"
+                style={{ fontSize: 'clamp(8rem, 22vw, 18rem)', lineHeight: 1, letterSpacing: '-0.04em' }}
               >
                 {String(idx + 1).padStart(2, '0')}
               </span>
             </div>
 
-            <footer className="flex flex-col gap-3">
+            {/* BOTTOM-LEFT serif title + subtitle */}
+            <footer className="flex flex-col gap-2">
               <h4
-                className="font-display text-theme-ink"
+                className="font-lore text-theme-ink"
                 style={{
-                  fontSize: 'clamp(1.4rem, 2.2vw, 2rem)',
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1,
+                  fontSize: 'clamp(1.5rem, 2.6vw, 2.4rem)',
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.05,
+                  fontStyle: 'italic',
                 }}
               >
                 {file.title}
               </h4>
-              <p className="font-lore text-[14px] leading-[1.5] text-theme-ink/65">
+              <p className="font-lore text-[14px] leading-[1.55] text-theme-ink/60">
                 {file.subtitle}
               </p>
-              <div className="mt-2 flex items-center gap-2 font-code text-[10px] uppercase tracking-[0.28em] text-theme-accent-dim">
+              <div className="mt-3 flex items-center gap-2 font-code text-[10px] uppercase tracking-[0.28em] text-theme-accent-dim">
                 <span aria-hidden className="inline-block h-px w-6 bg-theme-accent-dim" />
                 OPEN FILE
               </div>

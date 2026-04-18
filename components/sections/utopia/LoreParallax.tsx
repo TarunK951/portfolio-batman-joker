@@ -9,42 +9,52 @@ const LORE = [
   'To walk the city after midnight is to consult an older version of yourself: still convinced the law would be enough, still willing to be proven wrong.',
 ];
 
+/**
+ * Lore passage.
+ *
+ * utopiatokyo.com renders its long-form passages as a single narrow column
+ * centred in a very tall section. We match that here:
+ * - `py-[20vh]` for generous vertical breathing room.
+ * - Eyebrow + heading stack centred above the column.
+ * - One narrow column (`max-w-[680px]`, ~68ch at this font size), font-lore
+ *   (Crimson Text) at 19px with 1.75 leading.
+ * - Hairline top border only — no boxes, no panels.
+ */
 export function LoreParallax() {
   return (
     <section
       data-morph-stop="lore"
-      className="relative w-full overflow-hidden border-t border-theme-hairline bg-theme-surface/40 px-6 py-40 sm:px-12 sm:py-48"
+      className="relative w-full overflow-hidden border-t border-theme-hairline bg-theme-bg px-6 py-[20vh] sm:px-12"
     >
-      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-12 gap-6">
-        <RevealOnScroll as="div" className="col-span-12 md:col-span-4">
+      <div className="mx-auto flex w-full max-w-[680px] flex-col items-center gap-10 text-center">
+        <RevealOnScroll as="div" className="flex flex-col items-center gap-4">
           <span className="font-code text-[10px] uppercase tracking-[0.3em] text-theme-accent">
             [ 02 ] / lore
           </span>
           <h3
-            className="mt-4 font-display text-theme-ink"
+            className="font-display text-theme-ink"
             style={{
-              fontSize: 'clamp(2rem, 4.5vw, 3.8rem)',
+              fontSize: 'clamp(2.4rem, 5vw, 4.4rem)',
               lineHeight: 0.95,
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.025em',
             }}
           >
-            The quiet
-            <br />
-            <span className="text-theme-accent">corrosion.</span>
+            The quiet <span className="text-theme-accent">corrosion.</span>
           </h3>
+          <span
+            aria-hidden
+            className="mt-2 inline-block h-px w-16 bg-theme-hairline"
+          />
         </RevealOnScroll>
 
-        <ParallaxLayer
-          speed={-0.18}
-          className="col-span-12 flex flex-col gap-8 md:col-span-7 md:col-start-6"
-        >
+        <ParallaxLayer speed={-0.12} className="flex flex-col gap-8 text-left">
           {LORE.map((para, idx) => (
             <RevealOnScroll
               as="p"
               key={idx}
               delay={idx * 0.08}
-              className="font-lore text-[18px] leading-[1.6] text-theme-ink/75"
-              style={{ maxWidth: '56ch' }}
+              className="font-lore text-[19px] leading-[1.75] text-theme-ink/80"
+              data-cursor="target"
             >
               <span dangerouslySetInnerHTML={{ __html: para }} />
             </RevealOnScroll>
@@ -53,7 +63,7 @@ export function LoreParallax() {
           <RevealOnScroll
             as="div"
             delay={0.3}
-            className="mt-6 inline-flex items-center gap-3 font-code text-[10px] uppercase tracking-[0.3em] text-theme-ink-subtle"
+            className="mt-6 inline-flex items-center gap-3 self-center font-code text-[10px] uppercase tracking-[0.3em] text-theme-ink-subtle"
           >
             <span
               aria-hidden

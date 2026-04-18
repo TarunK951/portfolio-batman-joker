@@ -84,6 +84,54 @@ ScrollTrigger: `start: 'top top'`, `end: '+=120%'`, `scrub: 1`.
 | CSS fallback | `800ms cubic-bezier(.2,.8,.2,1)` | inline on wrapper for flash-proofing |
 | trigger    | `start: top 60%`, `end: bottom 40%` | onEnter + onEnterBack both set bg  |
 
+### `TargetCursor` (components/motion/TargetCursor.tsx)
+
+Hand-rolled reticle cursor (crosshair + corner brackets) that replaces the
+native cursor on hover-capable devices and snaps onto elements marked with
+`data-cursor="target"` or `.cursor-target`.
+
+Uses **GSAP `quickTo`** (not framer-motion springs) for the follow — chosen
+because `quickTo` gives a single interruptible tween per axis at 60fps with
+no spring overshoot, which reads as more "surgical" than a spring and is
+what utopiatokyo.com's cursor behaves like.
+
+| Phase                   | Duration | Ease          | Notes                          |
+|-------------------------|----------|---------------|--------------------------------|
+| Follow (free)           | `0.28s`  | `power3.out`  | Reticle trails pointer         |
+| Centre dot follow       | `0.08s`  | `power2.out`  | Near-1:1 with real pointer     |
+| Snap to target bbox     | `0.35s`  | `power3.out`  | `width/height/x/y` in one tween |
+| Release (no target)     | `0.30s`  | `power3.out`  | Reticle shrinks back to 28x28  |
+| Enter / leave opacity   | `0.20s`  | default       | Fades when mouse enters/leaves window |
+
+Native cursor hidden via `globals.css`:
+```
+@media (hover: hover) and (pointer: fine) {
+  html, body, * { cursor: none !important; }
+}
+```
+
+Hidden entirely on touch / coarse pointer via the same media query check in JS.
+
+### `GrainOverlay` (components/motion/GrainOverlay.tsx)
+
+Static SVG `feTurbulence` noise at 6% opacity, `mix-blend-mode: overlay`, sized
+220x220 tile. No animation — film grain reads best as still texture. Respects
+reduced-motion by default (nothing to pause).
+
+| Prop         | Value                   |
+|--------------|-------------------------|
+| opacity      | `0.06`                  |
+| blend-mode   | `overlay`               |
+| tile size    | `220px`                 |
+| z-index      | `30` (below HUD at 40, cursor at 9999) |
+
+### `FixedMetaHud` (components/sections/utopia/FixedMetaHud.tsx)
+
+Persistent fixed chrome (coords TL, version TR, terminal BL, clock BR). Clock
+uses a `setInterval(1000)` tick for UTC hh:mm:ss. Caret blink on the terminal
+line reuses the existing `.u-flicker` keyframe (4.2s ease-in-out infinite,
+40% dip to 0.6 opacity).
+
 ## Route transition
 
 ### `app/template.tsx`
