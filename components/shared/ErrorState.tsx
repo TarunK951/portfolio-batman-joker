@@ -5,7 +5,7 @@ import { UButton } from '@/components/shared/UButton';
 
 type Variant = 'runtime' | 'network';
 
-const COPY: Record<Variant, Record<'batman' | 'ancient-india' | 'futuristic', { eyebrow: string; heading: string; body: string; cta: string }>> = {
+const COPY: Record<Variant, Record<'batman' | 'ancient-india', { eyebrow: string; heading: string; body: string; cta: string }>> = {
   runtime: {
     batman: {
       eyebrow: 'System fault',
@@ -18,12 +18,6 @@ const COPY: Record<Variant, Record<'batman' | 'ancient-india' | 'futuristic', { 
       heading: 'An arrow off its mark.',
       body: 'The page wandered from its dharma. Draw breath — then try the path once more.',
       cta: 'Try again',
-    },
-    futuristic: {
-      eyebrow: 'runtime / exception',
-      heading: 'Unhandled exception.',
-      body: 'The client crashed. The trace has been captured locally. Replay the request or return to root.',
-      cta: 'Replay',
     },
   },
   network: {
@@ -38,12 +32,6 @@ const COPY: Record<Variant, Record<'batman' | 'ancient-india' | 'futuristic', { 
       heading: 'The path is silent.',
       body: 'No word returned from the field. The network is still. Wait, then try again.',
       cta: 'Retry',
-    },
-    futuristic: {
-      eyebrow: 'net / offline',
-      heading: 'Network unreachable.',
-      body: 'Upstream returned no payload. Reconnect and retry the handshake.',
-      cta: 'Reconnect',
     },
   },
 };

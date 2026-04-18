@@ -10,7 +10,7 @@ import { LogoDock } from '@/components/three/PersistentLogo';
 import { WireframeDecal } from '@/components/shared/WireframeDecal';
 import { CornerReticle } from '@/components/shared/CornerReticle';
 import { AiDivider } from '@/components/shared/AiDivider';
-import { PillCta } from '@/components/shared/PillCta';
+import { hindiCopy } from '@/data/hindiCopy';
 
 const CONTACT_COPY = {
   batman: {
@@ -20,10 +20,6 @@ const CONTACT_COPY = {
   'ancient-india': {
     heading: 'Speak',
     body: 'Seeking work shaped by dharma — patient craft, restrained form, and quiet intent? I\u2019m listening.',
-  },
-  futuristic: {
-    heading: 'Ping',
-    body: 'Building something at the edge of the web? Real-time, spatial, data-heavy? Let\u2019s wire it up.',
   },
 } as const;
 
@@ -50,67 +46,6 @@ export function Contact() {
   }, []);
 
   const isBatman = theme === 'batman';
-  const isFuturistic = theme === 'futuristic';
-
-  if (isFuturistic) {
-    return (
-      <section
-        ref={sectionRef}
-        id="contact"
-        className="relative u-section bg-theme-bg"
-      >
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
-          <p className="contact-line u-mono text-[11px] uppercase tracking-[0.3em] text-theme-ink/55">
-            [ 05 / the_signal ]
-          </p>
-          <h2
-            className="contact-line text-theme-ink"
-            style={{
-              fontSize: 'clamp(2.4rem, 6vw, 5rem)',
-              lineHeight: 1.05,
-              letterSpacing: '-0.025em',
-              fontWeight: 500,
-            }}
-          >
-            Ready to <span className="fx-italic-emph">ascend</span> your next
-            project?
-          </h2>
-          <p className="contact-line max-w-xl text-[15px] leading-relaxed text-theme-ink/65">
-            {copy.body}
-          </p>
-          <div className="contact-line mt-2 flex flex-wrap items-center justify-center gap-4">
-            <PillCta href={`mailto:${SITE.email}`}>Get in Touch</PillCta>
-            <a
-              href={`https://github.com/${SITE.alias}`}
-              data-cursor-hover
-              className="u-mono text-[11px] uppercase tracking-[0.28em] text-theme-ink/60 transition-colors hover:text-theme-ink"
-            >
-              [ github / {SITE.alias} ]
-            </a>
-          </div>
-
-          <div className="mt-16 w-full">
-            <div className="u-rule mb-5" />
-            <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-              <span className="fx-wordmark">satyatarun</span>
-              <nav className="flex items-center gap-6">
-                {(['Discover', 'About', 'Contact'] as const).map((l) => (
-                  <a
-                    key={l}
-                    href={`#${l.toLowerCase()}`}
-                    data-cursor-hover
-                    className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-ink/55 transition-colors hover:text-theme-ink"
-                  >
-                    {l}
-                  </a>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   if (isBatman) {
     return (
@@ -206,6 +141,16 @@ export function Contact() {
           <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-utopia-red">
               <ScrambleText text="[05] the signal · contact" trigger="inview" />
+              {isAI ? (
+                <>
+                  {' '}
+                  <span aria-hidden className="text-theme-ink/30">॥</span>
+                  {' '}
+                  <span className="ai-devanagari normal-case tracking-normal">{hindiCopy.signal}</span>
+                  {' '}
+                  <span aria-hidden className="text-theme-ink/30">॥</span>
+                </>
+              ) : null}
             </p>
             <h2 className="u-h2">
               <span className="contact-line block">{copy.heading}</span>

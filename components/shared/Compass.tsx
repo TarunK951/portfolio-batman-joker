@@ -9,13 +9,19 @@
  */
 
 import type { ReactNode } from 'react';
+import { hindiCopy } from '@/data/hindiCopy';
 
 interface CompassProps {
   children: ReactNode;
   label?: string;
+  hindiLabel?: string;
 }
 
-export function Compass({ children, label = 'FLOW CONTROL' }: CompassProps) {
+export function Compass({
+  children,
+  label = 'FLOW',
+  hindiLabel = hindiCopy.flow,
+}: CompassProps) {
   return (
     <div className="ai-compass relative flex items-center justify-center">
       {/* Cardinal labels */}
@@ -39,8 +45,13 @@ export function Compass({ children, label = 'FLOW CONTROL' }: CompassProps) {
         </g>
       </svg>
 
-      {/* Flow-control mono label outside the top-right */}
-      <span className="ai-compass__flow u-mono">[ {label} ]</span>
+      {/* Flow-control mono label outside the top-right — bilingual */}
+      <span className="ai-compass__flow u-mono">
+        [ {label}
+        {' / '}
+        <span className="ai-devanagari">{hindiLabel}</span>
+        {' ]'}
+      </span>
 
       {/* 45° rotated tile slot wrapping children */}
       <div className="ai-compass__slot">{children}</div>

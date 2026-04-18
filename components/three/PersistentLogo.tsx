@@ -7,77 +7,20 @@
  * Its fixed wrapper tweens its bounding box to match whichever
  * `<LogoDock />` is currently active in the viewport.
  *
- * Wave 3.1 renderer split:
- *   - 'futuristic' theme keeps the R3F Canvas (needs shader FX later)
- *   - 'batman' and 'ancient-india' use <model-viewer> via
- *     `ModelViewerLogo` (see design doc §2.1).
- *
- * Rotation is no longer driven by a local useFrame spinner. Both
- * renderer branches read from the shared `useLogoRotation()` hook
- * (scroll-coupled, with "tyre rim" idle coast — design doc §2.3).
+ * Both themes (batman + ancient-india) use <model-viewer> via
+ * `ModelViewerLogo` (see design doc §2.1). Rotation is driven from
+ * the shared `useLogoRotation()` hook (scroll-coupled, with "tyre
+ * rim" idle coast — design doc §2.3).
  */
 
-import { Canvas, useFrame } from '@react-three/fiber';
-import {
-  Environment,
-  MeshTransmissionMaterial,
-  useGLTF,
-} from '@react-three/drei';
-import { Suspense, useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
-import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
+import { useEffect, useRef } from 'react';
+import { useTheme } from '@/components/theme/ThemeProvider';
 import { registerGsap } from '@/lib/gsap';
 import { useLogoRotation } from '@/hooks/useLogoRotation';
 import {
   ModelViewerLogo,
   type ModelViewerLogoHandle,
 } from '@/components/three/ModelViewerLogo';
-
-type LogoThemeKey = Theme;
-
-type PalettePreset = {
-  base: string;
-  accent: string;
-  glow: string;
-  emissive: number;
-  metalness: number;
-  roughness: number;
-  wireframe: boolean;
-  glass: boolean;
-};
-
-const PALETTE: Record<LogoThemeKey, PalettePreset> = {
-  batman: {
-    base: '#050505',
-    accent: '#ff1919',
-    glow: '#ff4d4d',
-    emissive: 0.55,
-    metalness: 0.9,
-    roughness: 0.25,
-    wireframe: false,
-    glass: false,
-  },
-  'ancient-india': {
-    base: '#14120f',
-    accent: '#8a1a1a',
-    glow: '#c8361f',
-    emissive: 0.1,
-    metalness: 0.08,
-    roughness: 0.92,
-    wireframe: false,
-    glass: false,
-  },
-  futuristic: {
-    base: '#ffffff',
-    accent: '#ffffff',
-    glow: '#ffffff',
-    emissive: 1.4,
-    metalness: 0.2,
-    roughness: 0.35,
-    wireframe: false,
-    glass: false,
-  },
-};
 
 /* -------------------------------------------------------------------------- */
 /*                                   Dock                                     */
@@ -132,9 +75,7 @@ export function LogoDock({
 
 /**
  * Wires a fixed-positioned wrapper to travel between `[data-logo-dock]`
- * anchors as the user scrolls. Returns a cleanup function. Extracted so
- * both the R3F (futuristic) and model-viewer (batman / ancient-india)
- * branches share a single implementation.
+ * anchors as the user scrolls. Returns a cleanup function.
  */
 function wireDockTravel(wrapper: HTMLDivElement): () => void {
   const { gsap, ScrollTrigger } = registerGsap();
@@ -232,101 +173,6 @@ function wireDockTravel(wrapper: HTMLDivElement): () => void {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               R3F Logo body                                */
-/* -------------------------------------------------------------------------- */
-
-function LogoBody({
-  yawRef,
-  pitchRef,
-}: {
-  yawRef: React.MutableRefObject<number>;
-  pitchRef: React.MutableRefObject<number>;
-}) {
-  const groupRef = useRef<THREE.Group | null>(null);
-  const { theme } = useTheme();
-  const palette = PALETTE[theme as LogoThemeKey] ?? PALETTE.batman;
-  const { scene } = useGLTF('/models/batman_logo.glb');
-  const cloned = useMemo(() => scene.clone(true), [scene]);
-
-  useEffect(() => {
-    const disposables: Array<THREE.Material> = [];
-    cloned.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        if (palette.glass) {
-          const mat = new THREE.MeshPhysicalMaterial({
-            color: new THREE.Color(palette.base),
-            emissive: new THREE.Color(palette.accent),
-            emissiveIntensity: palette.emissive,
-            metalness: 0.2,
-            roughness: palette.roughness,
-            transmission: 0.85,
-            thickness: 0.5,
-            ior: 1.4,
-            clearcoat: 1,
-            clearcoatRoughness: 0.1,
-            wireframe: false,
-          });
-          child.material = mat;
-          disposables.push(mat);
-        } else {
-          const mat = new THREE.MeshStandardMaterial({
-            color: new THREE.Color(palette.base),
-            emissive: new THREE.Color(palette.accent),
-            emissiveIntensity: palette.emissive,
-            metalness: palette.metalness,
-            roughness: palette.roughness,
-            wireframe: palette.wireframe,
-          });
-          child.material = mat;
-          disposables.push(mat);
-        }
-      }
-    });
-    return () => {
-      disposables.forEach((m) => m.dispose());
-    };
-  }, [cloned, palette]);
-
-  // Rotation is now driven entirely by the shared useLogoRotation hook
-  // (see design doc §2.3). The old `t * 0.3` spinner was removed in
-  // Wave 3.1.
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-    const yawRad = (yawRef.current * Math.PI) / 180;
-    const pitchRad = (pitchRef.current * Math.PI) / 180;
-    groupRef.current.rotation.y = yawRad;
-    groupRef.current.rotation.x = pitchRad;
-    // Subtle breathing pulse — only under the futuristic theme's bright
-    // white look needs the "alive" cue. Harmless at other scales.
-    const pulse = 1 + Math.sin(clock.elapsedTime * 1.6) * 0.015;
-    groupRef.current.scale.setScalar(pulse);
-  });
-
-  return (
-    <group ref={groupRef} scale={1}>
-      <primitive object={cloned} />
-      {palette.glass ? (
-        <mesh scale={1.18}>
-          <sphereGeometry args={[1, 48, 48]} />
-          <MeshTransmissionMaterial
-            thickness={0.5}
-            roughness={0.1}
-            ior={1.4}
-            distortion={0.15}
-            distortionScale={0.35}
-            temporalDistortion={0.08}
-            chromaticAberration={0.04}
-            transmission={1}
-            color={palette.glow}
-            backside
-          />
-        </mesh>
-      ) : null}
-    </group>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                    Model-viewer branch (batman / ancient)                  */
 /* -------------------------------------------------------------------------- */
 
@@ -382,74 +228,10 @@ function ModelViewerPersistent({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                          R3F branch (futuristic)                           */
-/* -------------------------------------------------------------------------- */
-
-function R3FPersistent() {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const { theme } = useTheme();
-  const palette = PALETTE[theme as LogoThemeKey] ?? PALETTE.batman;
-  const { yaw, pitch } = useLogoRotation();
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-    if (typeof window === 'undefined') return;
-    return wireDockTravel(wrapper);
-  }, []);
-
-  return (
-    <div
-      ref={wrapperRef}
-      aria-hidden
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: 0,
-        height: 0,
-        pointerEvents: 'none',
-        zIndex: 40,
-        willChange: 'transform, width, height',
-      }}
-    >
-      <Canvas
-        camera={{ position: [0, 0, 4.2], fov: 42 }}
-        dpr={[1, 2]}
-        gl={{ alpha: true, antialias: true }}
-        style={{ background: 'transparent', width: '100%', height: '100%' }}
-      >
-        <ambientLight intensity={theme === 'ancient-india' ? 0.6 : 0.15} />
-        <spotLight
-          position={[4, 5, 5]}
-          angle={0.5}
-          penumbra={0.8}
-          intensity={1.8}
-          color={palette.accent}
-        />
-        <pointLight position={[-4, 2, 3]} intensity={0.55} color={palette.glow} />
-        <pointLight position={[0, -2, -4]} intensity={0.6} color={palette.accent} />
-        <Suspense fallback={null}>
-          {palette.glass ? <Environment preset="city" /> : null}
-          <LogoBody yawRef={yaw} pitchRef={pitch} />
-        </Suspense>
-      </Canvas>
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                              Router component                              */
 /* -------------------------------------------------------------------------- */
 
 export function PersistentLogo() {
   const { theme } = useTheme();
-
-  if (theme !== 'futuristic') {
-    return <ModelViewerPersistent theme={theme} />;
-  }
-
-  return <R3FPersistent />;
+  return <ModelViewerPersistent theme={theme} />;
 }
-
-useGLTF.preload('/models/batman_logo.glb');

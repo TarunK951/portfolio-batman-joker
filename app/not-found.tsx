@@ -27,14 +27,6 @@ const NF_COPY = {
     cta: 'Return to the ashrama',
     status: '४०४',
   },
-  futuristic: {
-    eyebrow: '404 / signal lost',
-    heading: 'Route',
-    headingAccent: 'null.',
-    body: 'The endpoint returned an empty payload. Re-align to root and try a different path.',
-    cta: 'Return to root://',
-    status: 'HTTP 404',
-  },
 } as const;
 
 export default function NotFound() {

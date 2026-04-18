@@ -15,7 +15,6 @@ import { useTheme, type Theme } from '@/components/theme/ThemeProvider';
  * Per-theme material:
  *   batman        → red metallic (hot emissive rim)
  *   ancient-india → ink-brushed dark red silhouette, matte, low emissive
- *   futuristic    → neon cyan wireframe, additive glow
  */
 
 type MarkMode = 'hero' | 'tiny';
@@ -50,15 +49,6 @@ const PALETTE: Record<
     metalness: 0.1,
     roughness: 0.95,
     wireframe: false,
-  },
-  futuristic: {
-    accent: '#00e5ff',
-    glow: '#6df7ff',
-    base: '#02080c',
-    emissive: 1.1,
-    metalness: 0.4,
-    roughness: 0.15,
-    wireframe: true,
   },
 };
 

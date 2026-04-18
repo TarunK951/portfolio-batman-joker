@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue, Caveat, Space_Mono, Big_Shoulders_Stencil_Display, Instrument_Serif, Crimson_Pro, Noto_Serif_Devanagari } from 'next/font/google';
+import { Inter, Bebas_Neue, Caveat, Space_Mono, Big_Shoulders_Stencil_Display, Crimson_Pro, Noto_Serif_Devanagari } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
@@ -43,15 +43,6 @@ const stencil = Big_Shoulders_Stencil_Display({
   display: 'swap',
 });
 
-// Futuristic italic emphasis — ascend/8bit.ai italic serif accent
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: '400',
-  style: 'italic',
-  variable: '--font-italic-serif',
-  display: 'swap',
-});
-
 // Ancient-india serif — Crimson Pro (variable). Used for h2/h3 under that theme.
 const crimson = Crimson_Pro({
   subsets: ['latin'],
@@ -68,7 +59,7 @@ const devanagari = Noto_Serif_Devanagari({
 });
 
 const SEO_DESCRIPTION =
-  'Satya Tarun K (satyatarun, Satya Tarun) — creative developer and full-stack engineer from Hyderabad. Three-theme portfolio (Batman, Ancient India, Futuristic) built with Next.js, React Three Fiber, GSAP and Framer Motion.';
+  'Satya Tarun K (satyatarun, Satya Tarun) — creative developer and full-stack engineer from Hyderabad. Dual-theme portfolio (Batman, Ancient India) built with Next.js, React Three Fiber, GSAP and Framer Motion.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -146,14 +137,14 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='samurai'){t='ancient-india';try{localStorage.setItem('portfolio-theme','ancient-india');}catch(e){}}if(t==='batman'||t==='ancient-india'||t==='futuristic'){document.documentElement.dataset.theme=t;}else{document.documentElement.dataset.theme='batman';}}catch(e){document.documentElement.dataset.theme='batman';}})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='samurai'||t==='futuristic'){t='ancient-india';try{localStorage.setItem('portfolio-theme','ancient-india');}catch(e){}}if(t==='batman'||t==='ancient-india'){document.documentElement.dataset.theme=t;}else{document.documentElement.dataset.theme='batman';}}catch(e){document.documentElement.dataset.theme='batman';}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       data-theme="batman"
-      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable} ${stencil.variable} ${instrumentSerif.variable} ${crimson.variable} ${devanagari.variable}`}
+      className={`${inter.variable} ${bebas.variable} ${caveat.variable} ${spaceMono.variable} ${stencil.variable} ${crimson.variable} ${devanagari.variable}`}
       suppressHydrationWarning
     >
       <head>

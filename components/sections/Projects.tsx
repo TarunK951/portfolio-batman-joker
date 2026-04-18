@@ -8,7 +8,8 @@ import { AiDivider } from '@/components/shared/AiDivider';
 import { LogoDock } from '@/components/three/PersistentLogo';
 import { WireframeDecal } from '@/components/shared/WireframeDecal';
 import { CornerReticle } from '@/components/shared/CornerReticle';
-import { LogoCard } from '@/components/shared/LogoCard';
+import { KineticSerif } from '@/components/shared/KineticSerif';
+import { hindiCopy } from '@/data/hindiCopy';
 
 const statusLabel: Record<string, string> = {
   live: 'Live',
@@ -33,11 +34,6 @@ const PROJECTS_COPY: Record<Theme, ProjectsCopy> = {
     intro:
       'A patient canon. Each work tempered by dharma — shaped with intent, finished only when nothing more can be refined.',
   },
-  futuristic: {
-    title: 'The systems.',
-    intro:
-      'Shipped systems. Throughput, latency, and clarity — measured and optimized end to end.',
-  },
 };
 
 function projectLabel(
@@ -47,8 +43,7 @@ function projectLabel(
 ): string {
   if (theme === 'batman') return project.batmanName;
   const n = String(index + 1).padStart(3, '0');
-  if (theme === 'ancient-india') return `Parva ${n}`;
-  return `SYS.${n}`;
+  return `Parva ${n}`;
 }
 
 export function Projects() {
@@ -77,7 +72,6 @@ export function Projects() {
 
   const isBatman = theme === 'batman';
   const isAI = theme === 'ancient-india';
-  const isFuturistic = theme === 'futuristic';
 
   return (
     <section ref={sectionRef} id="work" className="relative u-section bg-theme-bg">
@@ -94,9 +88,27 @@ export function Projects() {
           <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
               <span className="inline-block h-1.5 w-1.5 translate-y-[-2px] rounded-full bg-theme-accent align-middle" />
-              <span className="ml-3 align-middle">[02] the work · selected</span>
+              <span className="ml-3 align-middle">
+                [02] the work · selected
+                {isAI ? (
+                  <>
+                    {' '}
+                    <span aria-hidden className="text-theme-ink/30">॥</span>
+                    {' '}
+                    <span className="ai-devanagari normal-case tracking-normal">{hindiCopy.work}</span>
+                    {' '}
+                    <span aria-hidden className="text-theme-ink/30">॥</span>
+                  </>
+                ) : null}
+              </span>
             </p>
-            <h2 className="u-h2 text-theme-ink">{copy.title}</h2>
+            {isAI ? (
+              <h2 className="text-theme-ink" style={{ fontSize: 'clamp(3rem, 10vw, 9rem)' }}>
+                <KineticSerif>{copy.title}</KineticSerif>
+              </h2>
+            ) : (
+              <h2 className="u-h2 text-theme-ink">{copy.title}</h2>
+            )}
             <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-theme-ink/65">
               {copy.intro}
             </p>
@@ -114,50 +126,7 @@ export function Projects() {
           <div className="u-rule mt-20" />
         )}
 
-        {isFuturistic && (
-          <ul className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2">
-            {projects.map((project, i) => (
-              <li key={project.id} className="project-row">
-                <LogoCard
-                  size="md"
-                  notched={i % 3 === 0}
-                  className="h-full !items-stretch !justify-start !text-left"
-                  style={{ minHeight: 220 }}
-                >
-                  <div className="flex h-full w-full flex-col gap-4 text-left">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/45">
-                        {String(i + 1).padStart(2, '0')} / {projectLabel(theme, project, i)}
-                      </span>
-                      <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/80">
-                        {statusLabel[project.status] ?? project.status}
-                      </span>
-                    </div>
-                    <h3
-                      className="fx-display text-theme-ink"
-                      style={{
-                        fontSize: 'clamp(1.4rem, 2.4vw, 2rem)',
-                        lineHeight: 1.05,
-                      }}
-                    >
-                      {project.name}
-                    </h3>
-                    <p className="flex-1 text-[13px] leading-relaxed text-theme-ink/65">
-                      {project.description}
-                    </p>
-                    <div className="u-rule" />
-                    <span className="u-mono text-[10px] uppercase tracking-[0.22em] text-theme-ink/50">
-                      {project.type}
-                    </span>
-                  </div>
-                </LogoCard>
-              </li>
-            ))}
-          </ul>
-        )}
-
         {/* ── ROW LIST (batman / ancient-india) ─────────── */}
-        {!isFuturistic && (
         <ul className="group/list">
           {projects.map((project, i) => (
             <li
@@ -205,7 +174,6 @@ export function Projects() {
             </li>
           ))}
         </ul>
-        )}
 
         <div className="u-rule" />
       </div>

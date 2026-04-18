@@ -250,8 +250,8 @@ export const mahabharataCharacters: readonly MahabharataCharacter[] = [
     deathCause: "Beheaded by Arjuna's Anjalika astra on day 17 while Karna was dismounted trying to free his chariot wheel from the mud — Krishna invoked Karna's own lapses of dharma to justify the otherwise adharmic strike",
     deathBy: 'arjuna',
     keyMoment: 'Giving away his divine golden armour (kavacha-kundala) to Indra disguised as a brahmin, knowing it meant his death',
-    // TODO: replace with Wikimedia Commons Raja Ravi Varma painting
-    image: '/mahabharata/karna.jpg',
+    // User-provided B&W line-art sketch (transparent bg, red tilak)
+    image: '/mahabharata/karna.png',
     stats: { valor: 100, wisdom: 85, devotion: 96, strategy: 88, martial: 99, influence: 92 },
   },
   {

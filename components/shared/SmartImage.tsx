@@ -39,9 +39,7 @@ export function SmartImage({
   const gradient =
     theme === 'ancient-india'
       ? 'linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--accent) / 0.35) 100%)'
-      : theme === 'futuristic'
-        ? 'linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--accent) / 0.25) 100%)'
-        : 'linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--accent) / 0.3) 100%)';
+      : 'linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--accent) / 0.3) 100%)';
 
   if (errored) {
     return (

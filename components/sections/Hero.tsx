@@ -7,17 +7,9 @@ import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { DepthText } from '@/components/shared/DepthText';
 import { LogoDock } from '@/components/three/PersistentLogo';
 import { ancientIndiaCopy } from '@/data/ancientIndiaCopy';
-import { StackHeadline } from '@/components/shared/StackHeadline';
-import { LogoCard } from '@/components/shared/LogoCard';
+import { hindiCopy } from '@/data/hindiCopy';
 import { Compass } from '@/components/shared/Compass';
 import { UnrollText } from '@/components/shared/UnrollText';
-
-/**
- * Hero — multi-theme. Futuristic branch mirrors 8bit.ai + ascend:
- * wordmark / hamburger chrome, scroll-cycling stacked headline on the
- * left, bright white R3F logo centre, italic-serif mission line right,
- * mono scroll-prompt + copyright rail at the bottom.
- */
 
 type HeroCopy = {
   eyebrow: string;
@@ -39,13 +31,6 @@ const HERO_COPY: Record<Theme, HeroCopy> = {
     subline: ancientIndiaCopy.hero.bio,
     cta: ancientIndiaCopy.hero.ctaLabel,
     tag: 'सत्य तरुण · shilpi · Bhārata',
-  },
-  futuristic: {
-    eyebrow: '[ 01 / arrival ] :: system online',
-    subline:
-      '[ engineer@edge ] shipping real-time, high-signal surfaces. latency low, intent high.',
-    cta: '> view.work',
-    tag: '[ node: hyderabad-01 ] [ uptime: infinite ]',
   },
 };
 
@@ -91,12 +76,7 @@ export function Hero() {
     return () => ctx.revert();
   }, []);
 
-  const isFuturistic = theme === 'futuristic';
   const isAI = theme === 'ancient-india';
-
-  if (isFuturistic) {
-    return <FuturisticHero sectionRef={sectionRef} clock={clock} />;
-  }
 
   if (isAI) {
     return <AncientIndiaHero sectionRef={sectionRef} clock={clock} tag={copy.tag} />;
@@ -190,127 +170,6 @@ export function Hero() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              Futuristic branch                             */
-/* -------------------------------------------------------------------------- */
-
-function FuturisticHero({
-  sectionRef,
-  clock,
-}: {
-  sectionRef: React.Ref<HTMLElement>;
-  clock: string;
-}) {
-  return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      className="relative flex min-h-screen w-full flex-col bg-theme-bg text-theme-ink"
-      style={{ willChange: 'transform' }}
-    >
-      <ThemeToggle />
-
-      <header className="relative z-10 flex items-center justify-between gap-4 px-6 pt-6 sm:px-10 sm:pt-8">
-        <span className="hero-reveal fx-wordmark">satyatarun</span>
-        <div className="hero-reveal flex items-center gap-5">
-          <span className="fx-hamburger" aria-hidden>
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="fx-avatar" aria-hidden />
-        </div>
-      </header>
-
-      <div className="relative z-10 grid flex-1 grid-cols-12 items-center gap-6 px-6 py-10 sm:px-10">
-        <div className="hero-reveal col-span-12 md:col-span-5">
-          <p className="u-mono mb-5 text-[10px] uppercase tracking-[0.3em] text-theme-ink/55">
-            [ 01 / arrival ]
-          </p>
-          <StackHeadline
-            stateA={['Accelerating', 'Enterprise', '*Creative* Developer']}
-            stateB={['AI-as-a-Service', 'Bespoke Solutions', 'for *You.*']}
-          />
-          <p className="u-mono mt-6 text-[11px] uppercase tracking-[0.28em] text-theme-ink/55">
-            Satya Tarun K <span className="mx-2 text-theme-ink/30">·</span>
-            Hyderabad / IN
-          </p>
-        </div>
-
-        <div className="col-span-12 flex items-center justify-center gap-6 md:col-span-4">
-          <div className="hero-reveal" style={{ willChange: 'transform' }} aria-hidden>
-            <LogoDock id="hero" size="xl" />
-          </div>
-          <div className="hero-reveal hidden flex-col gap-2 md:flex" aria-hidden>
-            <span className="fx-hex">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.2" />
-                <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5L19 19M5 19l2.5-2.5M16.5 7.5L19 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-              </svg>
-            </span>
-            <span className="fx-hex">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M4 17l5-5 4 4 7-9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </div>
-        </div>
-
-        <div className="hero-reveal col-span-12 md:col-span-3">
-          <p className="u-mono mb-4 text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
-            [ mission ]
-          </p>
-          <p className="text-[22px] leading-[1.2] text-theme-ink/90">
-            <span className="fx-italic-emph">Order meets chaos.</span>
-            <br />
-            <span className="text-[15px] leading-[1.55] text-theme-ink/65">
-              Shipping real-time, high-signal surfaces — latency low, intent
-              high.
-            </span>
-          </p>
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <LogoCard size="sm">
-              <div className="flex flex-col items-start gap-1 text-left">
-                <span className="u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/50">
-                  Latency
-                </span>
-                <span className="u-mono text-[14px] text-theme-ink">12ms</span>
-              </div>
-            </LogoCard>
-            <LogoCard size="sm">
-              <div className="flex flex-col items-start gap-1 text-left">
-                <span className="u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/50">
-                  Region
-                </span>
-                <span className="u-mono text-[14px] text-theme-ink">BLR-1</span>
-              </div>
-            </LogoCard>
-          </div>
-        </div>
-      </div>
-
-      <footer className="relative z-10 px-6 pb-6 sm:px-10 sm:pb-8">
-        <div className="mb-5 flex items-center justify-center">
-          <span className="u-mono text-[10px] uppercase tracking-[0.32em] text-theme-ink/55">
-            Scroll Down To Continue{' '}
-            <span className="ml-2 align-middle text-theme-ink/80">↓</span>
-          </span>
-        </div>
-        <div className="u-rule mb-4" />
-        <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-          <span className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-ink/50">
-            © {new Date().getFullYear()} Satya Tarun K — This site uses
-            technical cookies only.
-          </span>
-          <span className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-ink/50">
-            [ ist {clock || '—'} ]
-          </span>
-        </div>
-      </footer>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                             Ancient-India branch                           */
 /* -------------------------------------------------------------------------- */
 
@@ -336,7 +195,13 @@ function AncientIndiaHero({
       <header className="relative z-10 flex items-start justify-between gap-4 px-8 pt-10 sm:px-16">
         <div className="hero-reveal flex flex-col gap-1">
           <span className="u-mono text-[10px] uppercase tracking-[0.28em] text-theme-ink/55">
-            satyatarun · est. mmxxv
+            [ 01 ] arrival
+            {' '}
+            <span aria-hidden className="text-theme-ink/30">॥</span>
+            {' '}
+            <span className="ai-devanagari text-theme-accent/80">{hindiCopy.arrival}</span>
+            {' '}
+            <span aria-hidden className="text-theme-ink/30">॥</span>
           </span>
           <span className="ai-devanagari text-[11px] text-theme-accent/80">
             कुरुक्षेत्रम्

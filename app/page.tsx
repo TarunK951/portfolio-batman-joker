@@ -40,30 +40,12 @@ const PersistentLogo = dynamic(
   () => import('@/components/three/PersistentLogo').then((m) => m.PersistentLogo),
   { ssr: false },
 );
-const FuturisticSceneryLayer = dynamic(
-  () =>
-    import('@/components/shared/FuturisticSceneryLayer').then(
-      (m) => m.FuturisticSceneryLayer,
-    ),
-  { ssr: false },
-);
 const ParchmentFrame = dynamic(
   () => import('@/components/shared/ParchmentFrame').then((m) => m.ParchmentFrame),
   { ssr: false },
 );
 const FpsRail = dynamic(
   () => import('@/components/shared/FpsRail').then((m) => m.FpsRail),
-  { ssr: false },
-);
-const Starfield = dynamic(
-  () => import('@/components/shared/Starfield').then((m) => m.Starfield),
-  { ssr: false },
-);
-const ScrollProgressLine = dynamic(
-  () =>
-    import('@/components/shared/ScrollProgressLine').then(
-      (m) => m.ScrollProgressLine,
-    ),
   { ssr: false },
 );
 const DCGrid = dynamic(
@@ -164,13 +146,10 @@ export default function Home() {
       <Cursor />
       <AmbientAudio />
       <LoadingScreen />
-      <FuturisticSceneryLayer />
-      <Starfield />
-      <ScrollProgressLine />
       <ParchmentFrame />
       <FpsRail />
       <Hero />
-      {/* DCGrid gates itself to batman + futuristic themes. */}
+      {/* DCGrid gates itself to batman theme. */}
       <DCGrid />
       {/* MahabharataGrid gates itself to ancient-india theme. */}
       <MahabharataGrid />

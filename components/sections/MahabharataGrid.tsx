@@ -12,7 +12,7 @@
  * Data wiring to mahabharataCharacters / mahabharataFactions preserved.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { registerGsap } from '@/lib/gsap';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import {
@@ -25,6 +25,9 @@ import { SmartImage } from '@/components/shared/SmartImage';
 import { BentoCard } from '@/components/shared/BentoCard';
 import { AiDivider } from '@/components/shared/AiDivider';
 import { UnrollText } from '@/components/shared/UnrollText';
+import { KineticSerif } from '@/components/shared/KineticSerif';
+import { hindiCopy } from '@/data/hindiCopy';
+import { mahabharataEvents, type MahabharataEvent } from '@/data/mahabharataEvents';
 
 const STAT_LABELS: Array<{ key: keyof MahabharataCharacter['stats']; label: string }> = [
   { key: 'valor', label: 'Valor' },
@@ -160,6 +163,38 @@ function HeroCharacterCard({ character }: { character: MahabharataCharacter }) {
   );
 }
 
+function EventBentoCard({ event }: { event: MahabharataEvent }) {
+  return (
+    <BentoCard size="lg" className="relative overflow-hidden p-0">
+      <div className="relative h-full w-full">
+        <SmartImage
+          src={event.image}
+          alt={event.title}
+          name={event.title}
+          aspectClassName="aspect-[16/10]"
+          className="h-full w-full"
+        />
+        {/* top-right Hindi title */}
+        <div className="pointer-events-none absolute right-4 top-4 rounded-md bg-theme-bg/70 px-2 py-1 backdrop-blur-sm">
+          <span className="ai-devanagari text-[14px] text-theme-accent">{event.hindi}</span>
+        </div>
+        {/* bottom serif caption overlay */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-theme-bg/85 via-theme-bg/50 to-transparent p-5">
+          <p className="u-mono text-[9px] uppercase tracking-[0.28em] text-theme-accent">
+            {event.id} ॥ {event.hindi}
+          </p>
+          <p className="ai-serif-italic mt-1 text-[18px] leading-tight text-theme-ink">
+            {event.title}
+          </p>
+          <p className="mt-1 text-[12px] leading-snug text-theme-ink/75">
+            {event.caption}
+          </p>
+        </div>
+      </div>
+    </BentoCard>
+  );
+}
+
 export function MahabharataGrid() {
   const { theme } = useTheme();
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -210,11 +245,17 @@ export function MahabharataGrid() {
           <div className="col-span-12 md:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
               [03] {copy.eyebrow} · the mythos
+              {' '}
+              <span aria-hidden className="text-theme-ink/30">॥</span>
+              {' '}
+              <span className="ai-devanagari normal-case tracking-normal">{hindiCopy.roster}</span>
+              {' '}
+              <span aria-hidden className="text-theme-ink/30">॥</span>
             </p>
             <div className="ai-serif leading-[0.92] text-theme-ink" style={{ fontSize: 'clamp(3rem, 8vw, 6.4rem)' }}>
               <UnrollText as="div" text="Code" onScroll />
               <div>
-                <span className="ai-serif-italic">With</span>
+                <KineticSerif className="text-theme-ink/80">With</KineticSerif>
               </div>
               <UnrollText
                 as="div"
@@ -284,16 +325,34 @@ export function MahabharataGrid() {
             </div>
           ) : null}
 
-          {/* Remaining character mini-cards */}
-          {characterList.map((c, idx) => (
-            <div key={c.id} className="mb-bento-card">
-              <CharacterMiniCard
-                character={c}
-                active={idx === selectedIdx}
-                onSelect={() => setSelectedIdx(idx)}
-              />
-            </div>
-          ))}
+          {/* Remaining character mini-cards — event cards injected at 4/10/16 */}
+          {characterList.map((c, idx) => {
+            // Inject a large event bento card BEFORE positions 4, 10, 16
+            // (i.e. after every 6 character tiles, using events 0/1/2).
+            const injectIdx =
+              idx === 4 ? 0 : idx === 10 ? 1 : idx === 16 ? 2 : -1;
+            const eventToInject =
+              injectIdx >= 0 ? mahabharataEvents[injectIdx] : undefined;
+            return (
+              <Fragment key={c.id}>
+                {eventToInject ? (
+                  <div
+                    key={`event-${eventToInject.id}`}
+                    className="mb-bento-card"
+                  >
+                    <EventBentoCard event={eventToInject} />
+                  </div>
+                ) : null}
+                <div className="mb-bento-card">
+                  <CharacterMiniCard
+                    character={c}
+                    active={idx === selectedIdx}
+                    onSelect={() => setSelectedIdx(idx)}
+                  />
+                </div>
+              </Fragment>
+            );
+          })}
 
           {/* StringTune-esque helper card */}
           <div className="mb-bento-card md:col-span-2">

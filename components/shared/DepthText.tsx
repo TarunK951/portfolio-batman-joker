@@ -24,7 +24,6 @@ interface DepthTextProps {
 const THEME_DEFAULTS: Record<Theme, { color: string; shadow: string }> = {
   batman: { color: '#e8e8e8', shadow: '#ff1919' },
   'ancient-india': { color: '#14120f', shadow: '#8a1a1a' },
-  futuristic: { color: '#e8f4ff', shadow: '#00e5ff' },
 };
 
 export function DepthText({

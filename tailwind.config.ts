@@ -24,12 +24,6 @@ const config: Config = {
           accent: '#8a1a1a',
           ink: '#14120f',
         },
-        futuristic: {
-          bg: '#05070c',
-          surface: '#0b0f17',
-          accent: '#00e5ff',
-          ink: '#e8f4ff',
-        },
         // Token-driven (use these in components)
         theme: {
           bg: 'hsl(var(--bg) / <alpha-value>)',

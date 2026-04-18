@@ -6,7 +6,8 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { ScrambleText } from '@/components/shared/ScrambleText';
 import { LogoDock } from '@/components/three/PersistentLogo';
 import { AiDivider } from '@/components/shared/AiDivider';
-import { LogoCard } from '@/components/shared/LogoCard';
+import { KineticSerif } from '@/components/shared/KineticSerif';
+import { hindiCopy } from '@/data/hindiCopy';
 
 const skills = [
   { name: 'Next.js / React', level: 95 },
@@ -36,11 +37,6 @@ const ABOUT_COPY = {
     lead: 'The bow-smith',
     tail: 'dharma.',
     bio: "I'm Satya Tarun K — a full-stack product developer who builds like a dhanush-smith on the field of Kurukshetra. Few arrows, each loosed with intent. Craft is the quiet between the strings.",
-  },
-  futuristic: {
-    lead: 'The operator',
-    tail: 'the signal.',
-    bio: "I'm Satya Tarun K — a full-stack product developer engineering interfaces at the edge. Real-time systems, clean data paths, tomorrow's surface today.",
   },
 } as const;
 
@@ -89,89 +85,6 @@ export function About() {
     return () => ctx.revert();
   }, []);
 
-  if (theme === 'futuristic') {
-    return (
-      <section ref={sectionRef} id="about" className="u-section bg-theme-bg">
-        <div className="mx-auto max-w-6xl">
-          <p className="u-mono mb-8 text-[11px] uppercase tracking-[0.3em] text-theme-ink/55">
-            [ 04 / the_operator ]
-          </p>
-          <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-12 md:col-span-8">
-              <p
-                className="text-theme-ink/90"
-                style={{
-                  fontSize: 'clamp(1.8rem, 4.5vw, 3.6rem)',
-                  lineHeight: 1.08,
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                <span className="fx-italic-emph">One bad day</span> is all it
-                takes to build{' '}
-                <span className="fx-italic-emph">something</span> that outlives
-                the noise.
-              </p>
-              <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-theme-ink/65">
-                {copy.bio}
-              </p>
-            </div>
-            <div className="col-span-12 md:col-span-4 flex justify-end">
-              <LogoDock id="about" size="small" />
-            </div>
-          </div>
-
-          <div className="u-rule mt-16 mb-10" />
-
-          <p className="u-mono mb-6 text-[10px] uppercase tracking-[0.3em] text-theme-ink/45">
-            [ arsenal ] :: capabilities
-          </p>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {skills.map((skill, i) => (
-              <LogoCard
-                key={skill.name}
-                size="sm"
-                notched={i % 5 === 0}
-                className="!items-stretch !justify-start !text-left"
-                style={{ minHeight: 110 }}
-              >
-                <div className="flex h-full w-full flex-col justify-between gap-3 text-left">
-                  <span className="u-mono text-[9px] uppercase tracking-[0.24em] text-theme-ink/45">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="text-[14px] text-theme-ink">
-                    {skill.name}
-                  </span>
-                  <span className="u-mono text-[10px] tracking-[0.14em] text-theme-ink/70">
-                    {skill.level}/100
-                  </span>
-                </div>
-              </LogoCard>
-            ))}
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-4">
-            {timeline.map((item) => (
-              <LogoCard
-                key={item.year}
-                size="sm"
-                className="!items-stretch !justify-start"
-              >
-                <div className="flex w-full flex-col gap-1 text-left">
-                  <span className="u-mono text-[10px] uppercase tracking-[0.24em] text-theme-ink/80">
-                    {item.year}
-                  </span>
-                  <span className="text-[13px] leading-snug text-theme-ink/70">
-                    {item.label}
-                  </span>
-                </div>
-              </LogoCard>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section ref={sectionRef} id="about" className="u-section bg-theme-bg">
       <div className="mx-auto max-w-7xl">
@@ -180,18 +93,42 @@ export function About() {
           <div className="col-span-12 lg:col-span-8">
             <p className="u-mono mb-6 text-[11px] uppercase tracking-[0.3em] text-theme-accent">
               <ScrambleText text="[04] the journey · about" trigger="inview" />
+              {theme === 'ancient-india' ? (
+                <>
+                  {' '}
+                  <span aria-hidden className="text-theme-ink/30">॥</span>
+                  {' '}
+                  <span className="ai-devanagari normal-case tracking-normal">{hindiCopy.journey}</span>
+                  {' '}
+                  <span aria-hidden className="text-theme-ink/30">॥</span>
+                </>
+              ) : null}
             </p>
-            <h2 className="u-h2">
-              <span className="about-title-line block text-theme-ink">
-                {copy.lead}
-              </span>
-              <span className="about-title-line block text-theme-ink/35">
-                behind the
-              </span>
-              <span className="about-title-line block text-theme-accent">
-                {copy.tail}
-              </span>
-            </h2>
+            {theme === 'ancient-india' ? (
+              <h2 style={{ fontSize: 'clamp(3rem, 10vw, 9rem)' }}>
+                <span className="about-title-line block text-theme-ink">
+                  <KineticSerif>{copy.lead}</KineticSerif>
+                </span>
+                <span className="about-title-line block text-theme-ink/35 ai-serif-italic">
+                  behind the
+                </span>
+                <span className="about-title-line block text-theme-accent">
+                  <KineticSerif>{copy.tail}</KineticSerif>
+                </span>
+              </h2>
+            ) : (
+              <h2 className="u-h2">
+                <span className="about-title-line block text-theme-ink">
+                  {copy.lead}
+                </span>
+                <span className="about-title-line block text-theme-ink/35">
+                  behind the
+                </span>
+                <span className="about-title-line block text-theme-accent">
+                  {copy.tail}
+                </span>
+              </h2>
+            )}
           </div>
           <div className="col-span-12 lg:col-span-4 lg:text-right">
             <div className="flex flex-col items-end gap-4">
