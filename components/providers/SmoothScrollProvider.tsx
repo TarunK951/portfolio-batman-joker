@@ -12,10 +12,6 @@ import { registerGsap } from '@/lib/gsap';
  * - Disables itself entirely under `prefers-reduced-motion: reduce`.
  * - Refreshes ScrollTrigger once fonts/images finish loading to avoid
  *   triggers being computed against pre-layout heights.
- *
- * Safe to mount alongside the legacy `components/shared/SmoothScroll` helper
- * during the transition — both guard against reduced-motion and clean up on
- * unmount. Prefer this Provider in new code.
  */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {

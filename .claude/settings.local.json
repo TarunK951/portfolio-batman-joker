@@ -28,7 +28,8 @@
       "WebFetch(domain:commons.wikimedia.org)",
       "WebFetch(domain:en.wikipedia.org)",
       "Bash(taskkill //F //IM node.exe)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(taskkill //F //IM node.exe //T)"
     ]
   }
 }

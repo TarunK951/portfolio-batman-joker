@@ -2,37 +2,33 @@
 
 import { Marquee } from '@/components/motion/Marquee';
 
-const ITEMS = [
+const SEPARATOR = '\u00a0\u00a0///\u00a0\u00a0';
+const FRAGMENTS = [
   'BATCOMPUTER v2.0.0-RC.1',
-  '40.7306°N / 74.0000°W',
-  'CLEARANCE // OMEGA-7',
-  'CHANNEL: WAYNE-ENTERPRISES',
-  'FEED: GCPD-INTERCEPT',
-  'STATUS: COWL ENGAGED',
+  '40.7306\u00b0N / 74.0000\u00b0W',
+  'GOTHAM SECTOR 7G',
 ];
+const MARQUEE_STRING = FRAGMENTS.join(SEPARATOR) + SEPARATOR;
 
+/**
+ * Thin mono band — repeats a version + coords + sector string. Hairlines on
+ * top and bottom. No boxes, no fills. Mirrors the low-contrast utilitarian
+ * bands on utopiatokyo.com.
+ */
 export function VersionMarquee() {
   return (
     <section
       data-morph-stop="marquee"
       data-cursor="target"
-      className="relative w-full border-y border-theme-accent/40 bg-theme-bg py-5"
+      className="relative w-full border-y border-theme-hairline bg-theme-bg py-10"
     >
-      <Marquee speed={38} pauseOnHover>
-        {ITEMS.map((item, idx) => (
+      <Marquee speed={44}>
+        {Array.from({ length: 6 }).map((_, idx) => (
           <span
             key={idx}
-            className="mx-10 inline-flex items-center gap-4 font-code text-[11px] uppercase tracking-[0.28em] text-theme-ink/85"
+            className="whitespace-pre font-code text-xs uppercase tracking-[0.3em] text-theme-ink-subtle"
           >
-            <span
-              aria-hidden
-              className="inline-block h-1 w-1 rounded-full bg-theme-accent"
-            />
-            <span
-              className={idx % 2 === 0 ? 'text-theme-accent' : 'text-theme-ink'}
-            >
-              {item}
-            </span>
+            {MARQUEE_STRING}
           </span>
         ))}
       </Marquee>

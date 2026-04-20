@@ -1,10 +1,11 @@
 import dynamic from 'next/dynamic';
 import { SITE } from '@/lib/seo';
 
-// NOTE: the old <Hero /> has been removed in favour of <UtopiaHero /> below —
-// we were rendering two stacked heroes. Smooth scrolling is now handled by
-// the layout-level <SmoothScrollProvider />; the page-level <SmoothScroll />
-// shim has been dropped (double-init caused Lenis race conditions).
+// Lean homepage — utopiatokyo.com-style single scroll of Utopia sections only.
+// All legacy dual-theme machinery (LoadingScreen, AmbientAudio, ParchmentFrame,
+// FpsRail, PersistentLogo, DCGrid, MahabharataGrid, Projects, About, Contact,
+// Footer) has been removed from this page. Their files remain on disk for
+// future reintroduction — see components/sections/ and components/shared/.
 
 const FixedMetaHud = dynamic(
   () =>
@@ -13,53 +14,7 @@ const FixedMetaHud = dynamic(
     ),
   { ssr: false },
 );
-const AmbientAudio = dynamic(
-  () => import('@/components/shared/AmbientAudio').then((m) => m.AmbientAudio),
-  { ssr: false },
-);
-const LoadingScreen = dynamic(
-  () => import('@/components/sections/LoadingScreen').then((m) => m.LoadingScreen),
-  { ssr: false },
-);
-const PersistentLogo = dynamic(
-  () => import('@/components/three/PersistentLogo').then((m) => m.PersistentLogo),
-  { ssr: false },
-);
-const ParchmentFrame = dynamic(
-  () => import('@/components/shared/ParchmentFrame').then((m) => m.ParchmentFrame),
-  { ssr: false },
-);
-const FpsRail = dynamic(
-  () => import('@/components/shared/FpsRail').then((m) => m.FpsRail),
-  { ssr: false },
-);
-const DCGrid = dynamic(
-  () => import('@/components/sections/DCGrid').then((m) => m.DCGrid),
-  { ssr: false },
-);
-const MahabharataGrid = dynamic(
-  () =>
-    import('@/components/sections/MahabharataGrid').then((m) => m.MahabharataGrid),
-  { ssr: false },
-);
-const Projects = dynamic(
-  () => import('@/components/sections/Projects').then((m) => m.Projects),
-  { ssr: false },
-);
-const About = dynamic(
-  () => import('@/components/sections/About').then((m) => m.About),
-  { ssr: false },
-);
-const Contact = dynamic(
-  () => import('@/components/sections/Contact').then((m) => m.Contact),
-  { ssr: false },
-);
-const Footer = dynamic(
-  () => import('@/components/sections/Footer').then((m) => m.Footer),
-  { ssr: false },
-);
 
-// Utopia-Tokyo reskin sections (Batman). All client-only leaves.
 const UtopiaHero = dynamic(
   () =>
     import('@/components/sections/utopia/UtopiaHero').then((m) => m.UtopiaHero),
@@ -166,24 +121,18 @@ export default function Home() {
           </p>
         </div>
       </noscript>
-      <PersistentLogo />
-      <AmbientAudio />
-      <LoadingScreen />
-      <ParchmentFrame />
-      <FpsRail />
+
       <FixedMetaHud />
 
-      {/* Utopia-Tokyo reskin (Batman) — ORDER MEETS CHAOS + stanzas + marquee +
-          lore + horizontal case files. Wrapped in BackgroundColorMorph so
-          the canvas shifts tone as sections scroll into view. Stops tuned to
-          the new tonal palette (#0A0A0A -> #0E0E0E -> #111111 -> #0A0A0A). */}
+      {/* Utopia-Tokyo reskin (Batman) — single-scroll composition.
+          Morph stops widened for more perceptible tonal drift. */}
       <BackgroundColorMorph
-        initial="hsl(var(--bg))"
+        initial="hsl(0 0% 4%)"
         stops={[
-          { selector: '[data-morph-stop="stanza"]', color: 'hsl(0 0% 5%)' },
-          { selector: '[data-morph-stop="marquee"]', color: 'hsl(0 0% 6%)' },
+          { selector: '[data-morph-stop="stanza"]', color: 'hsl(0 0% 7%)' },
+          { selector: '[data-morph-stop="marquee"]', color: 'hsl(0 0% 9%)' },
           { selector: '[data-morph-stop="lore"]', color: 'hsl(0 0% 7%)' },
-          { selector: '[data-morph-stop="gallery"]', color: 'hsl(0 0% 4%)' },
+          { selector: '[data-morph-stop="gallery"]', color: 'hsl(0 0% 5%)' },
         ]}
       >
         <UtopiaHero />
@@ -193,14 +142,23 @@ export default function Home() {
         <CaseFileGallery />
       </BackgroundColorMorph>
 
-      {/* DCGrid gates itself to batman theme. */}
-      <DCGrid />
-      {/* MahabharataGrid gates itself to ancient-india theme. */}
-      <MahabharataGrid />
-      <Projects />
-      <About />
-      <Contact />
-      <Footer />
+      {/* Minimal footer — closes the page without reintroducing a full
+          Footer component. Hairline divider + mono caption + mailto. */}
+      <footer className="relative w-full border-t border-theme-hairline bg-theme-bg px-6 py-16 sm:px-12">
+        <div className="mx-auto flex w-full max-w-[1600px] flex-col items-start justify-between gap-6 font-code text-[10px] uppercase tracking-[0.3em] text-theme-ink-subtle sm:flex-row sm:items-center">
+          <a
+            href={`mailto:${SITE.email}`}
+            data-cursor="target"
+            className="text-theme-ink hover:text-theme-accent transition-colors"
+          >
+            {SITE.email}
+          </a>
+          <span className="tabular-nums">BATCOMPUTER v2.0.0-RC.1</span>
+          <span className="tabular-nums text-theme-ink/50">
+            &copy; {new Date().getFullYear()} {SITE.name}
+          </span>
+        </div>
+      </footer>
     </main>
   );
 }
